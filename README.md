@@ -1,137 +1,194 @@
-# Austin Hidden Infrastructure Mapper
+# Undervolt
 
-**DGX-accelerated system that extracts hidden infrastructure signals from construction permit text to reveal Austin's electrification and density trends.**
+> Energy is the bottleneck to the frontier.
 
-Built for the [AITX DGX Hackathon](https://luma.com/aitx-dgx-hackathon?tk=dQyKpK)
+Austin is electrifying. Solar panels, EV chargers, and battery systems are spreading across the city. But buried in 2.2 million construction permits is a different story: 634 generator permits — more than EV chargers. For every 7 solar installations, only 1 battery. The city is generating clean power but can't store it. Trust in the grid is fractured.
 
-Dataset link: https://data.austintexas.gov/Building-and-Development/Issued-Construction-Permits/3syk-w9eu
+**Undervolt** uses DGX-accelerated LLM extraction to surface hidden infrastructure signals from permit text. The result is a real-time map of Austin's energy transition — where it's thriving, where it's stalling, and where the next investment should go.
 
-## The Problem
+This isn't failure. It's transition under constraint.
 
-Austin issues 2M+ construction permits, but the real urban growth story is buried in unstructured text descriptions:
-- Where are EV chargers being installed?
-- Which neighborhoods are adding ADUs (density)?
-- Is the city building grid resilience after the 2021 freeze?
+---
 
-City planners can't see these trends because they're locked in free-text fields.
+## The Data
 
-## Our Solution
+- **Source:** [Austin Open Data - Issued Construction Permits](https://data.austintexas.gov/Building-and-Development/Issued-Construction-Permits/3syk-w9eu)
+- **Size:** 2.2M+ permits
+- **Coverage:** 63% geocoded, 87% have Council District
 
-Extract 7 hidden signals using LLM inference on DGX, then surface trends with RAPIDS analytics.
+---
 
-### Signals We Extract
+## Key Findings
 
-| Signal | Description |
-|--------|-------------|
-| `is_ev_charger` | EV charging station installations |
-| `is_solar` + `solar_kw` | Solar panel installations with capacity |
-| `has_battery` | Battery storage (Powerwall, backup) |
-| `has_generator` | Backup generator installations |
-| `is_adu` | Accessory dwelling units (housing density) |
-| `is_panel_upgrade` | Electrical panel upgrades (infrastructure strain) |
-| `units` | Number of housing units |
+| Signal | Count | Insight |
+|--------|-------|---------|
+| Solar | 25,610 | Grid-tied, saves money but useless when grid fails |
+| EV Chargers | 119,727 | Electrification is real |
+| Generators | 7,116 | +246% after 2021 freeze — trust is broken |
+| Batteries | 878 | Only 1 for every 29 solar — storage is the bottleneck |
+| ADUs | 2,549 | Density growing in central Austin |
 
-## Architecture
+**Post-Freeze Effect (2021):**
+- Battery permits: +214%
+- Generator permits: +246%
 
-```
-Neon Postgres (80K permits)
-        │
-        ▼
-   DGX Load (cuDF)
-        │
-        ▼
-   LLM Extraction (Mistral-7B, GPU batch)
-        │
-        ▼
-   Feature Store (Parquet)
-        │
-        ▼
-   RAPIDS Aggregation (cuDF groupby)
-        │
-        ▼
-   Visualization / Insights
-```
+**The Resilience Gap:**
+- District 10 (Westlake, wealthy): 2,151 generators
+- District 4 (East, lower income): 175 total permits
 
-## Data
+---
 
-- **Source:** [Austin Open Data - Issued Construction Permits](https://data.austintexas.gov/)
-- **Size:** 2.4M+ rows, 1.7GB
-- **Sample loaded:** 80K rows in Neon Postgres
-- **Coverage:** 97% have lat/long, 97% have zip code
+## Extraction Pipeline
 
-## Project Structure
+A config-driven, reusable pipeline. Add a new feature? Just add a YAML config.
 
 ```
-runtime-collective/
-├── README.md                        # This file
-├── PLAN.md                          # Build plan & DGX workflow
-├── resources/
-│   ├── PROJECT_SPEC.md              # DGX project specification
-│   ├── HACKATHON_TASK.md            # Hackathon challenge details
-│   └── sample_feature_extraction.md # Feature extraction analysis (40 samples)
-├── prompts/                         # LLM prompts (TODO)
-├── scripts/                         # Python scripts (TODO)
-│   ├── load_data.py                 # Neon → GPU
-│   ├── extract_features.py          # LLM batch extraction
-│   ├── analyze_trends.py            # RAPIDS aggregation
-│   └── visualize.py                 # Charts & maps
-└── feature_store/                   # Extracted features (TODO)
+Raw Data (2.2M permits)
+    → Clean (select columns)
+    → Build Prompt (from YAML config)
+    → LLM Extraction (vLLM on DGX)
+    → Parse JSON → Validate
+    → Save Parquet
 ```
 
-## Database
-
-Permit data is loaded in Neon Postgres:
+### Directory Structure
 
 ```
-Table: construction_permits
-Rows: 79,661
-Columns: 68 (all TEXT for flexibility)
+undervolt/
+├── config/
+│   ├── pipeline.yaml              # Global settings (DB, model, batch size)
+│   └── features/                  # One YAML per feature group
+│       ├── solar.yaml
+│       ├── ev.yaml
+│       ├── battery.yaml
+│       ├── generator.yaml
+│       ├── adu.yaml
+│       └── panel_upgrade.yaml
+│
+├── src/undervolt/
+│   ├── config/                    # Config loading + validation
+│   ├── data/                      # CSV/Postgres/Parquet loaders
+│   ├── extraction/                # LLM pipeline + prompt building
+│   └── cli.py                     # Entry point
+│
+├── frontend/                      # Next.js visualization
+└── output/features/               # Parquet output
 ```
 
-Key columns:
-- `permit_num` - Unique identifier
-- `description` - Free text (THE GOLDMINE)
-- `original_zip` - Location
-- `latitude`, `longitude` - Coordinates
-- `calendar_year_issued` - Time dimension
+### Feature Config Example
 
-## Quick Stats from Data Exploration
+```yaml
+# config/features/solar.yaml
+feature_group:
+  name: "solar"
+  enabled: true
 
-| Signal | Count in 80K Sample |
-|--------|---------------------|
-| EV Chargers | 775 |
-| Solar | 1,630 |
-| ADU | 331 |
-| Generator | 1,277 |
-| Battery Storage | 128 |
-| Panel Upgrades | 3,072 |
-| Multi-family | 4,025 |
+features:
+  - name: "is_solar"
+    type: "boolean"
+  - name: "solar_kw"
+    type: "number"
+    nullable: true
 
-## DGX Workflow
+extraction:
+  keywords: ["solar", "PV", "photovoltaic"]
+  prompt: |
+    Analyze for solar installation.
+    Return: {"is_solar": bool, "solar_kw": number|null}
+  examples:
+    - input: "Install 8.5 kW solar PV system"
+      output: '{"is_solar": true, "solar_kw": 8.5}'
+```
 
-1. **Load data** from Neon into cuDF (GPU DataFrame)
-2. **Batch LLM inference** with Mistral-7B across 80K descriptions
-3. **RAPIDS aggregation** - groupby zip, year for trend analysis
-4. **Export** feature store as Parquet
+### Adding a New Feature
 
-## Why DGX?
+1. Create `config/features/pool.yaml`
+2. Run `python -m undervolt extract`
 
-- **Batch LLM inference** - Process 80K permits without API rate limits
-- **Multi-GPU parallel processing** - Fast iteration on prompts
-- **RAPIDS/cuDF** - GPU-accelerated analytics
-- **Local models** - No cloud API costs
+**No code changes required.**
 
-## Sample Insights (Preview)
+### CLI Commands
 
-From initial exploration:
-- 78704 (South Austin) leads in EV charger installations
-- Solar + battery combinations growing (grid resilience)
-- ADUs clustering in central Austin zip codes
-- Generator permits reflect post-2021 freeze preparedness
+```bash
+# Full extraction
+python -m undervolt extract
 
-## Team
+# Test on 100 rows
+python -m undervolt extract --limit 100
 
-Built at the AITX DGX Hackathon
+# Specific features only
+python -m undervolt extract --features solar generator
+
+# List configured features
+python -m undervolt list
+```
+
+---
+
+## Output Schema
+
+```json
+{
+  "permit_num": "2023-045678",
+  "lat": 30.2672,
+  "lng": -97.7431,
+  "zip": "78704",
+  "district": 9,
+  "year": 2023,
+  "valuation": 28500,
+  "contractor": "Tesla Energy",
+
+  "is_solar": true,
+  "solar_kw": 8.5,
+  "is_ev": false,
+  "has_battery": true,
+  "has_generator": false,
+  "generator_kw": null,
+  "is_adu": false,
+  "is_panel_upgrade": false
+}
+```
+
+---
+
+## Who Uses This
+
+| Audience | What they want |
+|----------|---------------|
+| **City planners** | Where to invest in grid infrastructure |
+| **Datacenter scouts** | Is this area grid-ready? |
+| **Solar/battery companies** | Where to sell (gaps in coverage) |
+| **Utilities** | Load forecasting by neighborhood |
+| **Developers** | Infrastructure-ready zones |
+
+---
+
+## Frontend
+
+```bash
+cd frontend
+bun install
+bun run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000)
+
+Features:
+- **Story Mode:** Guided 5-stage narrative about Austin's energy transition
+- **Explore Mode:** Chat-based queries ("show solar", "district 10", "solar trend")
+- **Map:** Mapbox visualization with signal filtering
+- **Charts:** Trend data over time
+
+---
+
+## Tech Stack
+
+- **Extraction:** vLLM + Mistral-7B on DGX
+- **Data:** Neon Postgres, cuDF/RAPIDS
+- **Frontend:** Next.js 16, React 19, Tailwind, Mapbox, Recharts
+- **Output:** Parquet (RAPIDS-compatible)
+
+---
 
 ## License
 
