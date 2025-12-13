@@ -17,56 +17,86 @@ interface PermitLocation {
   signal: SignalType;
   description: string;
   zip: string;
+  district: number;
   value?: string;
+  year?: number;
 }
 
-// Mock permit locations around Austin
+// Mock permit locations around Austin with Council Districts
 const mockPermitLocations: PermitLocation[] = [
-  // 78704 - South Austin (high EV, ADU)
-  { id: "1", lat: 30.2410, lng: -97.7636, signal: "ev", description: "Level 2 EV Charger", zip: "78704", value: "residential" },
-  { id: "2", lat: 30.2450, lng: -97.7590, signal: "ev", description: "Tesla Wall Connector", zip: "78704", value: "residential" },
-  { id: "3", lat: 30.2380, lng: -97.7680, signal: "solar", description: "18.5 kW Solar System", zip: "78704", value: "18.5 kW" },
-  { id: "4", lat: 30.2420, lng: -97.7550, signal: "adu", description: "650 sqft ADU", zip: "78704", value: "650 sqft" },
-  { id: "5", lat: 30.2470, lng: -97.7620, signal: "adu", description: "Secondary dwelling unit", zip: "78704", value: "480 sqft" },
-  { id: "6", lat: 30.2390, lng: -97.7570, signal: "solar", description: "12.2 kW + Battery", zip: "78704", value: "12.2 kW" },
-  { id: "7", lat: 30.2440, lng: -97.7650, signal: "ev", description: "Commercial EV Station", zip: "78704", value: "commercial" },
+  // District 3 - South Central (78704)
+  { id: "1", lat: 30.2410, lng: -97.7636, signal: "ev", description: "Level 2 EV Charger", zip: "78704", district: 3, value: "residential", year: 2024 },
+  { id: "2", lat: 30.2450, lng: -97.7590, signal: "ev", description: "Tesla Wall Connector", zip: "78704", district: 3, value: "residential", year: 2024 },
+  { id: "3", lat: 30.2380, lng: -97.7680, signal: "solar", description: "18.5 kW Solar System", zip: "78704", district: 3, value: "18.5 kW", year: 2024 },
+  { id: "4", lat: 30.2420, lng: -97.7550, signal: "adu", description: "650 sqft ADU", zip: "78704", district: 3, value: "650 sqft", year: 2024 },
+  { id: "5", lat: 30.2470, lng: -97.7620, signal: "adu", description: "Secondary dwelling unit", zip: "78704", district: 3, value: "480 sqft", year: 2023 },
+  { id: "6", lat: 30.2390, lng: -97.7570, signal: "solar", description: "12.2 kW + Battery", zip: "78704", district: 3, value: "12.2 kW", year: 2024 },
+  { id: "7", lat: 30.2440, lng: -97.7650, signal: "ev", description: "Commercial EV Station", zip: "78704", district: 3, value: "commercial", year: 2025 },
 
-  // 78746 - Westlake (high resilience)
-  { id: "8", lat: 30.2950, lng: -97.8100, signal: "generator", description: "26kW Generac Standby", zip: "78746", value: "26 kW" },
-  { id: "9", lat: 30.2980, lng: -97.8050, signal: "battery", description: "Tesla Powerwall 3 x2", zip: "78746", value: "27 kWh" },
-  { id: "10", lat: 30.2920, lng: -97.8150, signal: "solar", description: "24.4 kW + Battery", zip: "78746", value: "24.4 kW" },
-  { id: "11", lat: 30.3000, lng: -97.8080, signal: "generator", description: "22kW Whole Home Generator", zip: "78746", value: "22 kW" },
-  { id: "12", lat: 30.2940, lng: -97.8120, signal: "battery", description: "Tesla Powerwall 3", zip: "78746", value: "13.5 kWh" },
-  { id: "13", lat: 30.2970, lng: -97.8020, signal: "solar", description: "20.1 kW Solar Array", zip: "78746", value: "20.1 kW" },
+  // District 10 - West Austin/Westlake (78746) - Highest resilience
+  { id: "8", lat: 30.2950, lng: -97.8100, signal: "generator", description: "26kW Generac Standby", zip: "78746", district: 10, value: "26 kW", year: 2024 },
+  { id: "9", lat: 30.2980, lng: -97.8050, signal: "battery", description: "Tesla Powerwall 3 x2", zip: "78746", district: 10, value: "27 kWh", year: 2024 },
+  { id: "10", lat: 30.2920, lng: -97.8150, signal: "solar", description: "24.4 kW + Battery", zip: "78746", district: 10, value: "24.4 kW", year: 2024 },
+  { id: "11", lat: 30.3000, lng: -97.8080, signal: "generator", description: "22kW Whole Home Generator", zip: "78746", district: 10, value: "22 kW", year: 2023 },
+  { id: "12", lat: 30.2940, lng: -97.8120, signal: "battery", description: "Tesla Powerwall 3", zip: "78746", district: 10, value: "13.5 kWh", year: 2025 },
+  { id: "13", lat: 30.2970, lng: -97.8020, signal: "solar", description: "20.1 kW Solar Array", zip: "78746", district: 10, value: "20.1 kW", year: 2024 },
+  { id: "33", lat: 30.2910, lng: -97.8050, signal: "generator", description: "20kW Kohler Generator", zip: "78746", district: 10, value: "20 kW", year: 2024 },
+  { id: "34", lat: 30.2960, lng: -97.8130, signal: "solar", description: "28.2 kW Solar + Powerwall", zip: "78746", district: 10, value: "28.2 kW", year: 2025 },
+  { id: "35", lat: 30.2990, lng: -97.8020, signal: "battery", description: "Enphase IQ Battery", zip: "78746", district: 10, value: "10 kWh", year: 2024 },
 
-  // 78702 - East Austin (density growth)
-  { id: "14", lat: 30.2620, lng: -97.7180, signal: "adu", description: "Backyard cottage", zip: "78702", value: "550 sqft" },
-  { id: "15", lat: 30.2650, lng: -97.7150, signal: "adu", description: "Garage conversion ADU", zip: "78702", value: "420 sqft" },
-  { id: "16", lat: 30.2600, lng: -97.7200, signal: "ev", description: "EV Charger Installation", zip: "78702", value: "residential" },
-  { id: "17", lat: 30.2680, lng: -97.7130, signal: "solar", description: "8.8 kW Rooftop Solar", zip: "78702", value: "8.8 kW" },
-  { id: "18", lat: 30.2590, lng: -97.7220, signal: "adu", description: "New ADU construction", zip: "78702", value: "720 sqft" },
+  // District 9 - East Austin (78702) - Density growth
+  { id: "14", lat: 30.2620, lng: -97.7180, signal: "adu", description: "Backyard cottage", zip: "78702", district: 9, value: "550 sqft", year: 2024 },
+  { id: "15", lat: 30.2650, lng: -97.7150, signal: "adu", description: "Garage conversion ADU", zip: "78702", district: 9, value: "420 sqft", year: 2024 },
+  { id: "16", lat: 30.2600, lng: -97.7200, signal: "ev", description: "EV Charger Installation", zip: "78702", district: 9, value: "residential", year: 2024 },
+  { id: "17", lat: 30.2680, lng: -97.7130, signal: "solar", description: "8.8 kW Rooftop Solar", zip: "78702", district: 9, value: "8.8 kW", year: 2023 },
+  { id: "18", lat: 30.2590, lng: -97.7220, signal: "adu", description: "New ADU construction", zip: "78702", district: 9, value: "720 sqft", year: 2025 },
+  { id: "36", lat: 30.2640, lng: -97.7160, signal: "adu", description: "Detached ADU", zip: "78702", district: 9, value: "600 sqft", year: 2024 },
 
-  // 78745 - South Austin
-  { id: "19", lat: 30.2080, lng: -97.7850, signal: "ev", description: "Level 2 EV Charger", zip: "78745", value: "residential" },
-  { id: "20", lat: 30.2050, lng: -97.7900, signal: "solar", description: "15.3 kW Solar", zip: "78745", value: "15.3 kW" },
-  { id: "21", lat: 30.2100, lng: -97.7820, signal: "ev", description: "EV Circuit Installation", zip: "78745", value: "residential" },
-  { id: "22", lat: 30.2030, lng: -97.7880, signal: "generator", description: "14kW Standby Generator", zip: "78745", value: "14 kW" },
+  // District 8 - South Austin (78745)
+  { id: "19", lat: 30.2080, lng: -97.7850, signal: "ev", description: "Level 2 EV Charger", zip: "78745", district: 8, value: "residential", year: 2024 },
+  { id: "20", lat: 30.2050, lng: -97.7900, signal: "solar", description: "15.3 kW Solar", zip: "78745", district: 8, value: "15.3 kW", year: 2024 },
+  { id: "21", lat: 30.2100, lng: -97.7820, signal: "ev", description: "EV Circuit Installation", zip: "78745", district: 8, value: "residential", year: 2024 },
+  { id: "22", lat: 30.2030, lng: -97.7880, signal: "generator", description: "14kW Standby Generator", zip: "78745", district: 8, value: "14 kW", year: 2023 },
+  { id: "37", lat: 30.2060, lng: -97.7830, signal: "solar", description: "12.1 kW Solar System", zip: "78745", district: 8, value: "12.1 kW", year: 2025 },
 
-  // 78731 - Northwest
-  { id: "23", lat: 30.3550, lng: -97.7580, signal: "solar", description: "22.1 kW Solar System", zip: "78731", value: "22.1 kW" },
-  { id: "24", lat: 30.3580, lng: -97.7550, signal: "battery", description: "Enphase Battery System", zip: "78731", value: "10 kWh" },
-  { id: "25", lat: 30.3520, lng: -97.7620, signal: "ev", description: "ChargePoint Home", zip: "78731", value: "residential" },
-  { id: "26", lat: 30.3600, lng: -97.7530, signal: "generator", description: "20kW Generator + ATS", zip: "78731", value: "20 kW" },
+  // District 7 - Northwest (78731)
+  { id: "23", lat: 30.3550, lng: -97.7580, signal: "solar", description: "22.1 kW Solar System", zip: "78731", district: 7, value: "22.1 kW", year: 2024 },
+  { id: "24", lat: 30.3580, lng: -97.7550, signal: "battery", description: "Enphase Battery System", zip: "78731", district: 7, value: "10 kWh", year: 2024 },
+  { id: "25", lat: 30.3520, lng: -97.7620, signal: "ev", description: "ChargePoint Home", zip: "78731", district: 7, value: "residential", year: 2024 },
+  { id: "26", lat: 30.3600, lng: -97.7530, signal: "generator", description: "20kW Generator + ATS", zip: "78731", district: 7, value: "20 kW", year: 2024 },
+  { id: "38", lat: 30.3570, lng: -97.7600, signal: "solar", description: "18.8 kW Solar", zip: "78731", district: 7, value: "18.8 kW", year: 2025 },
 
-  // 78757 - North Central
-  { id: "27", lat: 30.3380, lng: -97.7280, signal: "ev", description: "EV Charger", zip: "78757", value: "residential" },
-  { id: "28", lat: 30.3350, lng: -97.7320, signal: "solar", description: "10.5 kW Solar", zip: "78757", value: "10.5 kW" },
-  { id: "29", lat: 30.3410, lng: -97.7250, signal: "adu", description: "Detached ADU", zip: "78757", value: "580 sqft" },
+  // District 1 - North Austin (78757)
+  { id: "27", lat: 30.3380, lng: -97.7280, signal: "ev", description: "EV Charger", zip: "78757", district: 1, value: "residential", year: 2024 },
+  { id: "28", lat: 30.3350, lng: -97.7320, signal: "solar", description: "10.5 kW Solar", zip: "78757", district: 1, value: "10.5 kW", year: 2024 },
+  { id: "29", lat: 30.3410, lng: -97.7250, signal: "adu", description: "Detached ADU", zip: "78757", district: 1, value: "580 sqft", year: 2024 },
+  { id: "39", lat: 30.3400, lng: -97.7300, signal: "ev", description: "Tesla Wall Connector", zip: "78757", district: 1, value: "residential", year: 2025 },
+  { id: "40", lat: 30.3360, lng: -97.7260, signal: "generator", description: "16kW Generac", zip: "78757", district: 1, value: "16 kW", year: 2024 },
 
-  // 78723 - Windsor Park
-  { id: "30", lat: 30.3050, lng: -97.6920, signal: "ev", description: "Tesla Charger", zip: "78723", value: "residential" },
-  { id: "31", lat: 30.3020, lng: -97.6950, signal: "solar", description: "14.2 kW Solar", zip: "78723", value: "14.2 kW" },
-  { id: "32", lat: 30.3080, lng: -97.6880, signal: "adu", description: "ADU with bathroom", zip: "78723", value: "400 sqft" },
+  // District 9 - Windsor Park (78723)
+  { id: "30", lat: 30.3050, lng: -97.6920, signal: "ev", description: "Tesla Charger", zip: "78723", district: 9, value: "residential", year: 2024 },
+  { id: "31", lat: 30.3020, lng: -97.6950, signal: "solar", description: "14.2 kW Solar", zip: "78723", district: 9, value: "14.2 kW", year: 2024 },
+  { id: "32", lat: 30.3080, lng: -97.6880, signal: "adu", description: "ADU with bathroom", zip: "78723", district: 9, value: "400 sqft", year: 2023 },
+
+  // District 2 - Southeast (78741)
+  { id: "41", lat: 30.2320, lng: -97.7280, signal: "ev", description: "Level 2 Charger", zip: "78741", district: 2, value: "residential", year: 2024 },
+  { id: "42", lat: 30.2350, lng: -97.7250, signal: "solar", description: "9.6 kW Solar", zip: "78741", district: 2, value: "9.6 kW", year: 2024 },
+  { id: "43", lat: 30.2300, lng: -97.7300, signal: "adu", description: "Backyard ADU", zip: "78741", district: 2, value: "520 sqft", year: 2025 },
+
+  // District 5 - Far South (78748)
+  { id: "44", lat: 30.1750, lng: -97.8200, signal: "solar", description: "16.4 kW Solar System", zip: "78748", district: 5, value: "16.4 kW", year: 2024 },
+  { id: "45", lat: 30.1780, lng: -97.8150, signal: "ev", description: "EV Charger", zip: "78748", district: 5, value: "residential", year: 2024 },
+  { id: "46", lat: 30.1720, lng: -97.8180, signal: "generator", description: "18kW Standby Gen", zip: "78748", district: 5, value: "18 kW", year: 2024 },
+
+  // District 6 - Far Northwest (78750)
+  { id: "47", lat: 30.4150, lng: -97.8050, signal: "solar", description: "21.3 kW Solar", zip: "78750", district: 6, value: "21.3 kW", year: 2024 },
+  { id: "48", lat: 30.4180, lng: -97.8020, signal: "battery", description: "Tesla Powerwall 2", zip: "78750", district: 6, value: "13.5 kWh", year: 2024 },
+  { id: "49", lat: 30.4120, lng: -97.8080, signal: "generator", description: "22kW Generac", zip: "78750", district: 6, value: "22 kW", year: 2025 },
+
+  // District 4 - East (78721)
+  { id: "50", lat: 30.2780, lng: -97.6850, signal: "adu", description: "ADU Construction", zip: "78721", district: 4, value: "480 sqft", year: 2024 },
+  { id: "51", lat: 30.2750, lng: -97.6880, signal: "ev", description: "EV Charger Install", zip: "78721", district: 4, value: "residential", year: 2024 },
+  { id: "52", lat: 30.2810, lng: -97.6820, signal: "solar", description: "7.2 kW Solar", zip: "78721", district: 4, value: "7.2 kW", year: 2025 },
 ];
 
 // Black & white color scheme - differentiate by opacity/style
@@ -82,11 +112,12 @@ const signalConfig: Record<SignalType, { color: string; icon: typeof Zap; label:
 interface PermitMapProps {
   filter?: SignalType | SignalType[];
   highlightZip?: string;
+  highlightDistrict?: number;
   className?: string;
   showLegend?: boolean;
 }
 
-export function PermitMap({ filter = "all", highlightZip, className = "", showLegend = false }: PermitMapProps) {
+export function PermitMap({ filter = "all", highlightZip, highlightDistrict, className = "", showLegend = false }: PermitMapProps) {
   const [selectedPermit, setSelectedPermit] = useState<PermitLocation | null>(null);
   const [viewState, setViewState] = useState({
     latitude: 30.2672,
@@ -100,6 +131,13 @@ export function PermitMap({ filter = "all", highlightZip, className = "", showLe
     if (Array.isArray(filter)) return filter.includes(p.signal as SignalType);
     return p.signal === filter;
   });
+
+  // Determine if a permit should be highlighted
+  const isPermitHighlighted = (permit: PermitLocation) => {
+    if (highlightDistrict) return permit.district === highlightDistrict;
+    if (highlightZip) return permit.zip === highlightZip;
+    return true;
+  };
 
   return (
     <div className={`relative rounded-xl overflow-hidden ${className}`}>
@@ -115,7 +153,7 @@ export function PermitMap({ filter = "all", highlightZip, className = "", showLe
         {filteredPermits.map((permit) => {
           const config = signalConfig[permit.signal];
           const Icon = config.icon;
-          const isHighlighted = highlightZip ? permit.zip === highlightZip : true;
+          const isHighlighted = isPermitHighlighted(permit);
 
           return (
             <Marker
@@ -155,7 +193,7 @@ export function PermitMap({ filter = "all", highlightZip, className = "", showLe
             closeOnClick={false}
             className="permit-popup"
           >
-            <div className="p-2 min-w-[180px]">
+            <div className="p-2 min-w-[200px]">
               <div className="flex items-center gap-2 mb-1">
                 <div
                   className="w-5 h-5 rounded-full flex items-center justify-center"
@@ -172,9 +210,12 @@ export function PermitMap({ filter = "all", highlightZip, className = "", showLe
               </div>
               <p className="text-sm text-gray-600">{selectedPermit.description}</p>
               <div className="flex justify-between mt-2 text-xs text-gray-500">
-                <span>Zip: {selectedPermit.zip}</span>
+                <span>District {selectedPermit.district} • {selectedPermit.zip}</span>
                 {selectedPermit.value && <span>{selectedPermit.value}</span>}
               </div>
+              {selectedPermit.year && (
+                <div className="text-xs text-gray-400 mt-1">{selectedPermit.year}</div>
+              )}
             </div>
           </Popup>
         )}

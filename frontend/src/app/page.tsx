@@ -132,6 +132,7 @@ interface ChatResponse {
   message: string;
   mapFilter?: SignalType | SignalType[];
   highlightZip?: string;
+  highlightDistrict?: number;
   showChart?: boolean;
   chartTitle?: string;
   chartData?: Array<{ name: string; value: number; lastYear?: number }>;
@@ -228,6 +229,59 @@ const chatResponses: Record<string, ChatResponse> = {
     message: "The frontier is real: **Solar (+28% YoY)** and **EV chargers (+34% YoY)** are spreading. Austin is investing in electrified living.",
     mapFilter: ["solar", "ev"],
   },
+  // District queries
+  "district 10": {
+    message: "**District 10 (West Austin/Westlake)** — 722 permits, highest in the city. Leads in generators, batteries, and large solar. The resilience capital of Austin.",
+    mapFilter: "all",
+    highlightDistrict: 10,
+  },
+  "district 9": {
+    message: "**District 9 (East Austin)** — 343 permits. Leads in ADUs and density growth. Lower resilience investment but highest housing growth.",
+    mapFilter: "all",
+    highlightDistrict: 9,
+  },
+  "district 1": {
+    message: "**District 1 (North Austin)** — 399 permits. Balanced mix of solar and EV chargers. Middle-class suburbs investing in electrification.",
+    mapFilter: "all",
+    highlightDistrict: 1,
+  },
+  "district 8": {
+    message: "**District 8 (South Austin)** — 346 permits. Strong solar adoption, growing EV infrastructure. Eco-conscious suburban growth.",
+    mapFilter: "all",
+    highlightDistrict: 8,
+  },
+  "district 7": {
+    message: "**District 7 (Northwest Austin)** — 345 permits. High resilience with generators and batteries. Established wealth investing in grid independence.",
+    mapFilter: "all",
+    highlightDistrict: 7,
+  },
+  "district 3": {
+    message: "**District 3 (Central/Downtown)** — 183 permits. EV chargers and ADUs dominate. Urban core with limited roof space for solar.",
+    mapFilter: "all",
+    highlightDistrict: 3,
+  },
+  "district 4": {
+    message: "**District 4 (Far East)** — 175 permits. Emerging area with ADU growth. Lower overall investment but rising density.",
+    mapFilter: "all",
+    highlightDistrict: 4,
+  },
+  "districts": {
+    message: "**By Council District:**\n• D10 (West): 722 — highest resilience\n• D1 (North): 399\n• D8 (South): 346\n• D7 (NW): 345\n• D9 (East): 343 — highest density\n• D3 (Central): 183",
+    showChart: true,
+    chartTitle: "Permits by Council District",
+    chartData: [
+      { name: "D10", value: 722 },
+      { name: "D1", value: 399 },
+      { name: "D8", value: 346 },
+      { name: "D7", value: 345 },
+      { name: "D9", value: 343 },
+      { name: "D2", value: 285 },
+      { name: "D5", value: 279 },
+      { name: "D6", value: 235 },
+      { name: "D3", value: 183 },
+      { name: "D4", value: 175 },
+    ],
+  },
 };
 
 type Mode = "narrative" | "explore";
@@ -244,6 +298,7 @@ export default function NarrativeDashboard() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [exploreFilter, setExploreFilter] = useState<SignalType | SignalType[]>("all");
   const [exploreHighlightZip, setExploreHighlightZip] = useState<string | undefined>();
+  const [exploreHighlightDistrict, setExploreHighlightDistrict] = useState<number | undefined>();
   const [exploreView, setExploreView] = useState<ExploreView>("map");
   const [exploreChartData, setExploreChartData] = useState<{ title: string; data: Array<{ name: string; value: number; lastYear?: number }> } | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -326,13 +381,14 @@ export default function NarrativeDashboard() {
           setExploreView("map");
           setExploreFilter(response.mapFilter);
           setExploreHighlightZip(response.highlightZip);
+          setExploreHighlightDistrict(response.highlightDistrict);
         }
       } else {
         setChatMessages((prev) => [
           ...prev,
           {
             role: "assistant",
-            content: "Try:\n• **show solar** / **show ev** / **show generators**\n• **solar trend** / **ev trend** / **generator trend**\n• **westlake** / **78704** / **east austin**\n• **resilience** / **bottleneck**",
+            content: "Try:\n• **show solar** / **show ev** / **show generators**\n• **solar trend** / **ev trend** / **generator trend**\n• **westlake** / **78704** / **east austin**\n• **district 10** / **districts** for council areas\n• **resilience** / **bottleneck**",
           },
         ]);
       }
@@ -346,7 +402,7 @@ export default function NarrativeDashboard() {
     setChatMessages([
       {
         role: "assistant",
-        content: "**Explore mode.** Ask me anything:\n\n• \"Show solar\" or \"Show generators\"\n• \"Solar trend\" for time series\n• \"Westlake\" or \"78704\" for neighborhoods",
+        content: "**Explore mode.** Ask me anything:\n\n• \"Show solar\" or \"Show generators\"\n• \"Solar trend\" for time series\n• \"Westlake\" or \"78704\" for neighborhoods\n• \"District 10\" or \"Districts\" for council areas",
       },
     ]);
   };
@@ -356,6 +412,7 @@ export default function NarrativeDashboard() {
     setChatMessages([]);
     setExploreFilter("all");
     setExploreHighlightZip(undefined);
+    setExploreHighlightDistrict(undefined);
     setExploreView("map");
   };
 
@@ -365,6 +422,10 @@ export default function NarrativeDashboard() {
 
   const getHighlightZip = (): string | undefined => {
     return mode === "explore" ? exploreHighlightZip : undefined;
+  };
+
+  const getHighlightDistrict = (): number | undefined => {
+    return mode === "explore" ? exploreHighlightDistrict : undefined;
   };
 
   // Quick action buttons for explore mode
@@ -572,6 +633,7 @@ export default function NarrativeDashboard() {
                     onClick={() => {
                       setExploreFilter(action.filter);
                       setExploreHighlightZip(undefined);
+                      setExploreHighlightDistrict(undefined);
                       setExploreView("map");
                     }}
                     className={`px-3 py-1.5 rounded-full text-sm transition-all ${
@@ -672,6 +734,7 @@ export default function NarrativeDashboard() {
                 return filter === "all" ? "All Signals" : filter.charAt(0).toUpperCase() + filter.slice(1);
               })()}
               {getHighlightZip() && ` • ${getHighlightZip()}`}
+              {getHighlightDistrict() && ` • District ${getHighlightDistrict()}`}
             </p>
           </div>
 
@@ -737,6 +800,7 @@ export default function NarrativeDashboard() {
                   <PermitMap
                     filter={getMapFilter()}
                     highlightZip={getHighlightZip()}
+                    highlightDistrict={getHighlightDistrict()}
                     className="h-full"
                   />
                 </div>
@@ -752,6 +816,7 @@ export default function NarrativeDashboard() {
               <PermitMap
                 filter={getMapFilter()}
                 highlightZip={getHighlightZip()}
+                highlightDistrict={getHighlightDistrict()}
                 className="h-full"
               />
             )
@@ -767,6 +832,7 @@ export default function NarrativeDashboard() {
             <PermitMap
               filter={getMapFilter()}
               highlightZip={getHighlightZip()}
+              highlightDistrict={getHighlightDistrict()}
               className="h-full"
             />
           )}
@@ -795,6 +861,7 @@ export default function NarrativeDashboard() {
                   if (mode === "explore") {
                     setExploreFilter(item.key as SignalType);
                     setExploreHighlightZip(undefined);
+                    setExploreHighlightDistrict(undefined);
                     setExploreView("map");
                   }
                 }}
