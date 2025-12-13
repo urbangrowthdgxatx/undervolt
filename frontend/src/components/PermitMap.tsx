@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import Map, { Marker, Popup, NavigationControl } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { Zap, Sun, Battery, Home, Gauge } from "lucide-react";
+import { Zap, Sun, Battery, Home, Gauge, CircuitBoard } from "lucide-react";
 
 // You'll need to add your Mapbox token
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "YOUR_MAPBOX_TOKEN";
 
-export type SignalType = "ev" | "solar" | "battery" | "adu" | "generator" | "all";
+export type SignalType = "ev" | "solar" | "battery" | "adu" | "generator" | "panel" | "all";
 
 interface PermitLocation {
   id: string;
@@ -97,6 +97,18 @@ const mockPermitLocations: PermitLocation[] = [
   { id: "50", lat: 30.2780, lng: -97.6850, signal: "adu", description: "ADU Construction", zip: "78721", district: 4, value: "480 sqft", year: 2024 },
   { id: "51", lat: 30.2750, lng: -97.6880, signal: "ev", description: "EV Charger Install", zip: "78721", district: 4, value: "residential", year: 2024 },
   { id: "52", lat: 30.2810, lng: -97.6820, signal: "solar", description: "7.2 kW Solar", zip: "78721", district: 4, value: "7.2 kW", year: 2025 },
+
+  // Panel Upgrades - Infrastructure strain indicators
+  { id: "53", lat: 30.2430, lng: -97.7610, signal: "panel", description: "200A Panel Upgrade", zip: "78704", district: 3, value: "200A", year: 2024 },
+  { id: "54", lat: 30.2960, lng: -97.8090, signal: "panel", description: "Service Upgrade 200A", zip: "78746", district: 10, value: "200A", year: 2024 },
+  { id: "55", lat: 30.2630, lng: -97.7170, signal: "panel", description: "Panel Upgrade for EV", zip: "78702", district: 9, value: "200A", year: 2024 },
+  { id: "56", lat: 30.2070, lng: -97.7860, signal: "panel", description: "Electrical Service Upgrade", zip: "78745", district: 8, value: "200A", year: 2023 },
+  { id: "57", lat: 30.3560, lng: -97.7590, signal: "panel", description: "200A Main Panel", zip: "78731", district: 7, value: "200A", year: 2024 },
+  { id: "58", lat: 30.3370, lng: -97.7290, signal: "panel", description: "Panel Upgrade + Subpanel", zip: "78757", district: 1, value: "200A", year: 2025 },
+  { id: "59", lat: 30.2340, lng: -97.7270, signal: "panel", description: "Service Upgrade", zip: "78741", district: 2, value: "200A", year: 2024 },
+  { id: "60", lat: 30.1760, lng: -97.8170, signal: "panel", description: "200A Panel for Solar", zip: "78748", district: 5, value: "200A", year: 2024 },
+  { id: "61", lat: 30.4140, lng: -97.8060, signal: "panel", description: "Main Panel Replacement", zip: "78750", district: 6, value: "200A", year: 2024 },
+  { id: "62", lat: 30.2770, lng: -97.6860, signal: "panel", description: "Electrical Upgrade", zip: "78721", district: 4, value: "200A", year: 2024 },
 ];
 
 // Black & white color scheme - differentiate by opacity/style
@@ -106,6 +118,7 @@ const signalConfig: Record<SignalType, { color: string; icon: typeof Zap; label:
   battery: { color: "#a3a3a3", icon: Battery, label: "Battery", style: "solid" },
   adu: { color: "#737373", icon: Home, label: "ADU", style: "solid" },
   generator: { color: "#ffffff", icon: Gauge, label: "Generator", style: "ring" },
+  panel: { color: "#a3a3a3", icon: CircuitBoard, label: "Panel Upgrade", style: "ring" },
   all: { color: "#ffffff", icon: Zap, label: "All Signals", style: "solid" },
 };
 
