@@ -4,6 +4,8 @@
 
 Built for the [AITX DGX Hackathon](https://luma.com/aitx-dgx-hackathon?tk=dQyKpK)
 
+Dataset link: https://data.austintexas.gov/Building-and-Development/Issued-Construction-Permits/3syk-w9eu
+
 ## The Problem
 
 Austin issues 2M+ construction permits, but the real urban growth story is buried in unstructured text descriptions:
