@@ -321,6 +321,7 @@ export default function NarrativeDashboard() {
   // Explore mode state
   const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [exploreFilter, setExploreFilter] = useState<SignalType | SignalType[]>("all");
   const [exploreHighlightZip, setExploreHighlightZip] = useState<string | undefined>();
   const [exploreHighlightDistrict, setExploreHighlightDistrict] = useState<number | undefined>();
@@ -376,38 +377,44 @@ export default function NarrativeDashboard() {
     }, 300);
   };
 
-  const handleChatSubmit = (e: React.FormEvent) => {
+  const handleChatSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!chatInput.trim()) return;
+    if (!chatInput.trim() || isLoading) return;
 
     const userMessage = chatInput.trim();
     setChatMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setChatInput("");
+    setIsLoading(true);
 
-    // Find matching response
-    const normalizedInput = userMessage.toLowerCase();
-    let response: ChatResponse | null = null;
+    // Helper function to apply response to UI
+    const applyResponse = (response: ChatResponse) => {
+      setChatMessages((prev) => [...prev, { role: "assistant", content: response.message }]);
 
-    for (const [key, value] of Object.entries(chatResponses)) {
-      if (normalizedInput.includes(key)) {
-        response = value;
-        break;
+      if (response.showChart && response.chartData) {
+        setExploreView("chart");
+        setExploreChartData({ title: response.chartTitle || "Trend", data: response.chartData });
+      } else if (response.mapFilter) {
+        setExploreView("map");
+        setExploreFilter(response.mapFilter);
+        setExploreHighlightZip(response.highlightZip);
+        setExploreHighlightDistrict(response.highlightDistrict);
       }
-    }
+    };
 
-    setTimeout(() => {
-      if (response) {
-        setChatMessages((prev) => [...prev, { role: "assistant", content: response!.message }]);
+    // Helper function to use fallback responses
+    const useFallback = () => {
+      const normalizedInput = userMessage.toLowerCase();
+      let response: ChatResponse | null = null;
 
-        if (response.showChart && response.chartData) {
-          setExploreView("chart");
-          setExploreChartData({ title: response.chartTitle || "Trend", data: response.chartData });
-        } else if (response.mapFilter) {
-          setExploreView("map");
-          setExploreFilter(response.mapFilter);
-          setExploreHighlightZip(response.highlightZip);
-          setExploreHighlightDistrict(response.highlightDistrict);
+      for (const [key, value] of Object.entries(chatResponses)) {
+        if (normalizedInput.includes(key)) {
+          response = value;
+          break;
         }
+      }
+
+      if (response) {
+        applyResponse(response);
       } else {
         setChatMessages((prev) => [
           ...prev,
@@ -417,7 +424,29 @@ export default function NarrativeDashboard() {
           },
         ]);
       }
-    }, 400);
+    };
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage }),
+      });
+
+      if (!res.ok) {
+        console.warn('Chat API failed, using fallback');
+        useFallback();
+        return;
+      }
+
+      const data: ChatResponse = await res.json();
+      applyResponse(data);
+    } catch (error) {
+      console.warn('Chat API error, using fallback:', error);
+      useFallback();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const switchToExplore = () => {
@@ -715,19 +744,24 @@ export default function NarrativeDashboard() {
                     type="text"
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
-                    placeholder="Ask about Austin's infrastructure..."
-                    className="flex-1 bg-transparent outline-none text-white placeholder-white/30"
+                    placeholder={isLoading ? "Thinking..." : "Ask about Austin's infrastructure..."}
+                    disabled={isLoading}
+                    className="flex-1 bg-transparent outline-none text-white placeholder-white/30 disabled:opacity-50"
                   />
                   <button
                     type="submit"
-                    disabled={!chatInput.trim()}
+                    disabled={!chatInput.trim() || isLoading}
                     className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
-                      chatInput.trim()
+                      chatInput.trim() && !isLoading
                         ? "bg-white text-black"
                         : "bg-white/10 text-white/30"
                     }`}
                   >
-                    <ArrowUp size={16} />
+                    {isLoading ? (
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <ArrowUp size={16} />
+                    )}
                   </button>
                 </div>
               </form>
