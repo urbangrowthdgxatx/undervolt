@@ -6,7 +6,10 @@ Built for the [AITX DGX Hackathon](https://luma.com/aitx-dgx-hackathon?tk=dQyKpK
 
 Dataset link: https://data.austintexas.gov/Building-and-Development/Issued-Construction-Permits/3syk-w9eu
 
-Structured dataset link with 24 columns: https://drive.google.com/file/d/1PxZb5tJkGsfVDc4LaTnE_LV7J_sbQGcC/view?usp=drive_link
+Artifact Stages:
+1. Basic structured dataset with 24 columns: https://drive.google.com/file/d/1PxZb5tJkGsfVDc4LaTnE_LV7J_sbQGcC/view?usp=drive_link
+
+2. Row-cleaned, column-pruned, geo-valid, text-normalised, feature-agnostic dataset: https://drive.google.com/file/d/1DxW-Ou1rG3PEV2T6g7p8iWgU0Lp2JxQp/view?usp=drive_link
 
 ## The Problem
 
