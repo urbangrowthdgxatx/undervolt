@@ -12,9 +12,11 @@
     "@neondatabase/serverless": "^1.0.2",
     "clsx": "^2.1.1",
     "lucide-react": "^0.561.0",
+    "mapbox-gl": "^3.17.0",
     "next": "16.0.10",
     "react": "19.2.1",
     "react-dom": "19.2.1",
+    "react-map-gl": "^8.1.0",
     "recharts": "^3.5.1",
     "tailwind-merge": "^3.4.0"
   },
