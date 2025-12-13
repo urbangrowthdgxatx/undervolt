@@ -98,8 +98,8 @@ import cudf
 import pandas as pd
 from sqlalchemy import create_engine
 
-# Connection
-DATABASE_URL = "postgresql://neondb_owner:npg_5M4WYbgyfJDa@ep-long-sky-ah0b88ws-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require"
+# Connection - load from environment
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 def load_permits():
     engine = create_engine(DATABASE_URL)
