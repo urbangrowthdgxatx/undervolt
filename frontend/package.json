@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.56",
+    "@ai-sdk/mcp": "^0.0.12",
     "@ai-sdk/openai": "^2.0.86",
     "@neondatabase/serverless": "^1.0.2",
     "ai": "^5.0.113",
