@@ -322,6 +322,7 @@ export default function NarrativeDashboard() {
   const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [thinkingStatus, setThinkingStatus] = useState<string>("");
   const [exploreFilter, setExploreFilter] = useState<SignalType | SignalType[]>("all");
   const [exploreHighlightZip, setExploreHighlightZip] = useState<string | undefined>();
   const [exploreHighlightDistrict, setExploreHighlightDistrict] = useState<number | undefined>();
@@ -385,6 +386,7 @@ export default function NarrativeDashboard() {
     setChatMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setChatInput("");
     setIsLoading(true);
+    setThinkingStatus("Connecting...");
 
     // Helper function to apply response to UI
     const applyResponse = (response: ChatResponse) => {
@@ -396,8 +398,8 @@ export default function NarrativeDashboard() {
       } else if (response.mapFilter) {
         setExploreView("map");
         setExploreFilter(response.mapFilter);
-        setExploreHighlightZip(response.highlightZip);
-        setExploreHighlightDistrict(response.highlightDistrict);
+        setExploreHighlightZip(response.highlightZip ?? undefined);
+        setExploreHighlightDistrict(response.highlightDistrict ?? undefined);
       }
     };
 
@@ -439,13 +441,63 @@ export default function NarrativeDashboard() {
         return;
       }
 
-      const data: ChatResponse = await res.json();
-      applyResponse(data);
+      // Handle SSE stream
+      const reader = res.body?.getReader();
+      if (!reader) {
+        useFallback();
+        return;
+      }
+
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (line.startsWith('event: ')) {
+            const eventType = line.slice(7);
+            const dataLine = lines[lines.indexOf(line) + 1];
+            if (dataLine?.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(dataLine.slice(6));
+
+                switch (eventType) {
+                  case 'status':
+                    setThinkingStatus(data.message);
+                    break;
+                  case 'tool-call':
+                    setThinkingStatus(`Calling ${data.name}...`);
+                    break;
+                  case 'tool-result':
+                    setThinkingStatus('Processing results...');
+                    break;
+                  case 'response':
+                    applyResponse(data);
+                    break;
+                  case 'error':
+                    console.error('Stream error:', data);
+                    useFallback();
+                    break;
+                }
+              } catch {
+                // Skip parse errors
+              }
+            }
+          }
+        }
+      }
     } catch (error) {
       console.warn('Chat API error, using fallback:', error);
       useFallback();
     } finally {
       setIsLoading(false);
+      setThinkingStatus("");
     }
   };
 
@@ -733,6 +785,24 @@ export default function NarrativeDashboard() {
                   )}
                 </div>
               ))}
+              {/* Thinking indicator */}
+              {isLoading && (
+                <div className="flex gap-3">
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-white/50">{thinkingStatus || "Thinking..."}</span>
+                      <span className="flex gap-1">
+                        <span className="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <span className="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div ref={chatEndRef} />
             </div>
 
