@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Zap, Sun, Battery, Home, Gauge, ChevronRight, Play, RotateCcw, MessageSquare, Compass, ArrowUp, Pause, TrendingUp } from "lucide-react";
+import { Zap, Sun, Battery, Home, Gauge, CircuitBoard, ChevronRight, Play, RotateCcw, MessageSquare, Compass, ArrowUp, Pause, TrendingUp } from "lucide-react";
 import { PermitMap, SignalType } from "@/components/PermitMap";
 import { TrendChart } from "@/components/TrendChart";
 
@@ -158,6 +158,31 @@ const chatResponses: Record<string, ChatResponse> = {
   "show adu": {
     message: "**383 ADUs** adding density. Central neighborhoods (78704, 78702) lead — older lots with space for backyard units. Avg size: 650 sqft.",
     mapFilter: "adu",
+  },
+  "show panel": {
+    message: "**3,072 panel upgrades** — the hidden infrastructure strain. Homes upgrading from 100A to 200A to support EVs, solar, and modern loads.",
+    mapFilter: "panel",
+  },
+  "show panels": {
+    message: "**3,072 panel upgrades** — the hidden infrastructure strain. Homes upgrading from 100A to 200A to support EVs, solar, and modern loads.",
+    mapFilter: "panel",
+  },
+  "panel trend": {
+    message: "Panel upgrades up **+52% since 2020**. Most are 200A upgrades — homes maxing out electrical capacity for EVs and solar.",
+    showChart: true,
+    chartTitle: "Panel Upgrade Permits by Year",
+    chartData: [
+      { name: "2019", value: 312, lastYear: 245 },
+      { name: "2020", value: 389, lastYear: 312 },
+      { name: "2021", value: 478, lastYear: 389 },
+      { name: "2022", value: 623, lastYear: 478 },
+      { name: "2023", value: 712, lastYear: 623 },
+      { name: "2024", value: 558, lastYear: 712 },
+    ],
+  },
+  "infrastructure": {
+    message: "Infrastructure strain: **3,072 panel upgrades** signal homes at electrical capacity. Combined with EVs and solar, the grid is being pushed.",
+    mapFilter: ["panel", "ev", "solar"],
   },
   "show all": {
     message: "All **2,213 energy signals**. West Austin dominates resilience (solar, batteries, generators). Central/East leads density (ADUs).",
@@ -388,7 +413,7 @@ export default function NarrativeDashboard() {
           ...prev,
           {
             role: "assistant",
-            content: "Try:\n• **show solar** / **show ev** / **show generators**\n• **solar trend** / **ev trend** / **generator trend**\n• **westlake** / **78704** / **east austin**\n• **district 10** / **districts** for council areas\n• **resilience** / **bottleneck**",
+            content: "Try:\n• **show solar** / **show ev** / **show panels**\n• **solar trend** / **panel trend** / **generator trend**\n• **westlake** / **78704** / **east austin**\n• **district 10** / **districts** for council areas\n• **resilience** / **infrastructure** / **bottleneck**",
           },
         ]);
       }
@@ -402,7 +427,7 @@ export default function NarrativeDashboard() {
     setChatMessages([
       {
         role: "assistant",
-        content: "**Explore mode.** Ask me anything:\n\n• \"Show solar\" or \"Show generators\"\n• \"Solar trend\" for time series\n• \"Westlake\" or \"78704\" for neighborhoods\n• \"District 10\" or \"Districts\" for council areas",
+        content: "**Explore mode.** Ask me anything:\n\n• \"Show solar\" or \"Show panels\"\n• \"Panel trend\" for infrastructure strain\n• \"Westlake\" or \"78704\" for neighborhoods\n• \"District 10\" or \"Districts\" for council areas",
       },
     ]);
   };
@@ -435,6 +460,7 @@ export default function NarrativeDashboard() {
     { label: "Generators", filter: "generator" as SignalType },
     { label: "Batteries", filter: "battery" as SignalType },
     { label: "ADUs", filter: "adu" as SignalType },
+    { label: "Panels", filter: "panel" as SignalType },
     { label: "All", filter: "all" as SignalType },
   ];
 
@@ -783,6 +809,10 @@ export default function NarrativeDashboard() {
                 <div className="w-2.5 h-2.5 rounded-full border border-white/50" />
                 <span className="text-white/40">Generator</span>
               </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full border border-white/40" />
+                <span className="text-white/40">Panel</span>
+              </div>
             </div>
           )}
         </div>
@@ -839,13 +869,14 @@ export default function NarrativeDashboard() {
         </div>
 
         {/* Bottom Stats Bar */}
-        <div className="mt-4 grid grid-cols-5 gap-3">
+        <div className="mt-4 grid grid-cols-6 gap-3">
           {[
             { key: "ev", icon: Zap, label: "EV", value: "529" },
             { key: "solar", icon: Sun, label: "Solar", value: "580" },
             { key: "battery", icon: Battery, label: "Battery", value: "87" },
             { key: "adu", icon: Home, label: "ADU", value: "383" },
             { key: "generator", icon: Gauge, label: "Generator", value: "634" },
+            { key: "panel", icon: CircuitBoard, label: "Panel", value: "3,072" },
           ].map((item) => {
             const filter = getMapFilter();
             const isActive =
