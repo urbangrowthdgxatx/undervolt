@@ -69,13 +69,14 @@ const mockPermitLocations: PermitLocation[] = [
   { id: "32", lat: 30.3080, lng: -97.6880, signal: "adu", description: "ADU with bathroom", zip: "78723", value: "400 sqft" },
 ];
 
-const signalConfig: Record<SignalType, { color: string; icon: typeof Zap; label: string }> = {
-  ev: { color: "#22c55e", icon: Zap, label: "EV Charger" },
-  solar: { color: "#eab308", icon: Sun, label: "Solar" },
-  battery: { color: "#3b82f6", icon: Battery, label: "Battery" },
-  adu: { color: "#a855f7", icon: Home, label: "ADU" },
-  generator: { color: "#f97316", icon: Gauge, label: "Generator" },
-  all: { color: "#ffffff", icon: Zap, label: "All Signals" },
+// Black & white color scheme - differentiate by opacity/style
+const signalConfig: Record<SignalType, { color: string; icon: typeof Zap; label: string; style: "solid" | "ring" }> = {
+  ev: { color: "#ffffff", icon: Zap, label: "EV Charger", style: "solid" },
+  solar: { color: "#d4d4d4", icon: Sun, label: "Solar", style: "solid" },
+  battery: { color: "#a3a3a3", icon: Battery, label: "Battery", style: "solid" },
+  adu: { color: "#737373", icon: Home, label: "ADU", style: "solid" },
+  generator: { color: "#ffffff", icon: Gauge, label: "Generator", style: "ring" },
+  all: { color: "#ffffff", icon: Zap, label: "All Signals", style: "solid" },
 };
 
 interface PermitMapProps {
@@ -128,15 +129,17 @@ export function PermitMap({ filter = "all", highlightZip, className = "", showLe
               }}
             >
               <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center cursor-pointer transition-all hover:scale-125 ${
-                  isHighlighted ? "opacity-100" : "opacity-30"
-                }`}
-                style={{
+                className={`w-6 h-6 rounded-full flex items-center justify-center cursor-pointer transition-all hover:scale-125 ${
+                  isHighlighted ? "opacity-100" : "opacity-20"
+                } ${config.style === "ring" ? "border-2 border-white bg-transparent" : ""}`}
+                style={config.style === "solid" ? {
                   backgroundColor: config.color,
-                  boxShadow: `0 0 12px ${config.color}80`
+                  boxShadow: `0 0 8px ${config.color}60`
+                } : {
+                  boxShadow: `0 0 8px rgba(255,255,255,0.4)`
                 }}
               >
-                <Icon size={14} className="text-black" />
+                <Icon size={12} className={config.style === "ring" ? "text-white" : "text-black"} />
               </div>
             </Marker>
           );
