@@ -11,6 +11,8 @@ Artifact Stages:
 
 2. Row-cleaned, column-pruned, geo-valid, text-normalised, feature-agnostic dataset: https://drive.google.com/file/d/1DxW-Ou1rG3PEV2T6g7p8iWgU0Lp2JxQp/view?usp=drive_link
 
+3. Geocoded, model-ready dataset with normalized text, numeric signals from high-signal columns, along with domain specific feature flags: https://drive.google.com/file/d/1PxZb5tJkGsfVDc4LaTnE_LV7J_sbQGcC/view?usp=drive_link
+
 ## The Problem
 
 Austin issues 2M+ construction permits, but the real urban growth story is buried in unstructured text descriptions:
