@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronRight, ChevronLeft, Zap, Database, Brain, Map, Users, ArrowRight } from "lucide-react";
 
 interface OnboardingWizardProps {
@@ -26,6 +26,15 @@ const EXTRACTED_SIGNALS = [
   { key: "has_battery", value: "true", color: "text-emerald-400" },
   { key: "is_panel_upgrade", value: "true", color: "text-blue-400" },
   { key: "is_ev_prep", value: "true", color: "text-purple-400" },
+];
+
+// Rolling questions for the hook - cycles through personas
+const ROLLING_QUESTIONS = [
+  { question: "Where is the grid failing?", color: "text-red-400", persona: "Utilities" },
+  { question: "Where should we build next?", color: "text-blue-400", persona: "Developers" },
+  { question: "Where are the coverage gaps?", color: "text-amber-400", persona: "Solar Companies" },
+  { question: "Where is investment needed?", color: "text-emerald-400", persona: "City Planners" },
+  { question: "Where is load growing fastest?", color: "text-purple-400", persona: "Grid Operators" },
 ];
 
 const AUDIENCES = [
@@ -59,6 +68,17 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [revealedAudiences, setRevealedAudiences] = useState<Set<number>>(new Set());
   const [extractionPhase, setExtractionPhase] = useState(0);
+  const [rollingIndex, setRollingIndex] = useState(0);
+
+  // Cycle through rolling questions on the hook step
+  useEffect(() => {
+    if (currentStep === 0) {
+      const interval = setInterval(() => {
+        setRollingIndex((prev) => (prev + 1) % ROLLING_QUESTIONS.length);
+      }, 2500);
+      return () => clearInterval(interval);
+    }
+  }, [currentStep]);
 
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {
@@ -97,6 +117,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const renderStep = () => {
     switch (STEPS[currentStep].id) {
       case "hook":
+        const currentQuestion = ROLLING_QUESTIONS[rollingIndex];
         return (
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
             <p className="text-white/40 text-sm uppercase tracking-widest mb-6">Austin, Texas</p>
@@ -106,12 +127,32 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             <p className="text-2xl md:text-3xl font-light text-white/60 mb-8">
               One question buried inside.
             </p>
-            <div className="w-px h-16 bg-gradient-to-b from-white/40 to-transparent mb-8" />
-            <p className="text-xl text-white/80 max-w-lg">
-              Where is the grid <span className="text-amber-400">failing</span>?
-              <br />
-              Where is it <span className="text-emerald-400">thriving</span>?
-            </p>
+            <div className="w-px h-16 bg-gradient-to-b from-white/40 to-transparent mb-6" />
+
+            {/* Rolling question */}
+            <div className="h-20 flex flex-col items-center justify-center">
+              <p
+                key={rollingIndex}
+                className={`text-2xl md:text-3xl font-light ${currentQuestion.color} animate-fade-in`}
+              >
+                {currentQuestion.question}
+              </p>
+              <p className="text-white/30 text-sm mt-2 uppercase tracking-widest">
+                — {currentQuestion.persona}
+              </p>
+            </div>
+
+            {/* Progress dots for rolling */}
+            <div className="flex gap-2 mt-6">
+              {ROLLING_QUESTIONS.map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                    i === rollingIndex ? "bg-white w-4" : "bg-white/20"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         );
 
