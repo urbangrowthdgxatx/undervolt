@@ -37,7 +37,7 @@ function extractSQL(input: unknown): string | null {
 }
 
 export function ToolCallsPanel({ calls, isLoading, onClear }: ToolCallsPanelProps) {
-  const [isExpanded, setIsExpanded] = useState(true); // Start expanded
+  const [isExpanded, setIsExpanded] = useState(false); // Start collapsed
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when new calls come in
