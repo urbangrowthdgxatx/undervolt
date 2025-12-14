@@ -1,13 +1,46 @@
 # Undervolt
 
-> Energy is the bottleneck to the frontier.
+> **Urban growth is happening faster than cities can understand it.**
 
-Austin is electrifying. Solar panels, EV chargers, and battery systems are spreading across the city. But buried in 2.2 million construction permits is a different story: 634 generator permits — more than EV chargers. For every 7 solar installations, only 1 battery. The city is generating clean power but can't store it. Trust in the grid is fractured.
+Austin is changing. Solar panels, EV chargers, and new construction are spreading rapidly across the city. But inside **2.2 million construction permits**, a more fragile reality is hiding in plain sight.
 
-**Undervolt** uses DGX-accelerated LLM extraction to surface hidden infrastructure signals from permit text. The result is a real-time map of Austin's energy transition — where it's thriving, where it's stalling, and where the next investment should go.
+**There are more generator permits than batteries.**  
+**For every 7 solar installations, there is only 1 battery.**
 
-This isn't failure. It's transition under constraint.
+Cities are producing clean energy—but they can’t store it. **Grid trust is uneven. Resilience is unequal.** And these signals don’t show up in dashboards until it’s too late.
 
+**Undervolt** turns massive, messy permit data into **real-time Urban Growth Intelligence**, powered end-to-end on **NVIDIA DGX Spark**.
+
+We extract hidden infrastructure signals from unstructured permit text using **GPU-accelerated analytics** and **on-device LLMs**, then transform them into **interactive maps, trends, and natural-language insights**.
+
+**This isn’t about hindsight.**  
+**It’s about seeing urban stress—and opportunity—as it forms.**
+
+---
+
+## What Undervolt Does (Our Pitch)
+
+Cities usually learn where growth happened **after** it happens.
+
+**Undervolt finds the signals before that**: grid stress, solar adoption, battery gaps, redevelopment pressure—already buried inside permit text.
+
+**The challenge is scale:**
+- **Millions of records**
+- **Unstructured descriptions**
+- **Inconsistent formats**
+- **Impossible to explore interactively on CPU systems**
+
+So we built a **DGX-native pipeline** that:
+- **Cleans and structures 2.2M permits in seconds**
+- **Enriches them with GPU-accelerated NLP and clustering**
+- **Uses an on-device LLM to make the data conversational**
+
+**The result:**
+- **Instant insights from millions of records**
+- **Interactive geographic and trend maps**
+- **A natural-language assistant that understands urban growth**
+
+Queries that once took minutes now run in **milliseconds**, **locally** and **privately**.
 ---
 
 ## Architecture
