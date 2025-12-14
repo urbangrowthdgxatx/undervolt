@@ -345,27 +345,6 @@ export default function StoryBuilder() {
 
         {/* Chat Input */}
         <div className="p-4 border-t border-white/10">
-          {/* Suggested Questions */}
-          {suggestedQuestions.length > 0 && !isLoading && (
-            <div className="mb-3">
-              <p className="text-xs text-white/30 mb-2">Continue exploring</p>
-              <div className="flex flex-wrap gap-2">
-                {suggestedQuestions.map((q, i) => (
-                  <button
-                    key={i}
-                    onClick={() => {
-                      setChatInput(q);
-                      setSuggestedQuestions([]);
-                    }}
-                    className="text-xs text-white/60 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-3 py-1.5 transition-colors text-left"
-                  >
-                    {q}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           <form onSubmit={handleChatSubmit}>
             <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus-within:border-white/30">
               <input
@@ -487,29 +466,49 @@ export default function StoryBuilder() {
         </div>
 
         {/* Story Footer */}
-        {storyBlocks.length > 0 && (
-          <div className="p-4 border-t border-white/10">
-            {/* Synthesize button */}
-            {storyBlocks.length >= 2 && !synthesizedTheme && (
-              <button
-                onClick={synthesizeTheme}
-                disabled={isSynthesizing}
-                className="w-full mb-3 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-medium flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-              >
-                {isSynthesizing ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Synthesizing...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles size={16} />
-                    <span>Find the Theme</span>
-                  </>
-                )}
-              </button>
-            )}
+        <div className="p-4 border-t border-white/10">
+          {/* Suggested Questions from Story LLM */}
+          {suggestedQuestions.length > 0 && !isLoading && (
+            <div className="mb-4">
+              <p className="text-xs text-white/40 mb-2">
+                {storyBlocks.length === 0 ? "Start exploring" : "Deepen your story"}
+              </p>
+              <div className="space-y-2">
+                {suggestedQuestions.map((q, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setChatInput(q)}
+                    className="block w-full text-left text-sm text-white/60 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-3 py-2 transition-colors"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
+          {/* Synthesize button */}
+          {storyBlocks.length >= 2 && !synthesizedTheme && (
+            <button
+              onClick={synthesizeTheme}
+              disabled={isSynthesizing}
+              className="w-full mb-3 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-medium flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+            >
+              {isSynthesizing ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Synthesizing...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles size={16} />
+                  <span>Find the Theme</span>
+                </>
+              )}
+            </button>
+          )}
+
+          {storyBlocks.length > 0 && (
             <div className="flex items-center justify-between">
               <p className="text-xs text-white/30">
                 {storyBlocks.length} insight{storyBlocks.length !== 1 ? "s" : ""}
@@ -525,8 +524,8 @@ export default function StoryBuilder() {
                 Clear all
               </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
