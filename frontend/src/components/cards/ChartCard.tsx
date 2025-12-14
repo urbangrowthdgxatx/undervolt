@@ -15,7 +15,7 @@ export function ChartCard({ id, chartData, isSelected, onSelect }: ChartCardProp
   return (
     <div
       className={`
-        flex-shrink-0 w-72 h-[400px] rounded-2xl border transition-all
+        flex-shrink-0 w-72 h-[480px] rounded-2xl border transition-all
         flex flex-col overflow-hidden
         ${isSelected
           ? "border-white/40 bg-white/10 ring-2 ring-white/20"

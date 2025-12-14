@@ -7,6 +7,14 @@ import { MODE_CONFIG, GUARDRAILS, type Mode } from '@/lib/modes';
 
 export const maxDuration = 60;
 
+// Timeout helper
+function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms))
+  ]);
+}
+
 // Helper to send SSE events
 function sendEvent(controller: ReadableStreamDefaultController, event: string, data: unknown) {
   const encoder = new TextEncoder();
@@ -26,21 +34,25 @@ export async function POST(req: Request) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        // Step 1: Connect to MCP
+        // Step 1: Connect to MCP (with 5s timeout)
         sendEvent(controller, 'status', { step: 'connecting', message: 'Connecting to database...' });
 
-        const mcpTools = await getMcpTools();
+        const mcpTools = await withTimeout(getMcpTools(), 5000, {});
         const hasTools = Object.keys(mcpTools).length > 0;
         let dataContext = '';
 
+        if (!hasTools) {
+          console.log('MCP tools not available or timed out, proceeding without database');
+        }
+
         if (hasTools) {
-          // Step 2: Query database
+          // Step 2: Query database (with retries for robustness)
           sendEvent(controller, 'status', { step: 'querying', message: 'Running SQL query...' });
 
           const dataResult = await streamText({
             model: openai('gpt-5.2'),
             system: DATA_QUERY_PROMPT,
-            prompt: `User question: "${message}"\n\nWrite and execute a SQL query to answer this. Use the postgres-query tool.`,
+            prompt: `User question: "${message}"\n\nWrite and execute SQL queries to answer this. Use the postgres-query tool. If a query fails or returns no results, try alternative approaches (different columns, simpler aggregations, etc). Always return useful data.`,
             tools: mcpTools,
             toolChoice: 'required',
             onChunk: ({ chunk }) => {
