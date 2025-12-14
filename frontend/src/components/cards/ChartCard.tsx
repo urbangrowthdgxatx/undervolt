@@ -66,7 +66,7 @@ export function ChartCard({ id, chartData, isSelected, onSelect }: ChartCardProp
               <span className="text-sm">Selected</span>
             </>
           ) : (
-            <span className="text-sm">Select for theme</span>
+            <span className="text-sm">Select</span>
           )}
         </button>
       </div>

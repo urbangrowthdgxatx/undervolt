@@ -5,6 +5,7 @@ import { Sparkles, ArrowLeft, RefreshCw, Send, PlayCircle } from "lucide-react";
 import { FloatingQuestions } from "@/components/FloatingQuestions";
 import { StorylineCards, STORYLINES, type Storyline } from "@/components/StorylineCards";
 import { StoryCards, type StoryCardItem } from "@/components/StoryCards";
+import { SelectedCardsStack } from "@/components/SelectedCardsStack";
 import { OnboardingWizard } from "@/components/OnboardingWizard";
 import type { ChatResponse, StoryBlock } from "@/lib/chat-schema";
 
@@ -462,6 +463,13 @@ export default function ExplorationPage() {
               </div>
             </div>
 
+            {/* Selected cards stack - floating on right side */}
+            <SelectedCardsStack
+              cards={cards}
+              selectedIds={selectedIds}
+              onDeselect={handleSelectCard}
+            />
+
             {/* Bottom bar - title, input, question chips, find theme */}
             <div className="px-6 py-4 border-t border-white/10 bg-black/50 backdrop-blur-sm">
               <div className="max-w-6xl mx-auto">
@@ -531,7 +539,7 @@ export default function ExplorationPage() {
                       ) : (
                         <>
                           <Sparkles size={14} />
-                          Find Theme ({selectedIds.size})
+                          Find Insight ({selectedIds.size})
                         </>
                       )}
                     </button>

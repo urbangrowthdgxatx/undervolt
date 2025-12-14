@@ -168,7 +168,7 @@ export function InsightCard({ block, isSelected, onSelect }: InsightCardProps) {
               <span className="text-sm">Selected</span>
             </>
           ) : (
-            <span className="text-sm">Select for theme</span>
+            <span className="text-sm">Select</span>
           )}
         </button>
       </div>
