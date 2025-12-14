@@ -192,6 +192,17 @@ export default function ExplorationPage() {
               console.error("Failed to parse response:", e);
             }
           }
+
+          // Break when done event received
+          if (eventType === "done") {
+            console.log("Received done event");
+            break;
+          }
+        }
+
+        // If we processed a done event, break outer loop too
+        if (events.some(e => e.includes("event: done"))) {
+          break;
         }
       }
 
