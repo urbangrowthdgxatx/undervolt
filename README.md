@@ -1,5 +1,7 @@
 # Undervolt
+Welcome to our Project, UnderVolt — Your Urban Growth Intelligence Partner
 
+## Problem Statemement
 > **Urban growth is happening faster than cities can understand it.**
 
 Austin is changing. Solar panels, EV chargers, and new construction are spreading rapidly across the city. But inside **2.2 million construction permits**, a more fragile reality is hiding in plain sight.
@@ -16,9 +18,18 @@ We extract hidden infrastructure signals from unstructured permit text using **G
 **This isn’t about hindsight.**  
 **It’s about seeing urban stress and opportunity, as it forms.**
 
----
+## Who Needs this?
 
-## What Undervolt Does (Our Pitch)
+| Audience | What they want |
+|----------|---------------|
+| **City planners** | Where to invest in grid infrastructure |
+| **Datacenter scouts** | Is this area grid-ready? |
+| **Solar/battery companies** | Where to sell (gaps in coverage) |
+| **Utilities** | Load forecasting by neighborhood |
+| **Developers** | Infrastructure-ready zones |
+
+
+## What Undervolt Does
 
 Cities usually learn where growth happened **after** it happens.
 
@@ -43,6 +54,9 @@ So we built a **DGX-native pipeline** that:
 Queries that once took minutes now run in **milliseconds**, **locally** and **privately**.
 ---
 
+## Demo Video
+🔗 [Link here](https://www.loom.com/share/a473f2934db0409bacf54b767490cd19)
+
 ## Architecture
 
 ```
@@ -53,13 +67,13 @@ Queries that once took minutes now run in **milliseconds**, **locally** and **pr
 │   ┌─────────────────────────────────────────────────────────────────┐   │
 │   │                    DGX BOX (GPU EXTRACTION)                     │   │
 │   │                                                                 │   │
-│   │   ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌─────────┐  │   │
-│   │   │ Raw Data │───▶│   NLP    │───▶│   8B     │───▶│ Struct  │  │   │
-│   │   │  2.2M    │    │ Filter   │    │  Model   │    │ Signals │  │   │
-│   │   │ permits  │    │ keywords │    │ Extract  │    │  JSON   │  │   │
-│   │   └──────────┘    └──────────┘    └──────────┘    └────┬────┘  │   │
-│   │                                                        │       │   │
-│   │   cuDF/RAPIDS ─────────────────────────────────────────┘       │   │
+│   │   ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌─────────┐   │   │
+│   │   │ Raw Data │───▶│   NLP    │───▶│   8B     │───▶│ Struct  │   │   │
+│   │   │  2.2M    │    │ Driven   │    │  Model   │    │ Signals │   │   │
+│   │   │ permits  │    │ Features │    │ Extract  │    │  JSON   │   │   │
+│   │   └──────────┘    └──────────┘    └──────────┘    └────┬────┘   │   │
+│   │                                                        │        │   │
+│   │   cuDF/RAPIDS/cuML ────────────────────────────────────┘        │   │
 │   └───────────────────────────────────────────┬─────────────────────┘   │
 │                                               │                         │
 │                                               ▼                         │
@@ -75,16 +89,15 @@ Queries that once took minutes now run in **milliseconds**, **locally** and **pr
 │   ┌─────────────────────────────────────────────────────────────────┐   │
 │   │                      NEXT.JS FRONTEND                           │   │
 │   │                                                                 │   │
-│   │   ┌─────────────┐    ┌──────────────┐    ┌─────────────────┐   │   │
-│   │   │  MCP Server │───▶│   GPT-4o     │───▶│  Story Blocks   │   │   │
-│   │   │  (SQL Tool) │    │   + Zod      │    │  Maps, Charts   │   │   │
-│   │   └─────────────┘    └──────────────┘    └─────────────────┘   │   │
+│   │   ┌─────────────┐    ┌──────────────┐    ┌─────────────────┐    │   │
+│   │   │  MCP Server │───▶│   GPT        │───▶│  Story Blocks   │    │   │
+│   │   │  (SQL Tool) │    │   + Zod      │    │  Maps, Charts   │    │   │
+│   │   └─────────────┘    └──────────────┘    └─────────────────┘    │   │
 │   └─────────────────────────────────────────────────────────────────┘   │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
----
 
 ## Extraction Pipeline (DGX)
 
@@ -131,8 +144,6 @@ The GPU-accelerated pipeline transforms raw permit text into structured signals:
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
----
-
 ## Frontend Architecture
 
 The Next.js frontend connects to the database via MCP (Model Context Protocol):
@@ -149,28 +160,27 @@ The Next.js frontend connects to the database via MCP (Model Context Protocol):
 │   └──────┬──────┘                                                      │
 │          │                                                             │
 │          ▼                                                             │
-│   ┌─────────────┐    ┌─────────────────────────────────┐              │
-│   │  MCP Client │───▶│  @modelcontextprotocol/server   │              │
-│   │             │    │  postgres-query tool            │              │
-│   └──────┬──────┘    └─────────────────────────────────┘              │
+│   ┌─────────────┐    ┌─────────────────────────────────┐               │
+│   │  MCP Client │───▶│  @modelcontextprotocol/server   │               │
+│   │             │    │  postgres-query tool            │               │
+│   └──────┬──────┘    └─────────────────────────────────┘               │
 │          │                                                             │
 │          ▼                                                             │
 │   ┌─────────────┐                                                      │
-│   │  GPT-4o     │  generateObject() with Zod schema                   │
-│   │  + Context  │  • Writes SQL via MCP                               │
-│   │             │  • Formats insight as StoryBlock                    │
+│   │  GPT-4o     │  generateObject() with Zod schema                    │ 
+│   │  + Context  │  • Writes SQL via MCP                                │
+│   │             │  • Formats insight as StoryBlock                     │
 │   └──────┬──────┘                                                      │
 │          │                                                             │
 │          ▼                                                             │
-│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐              │
-│   │  StoryBlock │    │  MiniMap    │    │  MiniChart  │              │
-│   │   Card      │    │  (Mapbox)   │    │  (Recharts) │              │
-│   └─────────────┘    └─────────────┘    └─────────────┘              │
+│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐                │
+│   │  StoryBlock │    │  MiniMap    │    │  MiniChart  │                │
+│   │   Card      │    │  (Mapbox)   │    │  (Recharts) │                │
+│   └─────────────┘    └─────────────┘    └─────────────┘                │
 │                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
----
 
 ## The Data
 
@@ -178,7 +188,6 @@ The Next.js frontend connects to the database via MCP (Model Context Protocol):
 - **Size:** 2.2M+ permits
 - **Coverage:** 63% geocoded, 87% have Council District
 
----
 
 ## Key Findings
 
@@ -198,7 +207,6 @@ The Next.js frontend connects to the database via MCP (Model Context Protocol):
 - District 10 (Westlake, wealthy): 2,151 generators
 - District 4 (East, lower income): 175 total permits
 
----
 
 ## Database Schema
 
@@ -221,9 +229,8 @@ construction_permits
 └── f_panel           BOOLEAN
 ```
 
----
 
-## Feature Config (YAML-Driven)
+## Feature Extraction (YAML-Driven)
 
 Add new extraction features without code changes:
 
@@ -247,9 +254,7 @@ extraction:
     Return: {"is_solar": bool, "solar_kw": number|null}
 ```
 
----
-
-## Quick Start
+## Quick Start Guide
 
 ### Frontend
 
@@ -281,7 +286,6 @@ python scripts/extract_parallel.py
 | Maps | Mapbox GL |
 | Charts | Recharts |
 
----
 
 ## Future: Context Bundles
 
@@ -293,67 +297,26 @@ Pre-compute data-grounded questions from extraction patterns:
 │                                                                        │
 │   After each batch extraction:                                         │
 │                                                                        │
-│   ┌─────────────┐    ┌─────────────┐    ┌─────────────────────────┐   │
-│   │  Extracted  │───▶│  Context    │───▶│  Question Generator     │   │
-│   │   Signals   │    │   Bundle    │    │  (data-grounded)        │   │
-│   │             │    │   Builder   │    │                         │   │
-│   └─────────────┘    └─────────────┘    └───────────┬─────────────┘   │
+│   ┌─────────────┐    ┌─────────────┐    ┌─────────────────────────┐    │
+│   │  Extracted  │───▶│  Context    │───▶│  Question Generator     │    │
+│   │   Signals   │    │   Bundle    │    │  (data-grounded)        │    │
+│   │             │    │   Builder   │    │                         │    │
+│   └─────────────┘    └─────────────┘    └───────────┬─────────────┘    │
 │                                                     │                  │
 │   Current: Foundation model generates questions     ▼                  │
-│   from general knowledge                      ┌─────────────┐         │
-│                                               │ Rich, Data- │         │
-│   Future: Pre-compute question bundles        │  Grounded   │         │
-│   based on actual extracted patterns          │  Questions  │         │
-│                                               └─────────────┘         │
+│   from general knowledge                      ┌─────────────┐          │
+│                                               │ Rich, Data- │          │
+│   Future: Pre-compute question bundles        │  Grounded   │          │
+│   based on actual extracted patterns          │  Questions  │          │
+│                                               └─────────────┘          │
 │                                                                        │
 │   Examples:                                                            │
-│   • "District 10 has 5x more generators than District 4—why?"         │
-│   • "Solar-to-battery ratio dropped in 2023—what changed?"            │
-│   • "78704 has the highest ADU density—is it zoning?"                 │
+│   • "District 10 has 5x more generators than District 4—why?"          │
+│   • "Solar-to-battery ratio dropped in 2023—what changed?"             │
+│   • "78704 has the highest ADU density—is it zoning?"                  │
 │                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
-
----
-
-## Directory Structure
-
-```
-undervolt/
-├── config/
-│   └── features/           # YAML configs per signal type
-│       ├── energy.yaml
-│       └── ...
-│
-├── scripts/
-│   ├── extract.py          # Single-threaded extraction
-│   ├── extract_parallel.py # Multi-GPU parallel extraction
-│   └── gpu_extract.py      # cuDF GPU utilities
-│
-├── frontend/
-│   ├── src/app/            # Next.js app router
-│   ├── src/components/     # React components
-│   │   ├── cards/          # InsightCard, MapCard, ChartCard
-│   │   ├── MiniMap.tsx     # Mapbox integration
-│   │   └── MiniChart.tsx   # Recharts integration
-│   └── src/lib/            # Shared utilities
-│
-└── output/                 # Extracted parquet files
-```
-
----
-
-## Who Uses This
-
-| Audience | What they want |
-|----------|---------------|
-| **City planners** | Where to invest in grid infrastructure |
-| **Datacenter scouts** | Is this area grid-ready? |
-| **Solar/battery companies** | Where to sell (gaps in coverage) |
-| **Utilities** | Load forecasting by neighborhood |
-| **Developers** | Infrastructure-ready zones |
-
----
 
 ## License
 
