@@ -118,7 +118,7 @@ export default function ExplorationPage() {
 
     // Create abort controller for timeout
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
 
     // Get existing insight blocks for context
     const existingBlocks = cards
@@ -149,7 +149,7 @@ export default function ExplorationPage() {
       let gotResponse = false;
 
       // Read with timeout
-      const readTimeout = 20000; // 20s to read full response
+      const readTimeout = 45000; // 45s to read full response
       const readStart = Date.now();
 
       while (true) {
