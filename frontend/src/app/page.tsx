@@ -247,10 +247,11 @@ export default function ExplorationPage() {
   const handleResponse = (response: ChatResponse) => {
     console.log("handleResponse called:", response);
     let block = response.storyBlock;
+    let isGeneratedFromMessage = false;
 
     // If no storyBlock, create one from the message
     if (!block && response.message) {
-      // Extract first sentence or first 100 chars for headline
+      // Extract first sentence for headline
       const firstSentence = response.message.split(/[.!?]/)[0].trim();
       const headline = firstSentence.length > 50
         ? firstSentence.substring(0, 47) + "..."
@@ -263,6 +264,7 @@ export default function ExplorationPage() {
         whyStoryWorthy: "turning-point",
         confidence: "medium",
       };
+      isGeneratedFromMessage = true;
     }
 
     if (!block) {
@@ -270,8 +272,9 @@ export default function ExplorationPage() {
       return;
     }
 
-    // Filter out error-like story blocks
-    if (isErrorBlock(block)) {
+    // Only filter error blocks from model-generated storyBlocks, not from messages
+    // (We want to show the user what the model said even if it mentions errors)
+    if (!isGeneratedFromMessage && isErrorBlock(block)) {
       console.warn("Skipping error-like storyBlock:", block.headline);
       return;
     }
