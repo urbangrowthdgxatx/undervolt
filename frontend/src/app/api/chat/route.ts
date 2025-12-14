@@ -22,11 +22,18 @@ function sendEvent(controller: ReadableStreamDefaultController, event: string, d
 }
 
 export async function POST(req: Request) {
-  const { message, mode = 'scout' } = await req.json();
+  const { message, mode = 'scout', existingBlocks = [] } = await req.json();
 
   if (!message || typeof message !== 'string') {
     return Response.json({ error: 'Message is required' }, { status: 400 });
   }
+
+  // Build conversation context from existing story blocks
+  const conversationContext = existingBlocks.length > 0
+    ? `## Previous Insights in This Session:\n${existingBlocks.map((b: { headline: string; insight: string }, i: number) =>
+        `${i + 1}. **${b.headline}**: ${b.insight.substring(0, 200)}...`
+      ).join('\n')}\n\nIMPORTANT: Generate a NEW, DIFFERENT insight. Do NOT repeat previous headlines or topics. Explore a different angle or aspect.`
+    : '';
 
   // Get mode-specific prompt modifier
   const modeConfig = MODE_CONFIG[mode as Mode] || MODE_CONFIG.scout;
@@ -90,9 +97,12 @@ export async function POST(req: Request) {
         // Step 3: Generate structured response with mode context
         const modePrompt = `## Current Mode: ${modeConfig.label}\n${modeConfig.promptModifier}`;
         const systemWithMode = `${SYSTEM_PROMPT}\n\n${modePrompt}\n\n${GUARDRAILS}`;
-        const systemWithData = hasTools && dataContext
-          ? `${systemWithMode}\n\n## Live Data from Database:\n${dataContext}`
+        const systemWithConversation = conversationContext
+          ? `${systemWithMode}\n\n${conversationContext}`
           : systemWithMode;
+        const systemWithData = hasTools && dataContext
+          ? `${systemWithConversation}\n\n## Live Data from Database:\n${dataContext}`
+          : systemWithConversation;
 
         const response = await generateObject({
           model: openai('gpt-5.2'),
