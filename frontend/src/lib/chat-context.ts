@@ -9,12 +9,32 @@ Key columns:
 - issued_date (text): When permit was issued
 - original_zip (text): ZIP code
 - latitude, longitude (float): Coordinates
-- text_norm (text): Normalized description text
 - total_job_valuation (float): Total project value
 - building_valuation, electrical_valuation, mechanical_valuation, plumbing_valuation (float)
 - total_existing_bldg_sqft, total_new_add_sqft (float): Square footage
 - housing_units, number_of_floors (float)
 - primary_feature (text): Main permit category
+
+## text_norm - UNSTRUCTURED GOLD MINE
+The text_norm column contains raw permit descriptions with hidden details NOT in boolean flags:
+
+**Brands & Products:**
+- EV chargers: "Tesla", "ChargePoint", "JuiceBox", "Wallbox", "NEMA 14-50", "Level 2", "EVSE"
+- Solar: "Tesla Powerwall", "Enphase", "SolarEdge", "LG", "Panasonic"
+- Generators: "Generac", "Kohler", "Briggs", "whole house", "standby"
+- HVAC: "Carrier", "Trane", "Lennox", "mini-split", "heat pump"
+- Pools: "gunite", "fiberglass", "infinity", "spa", "hot tub"
+
+**Luxury Signals:**
+- "custom home", "wine cellar", "home theater", "outdoor kitchen"
+- "guest house", "casita", "pool house", "cabana"
+- "elevator", "safe room", "smart home"
+
+**Search with ILIKE:**
+\`\`\`sql
+SELECT COUNT(*) FROM construction_permits WHERE text_norm ILIKE '%tesla%';
+SELECT text_norm, COUNT(*) FROM construction_permits WHERE f_ev_charger = true GROUP BY text_norm LIMIT 20;
+\`\`\`
 
 ## Boolean Feature Flags (use these for filtering!)
 - f_solar (bool): Solar installations (25K permits)
