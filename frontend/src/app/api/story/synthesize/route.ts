@@ -16,21 +16,24 @@ export async function POST(req: Request) {
     const result = await generateObject({
       model: openai('gpt-4o'),
       schema: StoryBlockSchema,
-      system: `You are synthesizing multiple insights about Austin's energy infrastructure into ONE overarching theme.
+      system: `You are synthesizing multiple insights about Austin construction permits into ONE overarching theme.
 
 Given several story blocks, identify the META-INSIGHT - the bigger truth that emerges when you connect them all.
 
 Rules:
 - Create a NEW headline that captures the synthesis (not just combining existing headlines)
-- The insight should reference the underlying blocks but reveal something NEW
+- The insight should be 2-3 sentences that weaves together the underlying findings and reveals something NEW
+- Include evidence that references the key stats from the underlying blocks
 - The dataPoint should highlight the most striking statistic
 - Set isTheme: true
 - Set connectsTo to include ALL the block IDs being synthesized
+- Include chartData if the insights have comparable numeric data
 
 Examples of good synthesis:
-- Multiple blocks about generators, batteries, solar → Theme: "Austin is Preparing for Grid Independence"
-- Blocks about District 10 wealth + freeze response → Theme: "Resilience Has Become a Class Divide"
-- Blocks about solar growth + battery lag → Theme: "Generation Outpaces Storage"`,
+- Multiple blocks about pools, remodels, luxury → Theme: "Wealth Builds Differently"
+- Blocks about new construction vs remodels by area → Theme: "A Tale of Two Austins"
+- Blocks about post-2021 changes in generators/solar → Theme: "The Grid Trust Crisis"
+- Blocks about ADUs, density, housing → Theme: "Austin's Backyard Density Boom"`,
       prompt: `Synthesize these insights into ONE theme:\n\n${JSON.stringify(blocks, null, 2)}`,
     });
 
