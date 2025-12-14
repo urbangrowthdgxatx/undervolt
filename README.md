@@ -7,14 +7,14 @@ Austin is changing. Solar panels, EV chargers, and new construction are spreadin
 **There are more generator permits than batteries.**  
 **For every 7 solar installations, there is only 1 battery.**
 
-Cities are producing clean energy—but they can’t store it. **Grid trust is uneven. Resilience is unequal.** And these signals don’t show up in dashboards until it’s too late.
+Cities are producing clean energy, but they can’t store it. **Grid trust is uneven. Resilience is unequal.** And these signals don’t show up in dashboards until it’s too late.
 
 **Undervolt** turns massive, messy permit data into **real-time Urban Growth Intelligence**, powered end-to-end on **NVIDIA DGX Spark**.
 
 We extract hidden infrastructure signals from unstructured permit text using **GPU-accelerated analytics** and **on-device LLMs**, then transform them into **interactive maps, trends, and natural-language insights**.
 
 **This isn’t about hindsight.**  
-**It’s about seeing urban stress—and opportunity—as it forms.**
+**It’s about seeing urban stress and opportunity, as it forms.**
 
 ---
 
