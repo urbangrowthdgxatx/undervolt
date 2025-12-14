@@ -15,10 +15,10 @@ except Exception:
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
+    format="%(asctime)s | %(levelname)s | %(message)s ",
     handlers=[logging.StreamHandler()]
 )
-log = logging.getLogger("permits")
+log = logging.getLogger("permits", level=logging.INFO, )
 
 
 # -------------------------
@@ -133,6 +133,7 @@ def clean_permit_data(df):
             )
             # coerce to float safely
             if GPU_ENABLED:
+                log.info(f"Converting numeric column `{col}` using GPU-safe method")
                 import pandas as pd
                 df[col] = cudf.from_pandas(
                     pd.to_numeric(df[col].to_pandas(), errors="coerce")
@@ -171,7 +172,8 @@ def clean_permit_data(df):
 
     for col in str_cols:
         df[col] = df[col].astype("str").str.strip()
-
+    #Log the final columns as json with key:value, value is the data type
+    
     log.info(f"Final columns: {df.columns.tolist()}")
     log.info(f"Final cleaned row count: {len(df):,}")
 
