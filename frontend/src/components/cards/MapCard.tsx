@@ -78,7 +78,7 @@ export function MapCard({ id, title, geoData, isSelected, onSelect }: MapCardPro
               <span className="text-sm">Selected</span>
             </>
           ) : (
-            <span className="text-sm">Select for theme</span>
+            <span className="text-sm">Select</span>
           )}
         </button>
       </div>
