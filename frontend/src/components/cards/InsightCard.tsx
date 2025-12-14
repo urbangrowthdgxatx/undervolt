@@ -9,6 +9,60 @@ interface InsightCardProps {
   onSelect: (id: string) => void;
 }
 
+// Simple markdown parser for **bold** and *italic*
+function parseMarkdown(text: string): React.ReactNode[] {
+  const elements: React.ReactNode[] = [];
+  let remaining = text;
+  let key = 0;
+
+  while (remaining.length > 0) {
+    // Check for bold first (**)
+    const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
+    // Check for italic (*)
+    const italicMatch = remaining.match(/\*(.+?)\*/);
+
+    // Find which comes first
+    const boldIndex = boldMatch ? remaining.indexOf(boldMatch[0]) : -1;
+    const italicIndex = italicMatch ? remaining.indexOf(italicMatch[0]) : -1;
+
+    // No more matches
+    if (boldIndex === -1 && italicIndex === -1) {
+      if (remaining) elements.push(remaining);
+      break;
+    }
+
+    // Determine which match to use (whichever comes first)
+    const useBold = boldIndex !== -1 && (italicIndex === -1 || boldIndex <= italicIndex);
+    const match = useBold ? boldMatch! : italicMatch!;
+    const index = useBold ? boldIndex : italicIndex;
+
+    // Add text before the match
+    if (index > 0) {
+      elements.push(remaining.slice(0, index));
+    }
+
+    // Add the formatted element
+    if (useBold) {
+      elements.push(
+        <strong key={key++} className="text-white font-medium">
+          {match[1]}
+        </strong>
+      );
+    } else {
+      elements.push(
+        <em key={key++} className="text-white/80 italic">
+          {match[1]}
+        </em>
+      );
+    }
+
+    // Move past the match
+    remaining = remaining.slice(index + match[0].length);
+  }
+
+  return elements;
+}
+
 const WHY_LABELS: Record<StoryWorthyReason, string> = {
   'equity-gap': 'Equity gap',
   'post-freeze-shift': 'Post-freeze shift',
@@ -28,7 +82,7 @@ export function InsightCard({ block, isSelected, onSelect }: InsightCardProps) {
   return (
     <div
       className={`
-        flex-shrink-0 w-72 h-[400px] rounded-2xl border transition-all
+        flex-shrink-0 w-72 h-[480px] rounded-2xl border transition-all
         flex flex-col overflow-hidden
         ${isSelected
           ? "border-white/40 bg-white/10 ring-2 ring-white/20"
@@ -77,15 +131,7 @@ export function InsightCard({ block, isSelected, onSelect }: InsightCardProps) {
 
         {/* Insight */}
         <p className="text-sm text-white/70 leading-relaxed">
-          {block.insight.split("**").map((part, i) =>
-            i % 2 === 1 ? (
-              <strong key={i} className="text-white font-medium">
-                {part}
-              </strong>
-            ) : (
-              part
-            )
-          )}
+          {parseMarkdown(block.insight)}
         </p>
 
         {/* Evidence Section */}
@@ -95,13 +141,7 @@ export function InsightCard({ block, isSelected, onSelect }: InsightCardProps) {
               <div key={i} className="flex items-start gap-2 text-xs text-white/50">
                 <Info size={12} className="mt-0.5 flex-shrink-0" />
                 <span>
-                  {ev.stat.split("**").map((part, j) =>
-                    j % 2 === 1 ? (
-                      <strong key={j} className="text-white/70 font-medium">{part}</strong>
-                    ) : (
-                      part
-                    )
-                  )}
+                  {parseMarkdown(ev.stat)}
                   <span className="text-white/30 ml-1">· {ev.source}</span>
                 </span>
               </div>

@@ -104,51 +104,155 @@ export default function ExplorationPage() {
     }
   }, [cards.length]);
 
-  // Handle question click - use fallback for now (API can be re-enabled later)
+  // Handle question click - call API with timeout, fallback if slow
   const handleQuestionClick = async (question: string) => {
     setIsLoading(true);
 
-    // Small delay to show loading state
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
-    // Use fallback directly for reliable behavior
-    useFallback(question);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: question, mode: "scout" }),
+        signal: controller.signal,
+      });
 
-    setIsLoading(false);
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        throw new Error("API request failed");
+      }
+
+      const reader = res.body?.getReader();
+      if (!reader) {
+        throw new Error("No response body");
+      }
+
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let gotResponse = false;
+
+      // Read with timeout
+      const readTimeout = 20000; // 20s to read full response
+      const readStart = Date.now();
+
+      while (true) {
+        if (Date.now() - readStart > readTimeout) {
+          console.log("Read timeout, using fallback");
+          break;
+        }
+
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        // Parse SSE events (split by double newline)
+        const events = buffer.split("\n\n");
+        buffer = events.pop() || "";
+
+        for (const eventBlock of events) {
+          if (!eventBlock.trim()) continue;
+
+          const lines = eventBlock.split("\n");
+          let eventType = "";
+          let eventData = "";
+
+          for (const line of lines) {
+            if (line.startsWith("event: ")) {
+              eventType = line.slice(7);
+            } else if (line.startsWith("data: ")) {
+              eventData = line.slice(6);
+            }
+          }
+
+          if (eventType === "response" && eventData) {
+            try {
+              const parsed = JSON.parse(eventData) as ChatResponse;
+              console.log("API response:", parsed);
+              handleResponse(parsed);
+              gotResponse = true;
+            } catch (e) {
+              console.error("Failed to parse response:", e);
+            }
+          }
+        }
+      }
+
+      // Fallback if no response from API
+      if (!gotResponse) {
+        console.log("No API response, using fallback");
+        useFallback(question);
+      }
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.log("Request timed out, using fallback");
+      } else {
+        console.error("API error:", error);
+      }
+      useFallback(question);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Check if a story block looks like an error/failure message
+  const isErrorBlock = (block: StoryBlock): boolean => {
+    const errorPatterns = [
+      /failed/i, /error/i, /missing/i, /couldn't/i, /can't/i, /cannot/i,
+      /not present/i, /not available/i, /no data/i, /query failed/i,
+      /doesn't exist/i, /does not exist/i, /unable to/i, /problem/i,
+    ];
+    const textToCheck = `${block.headline} ${block.insight}`;
+    return errorPatterns.some(pattern => pattern.test(textToCheck));
   };
 
   // Handle LLM response - convert to cards
   const handleResponse = (response: ChatResponse) => {
     console.log("handleResponse called:", response);
-    if (response.storyBlock) {
-      const block = response.storyBlock;
-      const newCards: StoryCardItem[] = [];
+    const block = response.storyBlock;
 
-      // Always add insight card
-      newCards.push({ type: "insight", block });
-
-      // Add map card if geoData exists
-      if (block.geoData) {
-        newCards.push({
-          type: "map",
-          id: `${block.id}-map`,
-          title: block.headline,
-          geoData: block.geoData,
-        });
-      }
-
-      // Add chart card if chartData exists
-      if (block.chartData) {
-        newCards.push({
-          type: "chart",
-          id: `${block.id}-chart`,
-          chartData: block.chartData,
-        });
-      }
-
-      console.log("Adding cards:", newCards);
-      setCards((prev) => [...prev, ...newCards]);
+    if (!block) {
+      console.warn("No storyBlock in response");
+      return;
     }
+
+    // Filter out error-like story blocks
+    if (isErrorBlock(block)) {
+      console.warn("Skipping error-like storyBlock:", block.headline);
+      return;
+    }
+
+    const newCards: StoryCardItem[] = [];
+
+    // Always add insight card
+    newCards.push({ type: "insight", block });
+
+    // Add map card if geoData exists
+    if (block.geoData) {
+      newCards.push({
+        type: "map",
+        id: `${block.id}-map`,
+        title: block.headline,
+        geoData: block.geoData,
+      });
+    }
+
+    // Add chart card if chartData exists
+    if (block.chartData) {
+      newCards.push({
+        type: "chart",
+        id: `${block.id}-chart`,
+        chartData: block.chartData,
+      });
+    }
+
+    console.log("Adding cards:", newCards);
+    setCards((prev) => [...prev, ...newCards]);
   };
 
   // Fallback responses
@@ -342,21 +446,9 @@ export default function ExplorationPage() {
             />
           </section>
         ) : (
-          /* Story mode - collapsed questions + cards */
+          /* Story mode - cards + bottom bar */
           <section className="min-h-[calc(100vh-6rem)] flex flex-col">
-            {/* Collapsed questions at top */}
-            <div className="pt-2">
-              <FloatingQuestions
-                questions={questions}
-                onQuestionClick={handleQuestionClick}
-                onRefresh={fetchQuestions}
-                isLoading={isLoading}
-                isRefreshing={isRefreshing}
-                collapsed
-              />
-            </div>
-
-            {/* Story cards in center */}
+            {/* Story cards in center - with phantom card for suggestions */}
             <div className="flex-1 flex items-center py-8">
               <div className="w-full">
                 <StoryCards
@@ -364,73 +456,89 @@ export default function ExplorationPage() {
                   selectedIds={selectedIds}
                   onSelect={handleSelectCard}
                   isLoading={isLoading}
+                  suggestedQuestions={questions}
+                  onQuestionClick={handleQuestionClick}
                 />
               </div>
             </div>
 
-            {/* Bottom bar - title, input, find theme */}
+            {/* Bottom bar - title, input, question chips, find theme */}
             <div className="px-6 py-4 border-t border-white/10 bg-black/50 backdrop-blur-sm">
-              <div className="max-w-6xl mx-auto flex items-center gap-6">
-                {/* Title - left */}
-                <div className="flex-shrink-0">
-                  <p className="text-white/30 text-xs uppercase tracking-widest">Investigating</p>
-                  <h2 className="text-lg font-light text-white">{activeStoryline.title}</h2>
-                </div>
+              <div className="max-w-6xl mx-auto">
+                {/* Main row */}
+                <div className="flex items-center gap-4">
+                  {/* Title - left */}
+                  <div className="flex-shrink-0">
+                    <p className="text-white/30 text-xs uppercase tracking-widest">Investigating</p>
+                    <h2 className="text-lg font-light text-white">{activeStoryline.title}</h2>
+                  </div>
 
-                {/* Input - center */}
-                <form onSubmit={handleCustomSubmit} className="flex-1 max-w-lg">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={customQuestion}
-                      onChange={(e) => setCustomQuestion(e.target.value)}
-                      placeholder="Ask anything about Austin permits..."
-                      disabled={isLoading}
-                      className="w-full px-4 py-2.5 pr-10 rounded-full bg-white/5 border border-white/20 text-white placeholder-white/30 text-sm focus:outline-none focus:border-white/40 focus:bg-white/10 transition-all disabled:opacity-50"
-                    />
+                  {/* Input */}
+                  <form onSubmit={handleCustomSubmit} className="flex-1 max-w-md">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={customQuestion}
+                        onChange={(e) => setCustomQuestion(e.target.value)}
+                        placeholder="Ask anything..."
+                        disabled={isLoading}
+                        className="w-full px-4 py-2.5 pr-10 rounded-full bg-white/5 border border-white/20 text-white placeholder-white/30 text-sm focus:outline-none focus:border-white/40 focus:bg-white/10 transition-all disabled:opacity-50"
+                      />
+                      <button
+                        type="submit"
+                        disabled={isLoading || !customQuestion.trim()}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white/40 hover:text-white disabled:opacity-30 transition-colors"
+                      >
+                        <Send size={14} />
+                      </button>
+                    </div>
+                  </form>
+
+                  {/* Quick question chips */}
+                  <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
+                    {questions.slice(0, 2).map((q, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleQuestionClick(q)}
+                        disabled={isLoading}
+                        className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 text-xs hover:bg-white/10 hover:text-white/70 hover:border-white/20 transition-all disabled:opacity-50 max-w-[180px] truncate"
+                      >
+                        {q}
+                      </button>
+                    ))}
                     <button
-                      type="submit"
-                      disabled={isLoading || !customQuestion.trim()}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white/40 hover:text-white disabled:opacity-30 transition-colors"
+                      onClick={fetchQuestions}
+                      disabled={isRefreshing}
+                      className="p-1.5 text-white/30 hover:text-white/60 transition-colors disabled:opacity-50"
+                      title="New questions"
                     >
-                      <Send size={14} />
+                      <RefreshCw size={14} className={isRefreshing ? "animate-spin" : ""} />
                     </button>
                   </div>
-                </form>
 
-                {/* Refresh */}
-                <button
-                  onClick={fetchQuestions}
-                  disabled={isRefreshing}
-                  className="p-2 text-white/30 hover:text-white/60 transition-colors disabled:opacity-50"
-                  title="New questions"
-                >
-                  <RefreshCw size={16} className={isRefreshing ? "animate-spin" : ""} />
-                </button>
-
-                {/* Find Theme button - right */}
-                {selectedIds.size >= 2 && (
-                  <button
-                    onClick={synthesizeTheme}
-                    disabled={isSynthesizing}
-                    className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-full text-sm font-medium hover:bg-white/90 transition-colors disabled:opacity-50"
-                  >
-                    {isSynthesizing ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                        Finding...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles size={14} />
-                        Find Theme ({selectedIds.size})
-                      </>
-                    )}
-                  </button>
-                )}
+                  {/* Find Theme button - right */}
+                  {selectedIds.size >= 2 && (
+                    <button
+                      onClick={synthesizeTheme}
+                      disabled={isSynthesizing}
+                      className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-full text-sm font-medium hover:bg-white/90 transition-colors disabled:opacity-50"
+                    >
+                      {isSynthesizing ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                          Finding...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles size={14} />
+                          Find Theme ({selectedIds.size})
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-
           </section>
         )}
       </main>

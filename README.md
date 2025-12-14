@@ -1,165 +1,133 @@
 # Undervolt
 
+<p align="center">
+  <img src="assets/logo.png" alt="Undervolt Logo" width="200"/>
+</p>
+
 > Energy is the bottleneck to the frontier.
 
-Austin is electrifying. Solar panels, EV chargers, and battery systems are spreading across the city. But buried in 2.2 million construction permits is a different story: 634 generator permits — more than EV chargers. For every 7 solar installations, only 1 battery. The city is generating clean power but can't store it. Trust in the grid is fractured.
+Austin is electrifying. Solar panels, EV chargers, and battery systems are spreading across the city. But buried in 1.2 million construction permits is a different story: generators outnumber batteries 24:1. For every 7 solar installations, only 1 battery. The city is generating clean power but can't store it. Trust in the grid is fractured.
 
-**Undervolt** uses DGX-accelerated LLM extraction to surface hidden infrastructure signals from permit text. The result is a real-time map of Austin's energy transition — where it's thriving, where it's stalling, and where the next investment should go.
-
-This isn't failure. It's transition under constraint.
+**Undervolt** uses GPU-accelerated LLM extraction to surface hidden infrastructure signals from permit text. The result is a real-time map of Austin's energy transition — where it's thriving, where it's stalling, and where the next investment should go.
 
 ---
 
-## The Data
+## Extraction Stats (In Progress)
 
-- **Source:** [Austin Open Data - Issued Construction Permits](https://data.austintexas.gov/Building-and-Development/Issued-Construction-Permits/3syk-w9eu)
-- **Size:** 2.2M+ permits
-- **Coverage:** 63% geocoded, 87% have Council District
+| Metric | Value |
+|--------|-------|
+| **Total Permits** | 1,201,208 |
+| **Processed** | 218,000+ (18%) |
+| **Speed** | 7 permits/sec |
+| **Model** | Llama-3.1-8B-Instruct |
+| **Infrastructure** | vLLM on DGX (50 concurrent) |
+
+### Features Found (218K sample)
+
+| Signal | Count | Rate |
+|--------|-------|------|
+| Solar | 4,469 | 2.2% |
+| EV Chargers | 2,954 | 1.5% |
+| Generator | 1,565 | 0.8% |
+| Pool | 2,035 | 1.0% |
+| New Build | ~50,000 | ~25% |
+| ADU | 65 | 0.03% |
+| Battery | 64 | 0.03% |
 
 ---
 
-## Key Findings
+## What Went Wrong (Lessons Learned)
 
-| Signal | Count | Insight |
-|--------|-------|---------|
-| Solar | 25,610 | Grid-tied, saves money but useless when grid fails |
-| EV Chargers | 119,727 | Electrification is real |
-| Generators | 7,116 | +246% after 2021 freeze — trust is broken |
-| Batteries | 878 | Only 1 for every 29 solar — storage is the bottleneck |
-| ADUs | 2,549 | Density growing in central Austin |
+### 1. Ollama is Too Slow
+- **Problem:** Started with Ollama at 8 concurrent requests → 0.5 permits/sec
+- **Solution:** Switched to vLLM with 50 concurrent → 7 permits/sec (14x faster)
 
-**Post-Freeze Effect (2021):**
-- Battery permits: +214%
-- Generator permits: +246%
+### 2. SSH Connections Are Flaky
+- **Problem:** Hostname `gx10-4a58` resolved to different IPs at different times
+- **Solution:** Use IP directly with `-o ConnectTimeout=15` flag
 
-**The Resilience Gap:**
-- District 10 (Westlake, wealthy): 2,151 generators
-- District 4 (East, lower income): 175 total permits
+### 3. Processes Die Without tmux
+- **Problem:** Started extraction with `nohup` - died when SSH disconnected
+- **Solution:** Use `tmux` for persistent sessions (`tmux new -s extract`)
+
+### 4. Model Hallucinates Numeric Values
+- **Problem:** "replace emergency generator" → model returned `solar_kw=10, sqft=2500`
+- **Mitigation:** Boolean flags are reliable, numeric values need validation
+- **Recommendation:** Cross-validate numeric extractions with regex on original text
+
+### 5. Batch Saves Are Essential
+- **Problem:** First 3 extraction attempts crashed and lost all progress
+- **Solution:** Save every 1000 permits to CSV, auto-resume from last batch
+
+### 6. Schema Drift in Early Batches
+- **Problem:** First batches had different column order than later ones
+- **TODO:** Normalize all CSVs before combining
 
 ---
 
 ## Extraction Pipeline
 
-A config-driven, reusable pipeline. Add a new feature? Just add a YAML config.
-
 ```
-Raw Data (2.2M permits)
-    → Clean (select columns)
-    → Build Prompt (from YAML config)
-    → LLM Extraction (vLLM on DGX)
+Raw Data (1.2M permits in Postgres)
+    → Fetch batch (1000 permits)
+    → Build prompt (15 features)
+    → vLLM inference (50 concurrent)
     → Parse JSON → Validate
-    → Save Parquet
+    → Save CSV batch
+    → Repeat until done
 ```
 
 ### Directory Structure
 
 ```
 undervolt/
+├── scripts/
+│   ├── extract_vllm.py           # Production extraction (vLLM)
+│   ├── extract_parallel.py       # Config-driven Ollama extraction
+│   ├── extract.py                # Detailed single-threaded extraction
+│   └── gpu_extract.py            # cuDF/RAPIDS version
 ├── config/
-│   ├── pipeline.yaml              # Global settings (DB, model, batch size)
-│   └── features/                  # One YAML per feature group
-│       ├── solar.yaml
-│       ├── ev.yaml
-│       ├── battery.yaml
-│       ├── generator.yaml
-│       ├── adu.yaml
-│       └── panel_upgrade.yaml
-│
-├── src/undervolt/
-│   ├── config/                    # Config loading + validation
-│   ├── data/                      # CSV/Postgres/Parquet loaders
-│   ├── extraction/                # LLM pipeline + prompt building
-│   └── cli.py                     # Entry point
-│
-├── frontend/                      # Next.js visualization
-└── output/features/               # Parquet output
+│   ├── pipeline.yaml             # Global settings
+│   └── features/energy.yaml      # Feature definitions
+├── frontend/                     # Next.js visualization
+│   └── src/app/api/              # Chat, story endpoints
+├── assets/
+│   └── logo.png                  # Undervolt logo
+└── output/                       # Extraction results
 ```
 
-### Feature Config Example
-
-```yaml
-# config/features/solar.yaml
-feature_group:
-  name: "solar"
-  enabled: true
-
-features:
-  - name: "is_solar"
-    type: "boolean"
-  - name: "solar_kw"
-    type: "number"
-    nullable: true
-
-extraction:
-  keywords: ["solar", "PV", "photovoltaic"]
-  prompt: |
-    Analyze for solar installation.
-    Return: {"is_solar": bool, "solar_kw": number|null}
-  examples:
-    - input: "Install 8.5 kW solar PV system"
-      output: '{"is_solar": true, "solar_kw": 8.5}'
-```
-
-### Adding a New Feature
-
-1. Create `config/features/pool.yaml`
-2. Run `python -m undervolt extract`
-
-**No code changes required.**
-
-### CLI Commands
+### Running Extraction
 
 ```bash
-# Full extraction
-python -m undervolt extract
+# Set environment variables
+export DATABASE_URL="postgresql://..."
+export VLLM_URL="http://localhost:8000/v1/chat/completions"
 
-# Test on 100 rows
-python -m undervolt extract --limit 100
-
-# Specific features only
-python -m undervolt extract --features solar generator
-
-# List configured features
-python -m undervolt list
+# Run extraction (auto-resumes from last batch)
+python scripts/extract_vllm.py
 ```
 
 ---
 
-## Output Schema
+## Features Extracted
 
-```json
-{
-  "permit_num": "2023-045678",
-  "lat": 30.2672,
-  "lng": -97.7431,
-  "zip": "78704",
-  "district": 9,
-  "year": 2023,
-  "valuation": 28500,
-  "contractor": "Tesla Energy",
-
-  "is_solar": true,
-  "solar_kw": 8.5,
-  "is_ev": false,
-  "has_battery": true,
-  "has_generator": false,
-  "generator_kw": null,
-  "is_adu": false,
-  "is_panel_upgrade": false
-}
-```
-
----
-
-## Who Uses This
-
-| Audience | What they want |
-|----------|---------------|
-| **City planners** | Where to invest in grid infrastructure |
-| **Datacenter scouts** | Is this area grid-ready? |
-| **Solar/battery companies** | Where to sell (gaps in coverage) |
-| **Utilities** | Load forecasting by neighborhood |
-| **Developers** | Infrastructure-ready zones |
+| Feature | Type | Description |
+|---------|------|-------------|
+| `is_solar` | bool | Solar/PV installation |
+| `solar_kw` | num | System size in kW |
+| `is_ev` | bool | EV charger |
+| `has_battery` | bool | Powerwall/storage |
+| `has_generator` | bool | Generator/Generac |
+| `gen_kw` | num | Generator size |
+| `is_heat_pump` | bool | Heat pump/mini-split |
+| `panel_upgrade` | bool | Electrical panel upgrade |
+| `amps` | num | Panel amperage |
+| `is_adu` | bool | Accessory dwelling unit |
+| `is_pool` | bool | Pool/spa |
+| `is_new_build` | bool | New construction |
+| `is_remodel` | bool | Renovation |
+| `sqft` | num | Square footage |
+| `prop_type` | str | sf/mf/com |
 
 ---
 
@@ -174,8 +142,8 @@ bun run dev
 Open [http://localhost:3000](http://localhost:3000)
 
 Features:
-- **Story Mode:** Guided 5-stage narrative about Austin's energy transition
-- **Explore Mode:** Chat-based queries ("show solar", "district 10", "solar trend")
+- **Story Mode:** Guided narrative about Austin's energy transition
+- **Explore Mode:** Chat-based queries
 - **Map:** Mapbox visualization with signal filtering
 - **Charts:** Trend data over time
 
@@ -183,10 +151,10 @@ Features:
 
 ## Tech Stack
 
-- **Extraction:** vLLM + Mistral-7B on DGX
-- **Data:** Neon Postgres, cuDF/RAPIDS
-- **Frontend:** Next.js 16, React 19, Tailwind, Mapbox, Recharts
-- **Output:** Parquet (RAPIDS-compatible)
+- **Extraction:** vLLM + Llama-3.1-8B on DGX
+- **Data:** Neon Postgres (1.2M permits)
+- **Frontend:** Next.js 16, React 19, Tailwind, Mapbox
+- **Output:** CSV batches (auto-resume capable)
 
 ---
 

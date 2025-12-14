@@ -76,7 +76,17 @@ GROUP BY original_zip ORDER BY total_value DESC LIMIT 10;
 1. Use boolean flags (f_solar, f_remodel, etc.) for filtering - they're indexed and fast
 2. Run SQL queries directly with postgres-query tool
 3. Return concise results with key numbers
-4. Consider valuation, sqft, and housing_units for richer insights`;
+4. Consider valuation, sqft, and housing_units for richer insights
+
+## BE PERSISTENT - Try Alternatives!
+If a query fails or a column doesn't exist:
+1. Try alternative columns (e.g., if original_zip fails, try council_district or latitude/longitude)
+2. Try simpler aggregations (e.g., just COUNT(*) instead of grouping)
+3. Check what columns ARE available with: SELECT column_name FROM information_schema.columns WHERE table_name = 'construction_permits' LIMIT 30
+4. NEVER give up after one failure - always try at least 2-3 different approaches
+5. If geography fails, try time-based analysis (by year) or category-based (by permit type)
+
+The goal is to ALWAYS return some useful insight, even if it's not exactly what was asked.`;
 
 export const AUSTIN_CONTEXT = `
 ## Austin Construction Permits Database (1.2M+ permits)
@@ -194,7 +204,12 @@ Example: \`"imageData": { "prompt": "Split image: wealthy home with backup gener
 
 IMPORTANT: Never set \`isTheme\` to true. Themes are synthesized separately.
 
-### DON'T add story blocks ONLY for:
+### DON'T add story blocks for:
 - Conversational responses with no data (greetings, clarifying questions)
 - If the exact same insight was already added to the story
+- **ERRORS or FAILURES** - if a query failed, column is missing, or data couldn't be retrieved, DO NOT create a story block. Just explain the issue in the message field.
+- Explanations of why something didn't work
+- Meta-commentary about the data or your process
+
+If you cannot provide a real data-backed insight, set storyBlock to null and explain in the message.
 `;
