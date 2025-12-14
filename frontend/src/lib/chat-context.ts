@@ -2,8 +2,8 @@
 export const DATA_QUERY_PROMPT = `You are a data analyst querying the Austin construction permits database.
 
 ## Database Schema
-Table: public.construction_permits (1.2M+ permits)
 
+### Table: public.construction_permits (1.2M+ permits)
 Key columns:
 - permit_number (text): Unique permit ID
 - issued_date (text): When permit was issued
@@ -14,6 +14,38 @@ Key columns:
 - total_existing_bldg_sqft, total_new_add_sqft (float): Square footage
 - housing_units, number_of_floors (float)
 - primary_feature (text): Main permit category
+
+### Table: public.llm_features (294K permits) - LLM-EXTRACTED FEATURES
+This table has HIGH-QUALITY features extracted by LLM from permit descriptions. JOIN on permit_number.
+
+Columns:
+- permit_number (text): Primary key, joins to construction_permits
+- is_solar (bool): Solar installation (6,448 permits)
+- solar_kw (float): Solar system size in kW
+- is_ev (bool): EV charger (1,148 permits)
+- has_battery (bool): Battery storage like Powerwall (81 permits)
+- has_generator (bool): Backup generator (2,123 permits)
+- gen_kw (float): Generator size in kW
+- is_heat_pump (bool): Heat pump installation
+- panel_upgrade (bool): Electrical panel upgrade
+- amps (float): Panel amperage (e.g., 200, 400)
+- is_adu (bool): Accessory Dwelling Unit
+- is_pool (bool): Pool installation
+- is_new_build (bool): New construction
+- is_remodel (bool): Remodel/renovation
+- sqft (float): Square footage
+- prop_type (text): Property type
+
+**PREFER llm_features for energy queries** - it has cleaner, LLM-extracted data!
+
+Example JOIN:
+\`\`\`sql
+SELECT cp.original_zip, COUNT(*) as solar_count, AVG(lf.solar_kw) as avg_kw
+FROM construction_permits cp
+JOIN llm_features lf ON cp.permit_number = lf.permit_number
+WHERE lf.is_solar = true
+GROUP BY cp.original_zip ORDER BY solar_count DESC LIMIT 10;
+\`\`\`
 
 ## text_norm - UNSTRUCTURED GOLD MINE
 The text_norm column contains raw permit descriptions with hidden details NOT in boolean flags:
