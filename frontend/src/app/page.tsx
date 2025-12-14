@@ -1,13 +1,35 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sparkles, ArrowLeft, RefreshCw, Send } from "lucide-react";
+import { Sparkles, ArrowLeft, RefreshCw, Send, PlayCircle } from "lucide-react";
 import { FloatingQuestions } from "@/components/FloatingQuestions";
 import { StorylineCards, STORYLINES, type Storyline } from "@/components/StorylineCards";
 import { StoryCards, type StoryCardItem } from "@/components/StoryCards";
+import { OnboardingWizard } from "@/components/OnboardingWizard";
 import type { ChatResponse, StoryBlock } from "@/lib/chat-schema";
 
 export default function ExplorationPage() {
+  // Onboarding state - check localStorage on mount
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
+
+  // Check localStorage on mount
+  useEffect(() => {
+    const completed = localStorage.getItem("undervolt-onboarding-complete");
+    setHasCompletedOnboarding(completed === "true");
+  }, []);
+
+  // Handle onboarding completion
+  const handleOnboardingComplete = () => {
+    localStorage.setItem("undervolt-onboarding-complete", "true");
+    setHasCompletedOnboarding(true);
+  };
+
+  // Replay intro
+  const handleReplayIntro = () => {
+    localStorage.removeItem("undervolt-onboarding-complete");
+    setHasCompletedOnboarding(false);
+  };
+
   // Storyline state - null means on homepage
   const [activeStoryline, setActiveStoryline] = useState<Storyline | null>(null);
 
@@ -258,6 +280,16 @@ export default function ExplorationPage() {
     }
   };
 
+  // Show loading state while checking localStorage
+  if (hasCompletedOnboarding === null) {
+    return <div className="min-h-screen bg-black" />;
+  }
+
+  // Show onboarding wizard if not completed
+  if (!hasCompletedOnboarding) {
+    return <OnboardingWizard onComplete={handleOnboardingComplete} />;
+  }
+
   return (
     <div className="min-h-screen bg-black text-white story-bg">
       {/* Floating header */}
@@ -277,6 +309,16 @@ export default function ExplorationPage() {
               UNDERVOLT
             </h1>
           </div>
+          {/* Replay intro button - only on storyline selection */}
+          {!activeStoryline && (
+            <button
+              onClick={handleReplayIntro}
+              className="pointer-events-auto flex items-center gap-2 text-white/30 hover:text-white/60 text-sm transition-colors"
+            >
+              <PlayCircle size={14} />
+              <span>Replay Intro</span>
+            </button>
+          )}
         </div>
       </header>
 
