@@ -7,6 +7,7 @@ import { StorylineCards, STORYLINES, type Storyline } from "@/components/Storyli
 import { StoryCards, type StoryCardItem } from "@/components/StoryCards";
 import { SelectedCardsStack } from "@/components/SelectedCardsStack";
 import { SynthesizedInsightView } from "@/components/SynthesizedInsightView";
+import { ToolCallsPanel, type ToolCall } from "@/components/ToolCallsPanel";
 import { OnboardingWizard } from "@/components/OnboardingWizard";
 import type { ChatResponse, StoryBlock } from "@/lib/chat-schema";
 
@@ -41,6 +42,9 @@ export default function ExplorationPage() {
 
   // Loading state
   const [isLoading, setIsLoading] = useState(false);
+
+  // Tool calls for debug panel
+  const [toolCalls, setToolCalls] = useState<ToolCall[]>([]);
 
   // Story cards state
   const [cards, setCards] = useState<StoryCardItem[]>([]);
@@ -115,6 +119,7 @@ export default function ExplorationPage() {
   // Handle question click - call API with timeout, fallback if slow
   const handleQuestionClick = async (question: string) => {
     setIsLoading(true);
+    setToolCalls([]); // Clear previous tool calls
 
     // Create abort controller for timeout
     const controller = new AbortController();
@@ -190,6 +195,31 @@ export default function ExplorationPage() {
               gotResponse = true;
             } catch (e) {
               console.error("Failed to parse response:", e);
+            }
+          }
+
+          // Capture tool calls for debug panel
+          if (eventType === "tool-call" && eventData) {
+            try {
+              const data = JSON.parse(eventData);
+              setToolCalls((prev) => [
+                ...prev,
+                { type: "call", name: data.name, input: data.input, timestamp: Date.now() },
+              ]);
+            } catch (e) {
+              console.error("Failed to parse tool-call:", e);
+            }
+          }
+
+          if (eventType === "tool-result" && eventData) {
+            try {
+              const data = JSON.parse(eventData);
+              setToolCalls((prev) => [
+                ...prev,
+                { type: "result", name: data.name, result: data.result, timestamp: Date.now() },
+              ]);
+            } catch (e) {
+              console.error("Failed to parse tool-result:", e);
             }
           }
 
@@ -634,6 +664,9 @@ export default function ExplorationPage() {
 
   return (
     <div className="min-h-screen bg-black text-white story-bg">
+      {/* Tool calls debug panel */}
+      <ToolCallsPanel calls={toolCalls} isLoading={isLoading} />
+
       {/* Floating header */}
       <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
         <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
