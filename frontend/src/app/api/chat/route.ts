@@ -83,6 +83,9 @@ export async function POST(req: Request) {
           prompt: message,
         });
 
+        // Log the response for debugging
+        console.log('Chat response:', JSON.stringify(response.object, null, 2));
+
         // Send final response
         sendEvent(controller, 'response', response.object);
         sendEvent(controller, 'done', {});

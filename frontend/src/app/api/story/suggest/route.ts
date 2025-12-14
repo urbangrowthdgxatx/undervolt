@@ -19,14 +19,15 @@ export async function POST(req: Request) {
         questions: z.array(z.string()).describe('2-3 follow-up questions'),
         reasoning: z.string().describe('Why these questions would deepen the story'),
       }),
-      system: `You are analyzing a user's story about Austin's energy infrastructure to suggest what they should explore next.
+      system: `You are helping users explore Austin through 1.2 million construction permits - finding stories that reveal how the city is changing.
 
 ${AUSTIN_CONTEXT}
 
 Based on the insights they've collected, identify GAPS in their story:
-- If they have resilience data but no equity angle, ask about District 4 vs District 10
-- If they have post-freeze data but no storage data, ask about batteries
-- If they have generation but no demand, ask about EVs or panel upgrades
+- If they have new construction, ask about remodels or where growth is concentrated
+- If they have luxury data (pools, Westlake), ask about affordable areas
+- If they have residential, ask about commercial or multi-family
+- If they have energy (solar, EVs), ask about post-freeze resilience
 - If they have 2-3 insights, suggest what would tie them together
 
 Generate 2-3 SHORT questions (under 10 words each) that would:
@@ -43,9 +44,9 @@ Generate 2-3 SHORT questions (under 10 words each) that would:
     console.error('Suggestion error:', error);
     return Response.json({
       questions: [
-        "Who survives blackouts in Austin?",
-        "What changed after the 2021 freeze?",
-        "Where's the solar-battery gap?",
+        "Where is Austin growing fastest?",
+        "Which neighborhoods have the most pools?",
+        "How has construction changed since 2020?",
       ]
     });
   }

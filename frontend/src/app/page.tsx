@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { MessageSquare, ArrowUp, BookOpen, Sparkles, ChevronDown, ChevronUp, X } from "lucide-react";
 import { StoryBlockCard } from "@/components/StoryBlock";
+import { MiniChart } from "@/components/MiniChart";
 import type { ChatResponse, StoryBlock } from "@/lib/chat-schema";
 
 // Story item can be an insight or a theme (which contains rolled-up insights)
@@ -16,7 +17,7 @@ export default function StoryBuilder() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([
     {
       role: "assistant",
-      content: "**Welcome to Undervolt.** Ask me anything about Austin's energy infrastructure.\n\nTry questions like:\n• \"Who can survive a blackout?\"\n• \"What changed after the freeze?\"\n• \"Where is the solar-battery gap?\"",
+      content: "**Welcome to Undervolt.** Explore Austin through 1.2 million construction permits.\n\nTry questions like:\n• \"Where is new construction booming?\"\n• \"Which neighborhoods have the most pools?\"\n• \"How has remodeling changed since 2020?\"",
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -132,6 +133,8 @@ export default function StoryBuilder() {
                     setThinkingStatus("Analyzing...");
                     break;
                   case "response":
+                    console.log("Got response event:", data);
+                    console.log("Has storyBlock:", !!data.storyBlock);
                     handleResponse(data as ChatResponse);
                     break;
                   case "error":
@@ -180,9 +183,9 @@ export default function StoryBuilder() {
     } catch {
       if (blocks.length === 0) {
         setSuggestedQuestions([
-          "Who survives blackouts in Austin?",
-          "What changed after the 2021 freeze?",
-          "Where's the solar-battery gap?",
+          "Where is Austin growing fastest?",
+          "Which neighborhoods have the most pools?",
+          "How has construction changed since 2020?",
         ]);
       }
     }
@@ -204,6 +207,12 @@ export default function StoryBuilder() {
           headline: "Resilience is Wealth",
           insight: "District 10 has **12x more generators** than District 4. When the grid fails, geography determines who survives.",
           dataPoint: { label: "generators in D10", value: "2,151" },
+          whyStoryWorthy: "equity-gap",
+          evidence: [
+            { stat: "District 10: 2,151 generators vs District 4: 175 total permits", source: "2019-2024 permit data" },
+          ],
+          confidence: "high",
+          geoData: { type: "comparison", districts: [10, 4], signal: "generator" },
         },
       });
     } else if (lower.includes("freeze") || lower.includes("uri") || lower.includes("2021")) {
@@ -214,6 +223,23 @@ export default function StoryBuilder() {
           headline: "The Freeze Changed Everything",
           insight: "Post-2021, generator permits jumped **+246%**. Austin isn't just going green—it's hedging against the grid.",
           dataPoint: { label: "generator spike", value: "+246%" },
+          whyStoryWorthy: "post-freeze-shift",
+          evidence: [
+            { stat: "Generator permits: +246% post-2021", source: "Year-over-year permit comparison" },
+            { stat: "Battery permits: +214% post-2021", source: "Year-over-year permit comparison" },
+          ],
+          confidence: "high",
+          chartData: {
+            type: "bar",
+            title: "Generator permits by year",
+            data: [
+              { name: "2019", value: 412 },
+              { name: "2020", value: 523 },
+              { name: "2021", value: 1847 },
+              { name: "2022", value: 2156 },
+              { name: "2023", value: 1892 },
+            ],
+          },
         },
       });
     } else if (lower.includes("solar") || lower.includes("battery") || lower.includes("storage")) {
@@ -224,6 +250,12 @@ export default function StoryBuilder() {
           headline: "The Storage Paradox",
           insight: "**29 solar systems** for every **1 battery**. Austin generates clean power but can't store it.",
           dataPoint: { label: "solar:battery ratio", value: "29:1" },
+          whyStoryWorthy: "paradox",
+          evidence: [
+            { stat: "25,610 solar permits vs 878 battery permits", source: "2019-2024 permit data" },
+          ],
+          confidence: "high",
+          geoData: { type: "district", districts: [3, 9], signal: "solar" },
         },
       });
     } else {
@@ -231,7 +263,7 @@ export default function StoryBuilder() {
         ...prev,
         {
           role: "assistant",
-          content: "I can help you explore Austin's energy infrastructure. Try asking about:\n\n• **Resilience**: \"Who survives blackouts?\"\n• **The Freeze**: \"What changed after 2021?\"\n• **Storage**: \"Where's the solar-battery gap?\"",
+          content: "I can help you explore Austin through 1.2 million construction permits. Try asking about:\n\n• **Growth**: \"Where is Austin growing fastest?\"\n• **Luxury**: \"Which neighborhoods have the most pools?\"\n• **Trends**: \"How has construction changed since 2020?\"",
         },
       ]);
     }
@@ -446,20 +478,6 @@ export default function StoryBuilder() {
               </button>
             </div>
           </form>
-
-          {suggestedQuestions.length > 0 && !isLoading && (
-            <div className="mt-3 space-y-1.5">
-              {suggestedQuestions.map((q, i) => (
-                <button
-                  key={i}
-                  onClick={() => setChatInput(q)}
-                  className="block w-full text-left text-xs text-white/50 hover:text-white hover:bg-white/5 rounded-lg px-3 py-2 transition-colors"
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
@@ -493,22 +511,22 @@ export default function StoryBuilder() {
               <div className="mt-8 space-y-2 text-left">
                 <p className="text-xs text-white/30 uppercase tracking-wider mb-3">Try asking</p>
                 <button
-                  onClick={() => setChatInput("Who can survive a blackout in Austin?")}
+                  onClick={() => setChatInput("Where is new construction booming?")}
                   className="block w-full text-left text-sm text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-4 py-2 transition-colors"
                 >
-                  &ldquo;Who can survive a blackout?&rdquo;
+                  &ldquo;Where is new construction booming?&rdquo;
                 </button>
                 <button
-                  onClick={() => setChatInput("What changed after the freeze?")}
+                  onClick={() => setChatInput("Which neighborhoods have the most pools?")}
                   className="block w-full text-left text-sm text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-4 py-2 transition-colors"
                 >
-                  &ldquo;What changed after the freeze?&rdquo;
+                  &ldquo;Which neighborhoods have the most pools?&rdquo;
                 </button>
                 <button
-                  onClick={() => setChatInput("Where is the solar-battery gap?")}
+                  onClick={() => setChatInput("How has remodeling changed since 2020?")}
                   className="block w-full text-left text-sm text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-4 py-2 transition-colors"
                 >
-                  &ldquo;Where is the solar-battery gap?&rdquo;
+                  &ldquo;How has remodeling changed since 2020?&rdquo;
                 </button>
               </div>
             </div>
@@ -566,15 +584,50 @@ export default function StoryBuilder() {
                       </button>
 
                       {item.expanded && (
-                        <div className="px-5 pb-4 space-y-2">
+                        <div className="px-5 pb-4 space-y-4">
                           {item.insights.map((insight) => (
                             <div
                               key={insight.id}
-                              className="flex items-center justify-between bg-white/5 rounded-lg px-4 py-3"
+                              className="bg-white/5 rounded-lg p-4 border border-white/5"
                             >
-                              <span className="text-sm text-white/70">{insight.headline}</span>
-                              {insight.dataPoint && (
-                                <span className="text-xs text-white/40">{insight.dataPoint.value}</span>
+                              {/* Headline + Data Point */}
+                              <div className="flex items-start justify-between gap-3 mb-2">
+                                <h4 className="text-sm font-medium text-white">{insight.headline}</h4>
+                                {insight.dataPoint && (
+                                  <div className="flex-shrink-0 bg-white/10 rounded px-2 py-1">
+                                    <span className="text-lg font-light text-white">{insight.dataPoint.value}</span>
+                                    <span className="text-xs text-white/40 ml-1">{insight.dataPoint.label}</span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Full Insight */}
+                              <p className="text-sm text-white/60 leading-relaxed">
+                                {insight.insight.split("**").map((part, i) =>
+                                  i % 2 === 1 ? (
+                                    <strong key={i} className="text-white/80 font-medium">{part}</strong>
+                                  ) : (
+                                    part
+                                  )
+                                )}
+                              </p>
+
+                              {/* Evidence */}
+                              {insight.evidence && insight.evidence.length > 0 && (
+                                <div className="mt-2 pt-2 border-t border-white/5">
+                                  {insight.evidence.map((ev, i) => (
+                                    <p key={i} className="text-xs text-white/40">
+                                      {ev.stat} <span className="text-white/20">· {ev.source}</span>
+                                    </p>
+                                  ))}
+                                </div>
+                              )}
+
+                              {/* Chart if available */}
+                              {insight.chartData && (
+                                <div className="mt-3">
+                                  <MiniChart chartData={insight.chartData} />
+                                </div>
                               )}
                             </div>
                           ))}
@@ -591,9 +644,31 @@ export default function StoryBuilder() {
                   <span>Finding the theme...</span>
                 </div>
               )}
+
             </div>
           )}
         </div>
+
+        {/* Next Angles - Fixed at bottom */}
+        {suggestedQuestions.length > 0 && storyItems.length > 0 && !isLoading && (
+          <div className="px-6 py-3 border-t border-white/5">
+            <p className="text-xs text-white/40 uppercase tracking-wider mb-2 flex items-center gap-2">
+              <Sparkles size={10} />
+              Next angles
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {suggestedQuestions.map((q, i) => (
+                <button
+                  key={i}
+                  onClick={() => setChatInput(q)}
+                  className="text-xs text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-full px-3 py-1.5 transition-colors"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Story Footer */}
         {storyItems.length > 0 && (
