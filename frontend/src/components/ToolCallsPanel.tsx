@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, ChevronUp, Database, Terminal } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ChevronDown, ChevronUp, Database, Terminal, Trash2 } from "lucide-react";
 
 export interface ToolCall {
   type: "call" | "result";
@@ -14,15 +14,39 @@ export interface ToolCall {
 interface ToolCallsPanelProps {
   calls: ToolCall[];
   isLoading?: boolean;
+  onClear?: () => void;
 }
 
-export function ToolCallsPanel({ calls, isLoading }: ToolCallsPanelProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+// Extract SQL from tool call input
+function extractSQL(input: unknown): string | null {
+  if (!input) return null;
+  if (typeof input === "string") return input;
+  if (typeof input === "object" && input !== null) {
+    const obj = input as Record<string, unknown>;
+    // Common field names for SQL
+    if (obj.sql) return String(obj.sql);
+    if (obj.query) return String(obj.query);
+    if (obj.statement) return String(obj.statement);
+  }
+  return null;
+}
 
+export function ToolCallsPanel({ calls, isLoading, onClear }: ToolCallsPanelProps) {
+  const [isExpanded, setIsExpanded] = useState(true); // Start expanded
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when new calls come in
+  useEffect(() => {
+    if (scrollRef.current && isExpanded) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [calls.length, isExpanded]);
+
+  // Always show if there's history or loading
   if (calls.length === 0 && !isLoading) return null;
 
   return (
-    <div className="fixed bottom-20 left-4 z-40 max-w-md">
+    <div className="fixed bottom-20 left-4 z-40 w-[500px]">
       {/* Toggle button */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
@@ -40,52 +64,76 @@ export function ToolCallsPanel({ calls, isLoading }: ToolCallsPanelProps) {
 
       {/* Expanded panel */}
       {isExpanded && (
-        <div className="mt-2 rounded-xl bg-black/95 border border-white/20 backdrop-blur-sm overflow-hidden max-h-80 overflow-y-auto">
-          <div className="p-3 border-b border-white/10 flex items-center gap-2">
-            <Terminal size={14} className="text-white/50" />
-            <span className="text-xs text-white/50 uppercase tracking-wider">Tool Calls</span>
+        <div className="mt-2 rounded-xl bg-black/95 border border-white/20 backdrop-blur-sm overflow-hidden">
+          {/* Header */}
+          <div className="p-3 border-b border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Terminal size={14} className="text-white/50" />
+              <span className="text-xs text-white/50 uppercase tracking-wider">SQL Queries</span>
+            </div>
+            {onClear && calls.length > 0 && (
+              <button
+                onClick={onClear}
+                className="flex items-center gap-1 px-2 py-1 rounded text-xs text-white/40 hover:text-white/70 hover:bg-white/10 transition-colors"
+              >
+                <Trash2 size={10} />
+                Clear
+              </button>
+            )}
           </div>
 
-          <div className="p-2 space-y-2">
-            {calls.map((call, i) => (
-              <div
-                key={i}
-                className={`p-2 rounded-lg text-xs ${
-                  call.type === "call"
-                    ? "bg-blue-500/10 border border-blue-500/20"
-                    : "bg-green-500/10 border border-green-500/20"
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <span
-                    className={`px-1.5 py-0.5 rounded text-[10px] uppercase ${
-                      call.type === "call"
-                        ? "bg-blue-500/20 text-blue-400"
-                        : "bg-green-500/20 text-green-400"
-                    }`}
-                  >
-                    {call.type}
-                  </span>
-                  <span className="text-white/70 font-mono">{call.name}</span>
+          {/* Calls list */}
+          <div ref={scrollRef} className="p-2 space-y-2 max-h-96 overflow-y-auto">
+            {calls.map((call, i) => {
+              const sql = call.type === "call" ? extractSQL(call.input) : null;
+
+              return (
+                <div
+                  key={i}
+                  className={`p-2 rounded-lg text-xs ${
+                    call.type === "call"
+                      ? "bg-blue-500/10 border border-blue-500/20"
+                      : "bg-green-500/10 border border-green-500/20"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span
+                      className={`px-1.5 py-0.5 rounded text-[10px] uppercase font-medium ${
+                        call.type === "call"
+                          ? "bg-blue-500/20 text-blue-400"
+                          : "bg-green-500/20 text-green-400"
+                      }`}
+                    >
+                      {call.type === "call" ? "SQL" : "Result"}
+                    </span>
+                    <span className="text-white/50 font-mono text-[10px]">{call.name}</span>
+                  </div>
+
+                  {/* SQL Query - show prominently */}
+                  {call.type === "call" && sql && (
+                    <pre className="text-blue-300/80 overflow-x-auto whitespace-pre-wrap text-[11px] mt-1 p-2 bg-black/50 rounded font-mono leading-relaxed">
+                      {sql}
+                    </pre>
+                  )}
+
+                  {/* Non-SQL input */}
+                  {call.type === "call" && !sql && call.input && (
+                    <pre className="text-white/50 overflow-x-auto whitespace-pre-wrap text-[10px] mt-1 p-1.5 bg-black/30 rounded">
+                      {JSON.stringify(call.input, null, 2)}
+                    </pre>
+                  )}
+
+                  {/* Result */}
+                  {call.type === "result" && call.result && (
+                    <pre className="text-green-300/70 overflow-x-auto whitespace-pre-wrap text-[10px] mt-1 p-2 bg-black/50 rounded max-h-40 overflow-y-auto font-mono">
+                      {typeof call.result === "string"
+                        ? call.result.substring(0, 1000) + (call.result.length > 1000 ? "\n..." : "")
+                        : JSON.stringify(call.result, null, 2).substring(0, 1000)}
+                    </pre>
+                  )}
                 </div>
-
-                {call.type === "call" && call.input && (
-                  <pre className="text-white/50 overflow-x-auto whitespace-pre-wrap text-[10px] mt-1 p-1.5 bg-black/30 rounded">
-                    {typeof call.input === "string"
-                      ? call.input
-                      : JSON.stringify(call.input, null, 2)}
-                  </pre>
-                )}
-
-                {call.type === "result" && call.result && (
-                  <pre className="text-white/50 overflow-x-auto whitespace-pre-wrap text-[10px] mt-1 p-1.5 bg-black/30 rounded max-h-32 overflow-y-auto">
-                    {typeof call.result === "string"
-                      ? call.result.substring(0, 500) + (call.result.length > 500 ? "..." : "")
-                      : JSON.stringify(call.result, null, 2).substring(0, 500)}
-                  </pre>
-                )}
-              </div>
-            ))}
+              );
+            })}
 
             {calls.length === 0 && isLoading && (
               <div className="text-center py-4 text-white/30 text-xs">

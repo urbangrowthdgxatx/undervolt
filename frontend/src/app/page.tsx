@@ -119,7 +119,7 @@ export default function ExplorationPage() {
   // Handle question click - call API with timeout, fallback if slow
   const handleQuestionClick = async (question: string) => {
     setIsLoading(true);
-    setToolCalls([]); // Clear previous tool calls
+    // Don't clear tool calls - keep history
 
     // Create abort controller for timeout
     const controller = new AbortController();
@@ -665,7 +665,11 @@ export default function ExplorationPage() {
   return (
     <div className="min-h-screen bg-black text-white story-bg">
       {/* Tool calls debug panel */}
-      <ToolCallsPanel calls={toolCalls} isLoading={isLoading} />
+      <ToolCallsPanel
+        calls={toolCalls}
+        isLoading={isLoading}
+        onClear={() => setToolCalls([])}
+      />
 
       {/* Floating header */}
       <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
