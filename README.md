@@ -10,6 +10,135 @@ This isn't failure. It's transition under constraint.
 
 ---
 
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           UNDERVOLT SYSTEM                              │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│   ┌─────────────────────────────────────────────────────────────────┐   │
+│   │                    DGX BOX (GPU EXTRACTION)                     │   │
+│   │                                                                 │   │
+│   │   ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌─────────┐  │   │
+│   │   │ Raw Data │───▶│   NLP    │───▶│   8B     │───▶│ Struct  │  │   │
+│   │   │  2.2M    │    │ Filter   │    │  Model   │    │ Signals │  │   │
+│   │   │ permits  │    │ keywords │    │ Extract  │    │  JSON   │  │   │
+│   │   └──────────┘    └──────────┘    └──────────┘    └────┬────┘  │   │
+│   │                                                        │       │   │
+│   │   cuDF/RAPIDS ─────────────────────────────────────────┘       │   │
+│   └───────────────────────────────────────────┬─────────────────────┘   │
+│                                               │                         │
+│                                               ▼                         │
+│   ┌─────────────────────────────────────────────────────────────────┐   │
+│   │                      NEON POSTGRES                              │   │
+│   │                                                                 │   │
+│   │   construction_permits                                          │   │
+│   │   ├── permit_num, lat, lng, zip, district, year                 │   │
+│   │   └── f_solar, f_ev, f_battery, f_generator, f_adu, f_panel     │   │
+│   └───────────────────────────────────────────┬─────────────────────┘   │
+│                                               │                         │
+│                                               ▼                         │
+│   ┌─────────────────────────────────────────────────────────────────┐   │
+│   │                      NEXT.JS FRONTEND                           │   │
+│   │                                                                 │   │
+│   │   ┌─────────────┐    ┌──────────────┐    ┌─────────────────┐   │   │
+│   │   │  MCP Server │───▶│   GPT-4o     │───▶│  Story Blocks   │   │   │
+│   │   │  (SQL Tool) │    │   + Zod      │    │  Maps, Charts   │   │   │
+│   │   └─────────────┘    └──────────────┘    └─────────────────┘   │   │
+│   └─────────────────────────────────────────────────────────────────┘   │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Extraction Pipeline (DGX)
+
+The GPU-accelerated pipeline transforms raw permit text into structured signals:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        EXTRACTION PIPELINE                             │
+│                                                                        │
+│  ┌─────────────┐                                                       │
+│  │   CSV       │  2.2M permits                                         │
+│  │  (1.7 GB)   │  Issued_Construction_Permits.csv                      │
+│  └──────┬──────┘                                                       │
+│         │                                                              │
+│         ▼                                                              │
+│  ┌─────────────┐                                                       │
+│  │  Stage 1    │  Load + Clean (cuDF)                                  │
+│  │  Clean      │  • Select columns: permit_num, description, lat, lng  │
+│  │             │  • Drop nulls, min length filter                      │
+│  └──────┬──────┘  → 1.8M rows                                          │
+│         │                                                              │
+│         ▼                                                              │
+│  ┌─────────────┐                                                       │
+│  │  Stage 2    │  NLP Keyword Filter                                   │
+│  │  Filter     │  • Keywords from YAML config                          │
+│  │             │  • "solar", "generator", "battery", "EV", etc.        │
+│  └──────┬──────┘  → 150K candidate rows                                │
+│         │                                                              │
+│         ▼                                                              │
+│  ┌─────────────┐                                                       │
+│  │  Stage 3    │  LLM Extraction (8B model on vLLM)                    │
+│  │  Extract    │  • Batched inference (batch_size=50)                  │
+│  │             │  • Structured JSON output via prompt                  │
+│  │             │  • {"is_solar": true, "solar_kw": 8.5}                │
+│  └──────┬──────┘  → Extracted features                                 │
+│         │                                                              │
+│         ▼                                                              │
+│  ┌─────────────┐                                                       │
+│  │  Stage 4    │  Validate + Store                                     │
+│  │  Save       │  • JSON parse + schema validation                     │
+│  │             │  • Write to Neon Postgres                             │
+│  └─────────────┘  → Queryable signals                                  │
+│                                                                        │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Frontend Architecture
+
+The Next.js frontend connects to the database via MCP (Model Context Protocol):
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        FRONTEND (Next.js 16)                           │
+│                                                                        │
+│   User clicks question                                                 │
+│         │                                                              │
+│         ▼                                                              │
+│   ┌─────────────┐                                                      │
+│   │  /api/chat  │  Route handler                                       │
+│   └──────┬──────┘                                                      │
+│          │                                                             │
+│          ▼                                                             │
+│   ┌─────────────┐    ┌─────────────────────────────────┐              │
+│   │  MCP Client │───▶│  @modelcontextprotocol/server   │              │
+│   │             │    │  postgres-query tool            │              │
+│   └──────┬──────┘    └─────────────────────────────────┘              │
+│          │                                                             │
+│          ▼                                                             │
+│   ┌─────────────┐                                                      │
+│   │  GPT-4o     │  generateObject() with Zod schema                   │
+│   │  + Context  │  • Writes SQL via MCP                               │
+│   │             │  • Formats insight as StoryBlock                    │
+│   └──────┬──────┘                                                      │
+│          │                                                             │
+│          ▼                                                             │
+│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐              │
+│   │  StoryBlock │    │  MiniMap    │    │  MiniChart  │              │
+│   │   Card      │    │  (Mapbox)   │    │  (Recharts) │              │
+│   └─────────────┘    └─────────────┘    └─────────────┘              │
+│                                                                        │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## The Data
 
 - **Source:** [Austin Open Data - Issued Construction Permits](https://data.austintexas.gov/Building-and-Development/Issued-Construction-Permits/3syk-w9eu)
@@ -38,44 +167,32 @@ This isn't failure. It's transition under constraint.
 
 ---
 
-## Extraction Pipeline
+## Database Schema
 
-A config-driven, reusable pipeline. Add a new feature? Just add a YAML config.
-
-```
-Raw Data (2.2M permits)
-    → Clean (select columns)
-    → Build Prompt (from YAML config)
-    → LLM Extraction (vLLM on DGX)
-    → Parse JSON → Validate
-    → Save Parquet
-```
-
-### Directory Structure
-
-```
-undervolt/
-├── config/
-│   ├── pipeline.yaml              # Global settings (DB, model, batch size)
-│   └── features/                  # One YAML per feature group
-│       ├── solar.yaml
-│       ├── ev.yaml
-│       ├── battery.yaml
-│       ├── generator.yaml
-│       ├── adu.yaml
-│       └── panel_upgrade.yaml
+```sql
+construction_permits
+├── permit_num        TEXT PRIMARY KEY
+├── description       TEXT
+├── lat, lng          DOUBLE PRECISION
+├── original_zip      TEXT
+├── council_district  TEXT
+├── calendar_year_issued INTEGER
+├── issued_date_dt    DATE
 │
-├── src/undervolt/
-│   ├── config/                    # Config loading + validation
-│   ├── data/                      # CSV/Postgres/Parquet loaders
-│   ├── extraction/                # LLM pipeline + prompt building
-│   └── cli.py                     # Entry point
-│
-├── frontend/                      # Next.js visualization
-└── output/features/               # Parquet output
+│ -- Extracted signals (boolean flags)
+├── f_solar           BOOLEAN
+├── f_ev              BOOLEAN
+├── f_battery         BOOLEAN
+├── f_generator       BOOLEAN
+├── f_adu             BOOLEAN
+└── f_panel           BOOLEAN
 ```
 
-### Feature Config Example
+---
+
+## Feature Config (YAML-Driven)
+
+Add new extraction features without code changes:
 
 ```yaml
 # config/features/solar.yaml
@@ -95,58 +212,100 @@ extraction:
   prompt: |
     Analyze for solar installation.
     Return: {"is_solar": bool, "solar_kw": number|null}
-  examples:
-    - input: "Install 8.5 kW solar PV system"
-      output: '{"is_solar": true, "solar_kw": 8.5}'
-```
-
-### Adding a New Feature
-
-1. Create `config/features/pool.yaml`
-2. Run `python -m undervolt extract`
-
-**No code changes required.**
-
-### CLI Commands
-
-```bash
-# Full extraction
-python -m undervolt extract
-
-# Test on 100 rows
-python -m undervolt extract --limit 100
-
-# Specific features only
-python -m undervolt extract --features solar generator
-
-# List configured features
-python -m undervolt list
 ```
 
 ---
 
-## Output Schema
+## Quick Start
 
-```json
-{
-  "permit_num": "2023-045678",
-  "lat": 30.2672,
-  "lng": -97.7431,
-  "zip": "78704",
-  "district": 9,
-  "year": 2023,
-  "valuation": 28500,
-  "contractor": "Tesla Energy",
+### Frontend
 
-  "is_solar": true,
-  "solar_kw": 8.5,
-  "is_ev": false,
-  "has_battery": true,
-  "has_generator": false,
-  "generator_kw": null,
-  "is_adu": false,
-  "is_panel_upgrade": false
-}
+```bash
+cd frontend
+bun install
+bun run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000)
+
+### Extraction (requires DGX)
+
+```bash
+python scripts/extract_parallel.py
+```
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| GPU Processing | cuDF/RAPIDS on DGX |
+| LLM Extraction | vLLM + 8B model |
+| Database | Neon Postgres (serverless) |
+| API | MCP (Model Context Protocol) |
+| Frontend | Next.js 16, React 19, Tailwind |
+| Maps | Mapbox GL |
+| Charts | Recharts |
+
+---
+
+## Future: Context Bundles
+
+Pre-compute data-grounded questions from extraction patterns:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                    CONTEXT BUNDLES (PLANNED)                           │
+│                                                                        │
+│   After each batch extraction:                                         │
+│                                                                        │
+│   ┌─────────────┐    ┌─────────────┐    ┌─────────────────────────┐   │
+│   │  Extracted  │───▶│  Context    │───▶│  Question Generator     │   │
+│   │   Signals   │    │   Bundle    │    │  (data-grounded)        │   │
+│   │             │    │   Builder   │    │                         │   │
+│   └─────────────┘    └─────────────┘    └───────────┬─────────────┘   │
+│                                                     │                  │
+│   Current: Foundation model generates questions     ▼                  │
+│   from general knowledge                      ┌─────────────┐         │
+│                                               │ Rich, Data- │         │
+│   Future: Pre-compute question bundles        │  Grounded   │         │
+│   based on actual extracted patterns          │  Questions  │         │
+│                                               └─────────────┘         │
+│                                                                        │
+│   Examples:                                                            │
+│   • "District 10 has 5x more generators than District 4—why?"         │
+│   • "Solar-to-battery ratio dropped in 2023—what changed?"            │
+│   • "78704 has the highest ADU density—is it zoning?"                 │
+│                                                                        │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Directory Structure
+
+```
+undervolt/
+├── config/
+│   └── features/           # YAML configs per signal type
+│       ├── energy.yaml
+│       └── ...
+│
+├── scripts/
+│   ├── extract.py          # Single-threaded extraction
+│   ├── extract_parallel.py # Multi-GPU parallel extraction
+│   └── gpu_extract.py      # cuDF GPU utilities
+│
+├── frontend/
+│   ├── src/app/            # Next.js app router
+│   ├── src/components/     # React components
+│   │   ├── cards/          # InsightCard, MapCard, ChartCard
+│   │   ├── MiniMap.tsx     # Mapbox integration
+│   │   └── MiniChart.tsx   # Recharts integration
+│   └── src/lib/            # Shared utilities
+│
+└── output/                 # Extracted parquet files
 ```
 
 ---
@@ -160,33 +319,6 @@ python -m undervolt list
 | **Solar/battery companies** | Where to sell (gaps in coverage) |
 | **Utilities** | Load forecasting by neighborhood |
 | **Developers** | Infrastructure-ready zones |
-
----
-
-## Frontend
-
-```bash
-cd frontend
-bun install
-bun run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
-
-Features:
-- **Story Mode:** Guided 5-stage narrative about Austin's energy transition
-- **Explore Mode:** Chat-based queries ("show solar", "district 10", "solar trend")
-- **Map:** Mapbox visualization with signal filtering
-- **Charts:** Trend data over time
-
----
-
-## Tech Stack
-
-- **Extraction:** vLLM + Mistral-7B on DGX
-- **Data:** Neon Postgres, cuDF/RAPIDS
-- **Frontend:** Next.js 16, React 19, Tailwind, Mapbox, Recharts
-- **Output:** Parquet (RAPIDS-compatible)
 
 ---
 
