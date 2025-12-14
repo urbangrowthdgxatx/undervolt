@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Map, { Marker, Popup, NavigationControl, Source, Layer } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Zap, Sun, Battery, Home, Gauge, CircuitBoard, Map as MapIcon, BarChart3 } from "lucide-react";
+import type { DistrictDataItem } from "@/lib/chat-schema";
 
 // You'll need to add your Mapbox token
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "YOUR_MAPBOX_TOKEN";
@@ -190,7 +191,7 @@ function calculateDistrictScores(permits: PermitLocation[]) {
   return scores;
 }
 
-export type ViewMode = "points" | "electrification" | "stress" | "resilience" | "paradox";
+export type ViewMode = "points" | "electrification" | "stress" | "resilience" | "paradox" | "equity";
 
 interface PermitMapProps {
   filter?: SignalType | SignalType[];
@@ -200,6 +201,7 @@ interface PermitMapProps {
   showLegend?: boolean;
   viewMode?: ViewMode;
   onViewModeChange?: (mode: ViewMode) => void;
+  districtData?: DistrictDataItem[];  // Real data from LLM
 }
 
 export function PermitMap({
@@ -210,6 +212,7 @@ export function PermitMap({
   showLegend = false,
   viewMode: externalViewMode,
   onViewModeChange,
+  districtData,
 }: PermitMapProps) {
   const [selectedPermit, setSelectedPermit] = useState<PermitLocation | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<number | null>(null);
@@ -224,8 +227,44 @@ export function PermitMap({
     zoom: 11,
   });
 
-  // Calculate district scores
-  const districtScores = useMemo(() => calculateDistrictScores(mockPermitLocations), []);
+  // Use real district data from LLM if available, otherwise calculate from mock
+  const districtScores = useMemo(() => {
+    if (districtData && districtData.length > 0) {
+      // Convert LLM data to our score format
+      const scores: Record<number, {
+        electrification: number;
+        gridStress: number;
+        resilience: number;
+        generatorRatio: number;
+        equityRate: number;
+        total: number;
+        totalGrowth: number;
+        breakdown: { solar: number; ev: number; battery: number; generator: number; adu: number; panel: number };
+        name: string;
+      }> = {};
+
+      districtData.forEach((d) => {
+        const b = { solar: d.solar, ev: d.ev, battery: d.battery, generator: d.generator, adu: d.adu, panel: d.panel };
+        scores[d.district] = {
+          electrification: (b.solar * 2) + (b.ev * 1.5) + (b.battery * 3) + (b.panel * 0.5),
+          gridStress: ((b.ev * 2) + (b.adu * 1) + (b.panel * 0.5)) - ((b.solar * 1.5) + (b.battery * 2)),
+          resilience: (b.solar * 1) + (b.battery * 3) + (b.generator * 2),
+          generatorRatio: b.generator / (b.solar + 1),
+          equityRate: d.electrificationRate,
+          total: d.totalEnergy,
+          totalGrowth: d.totalGrowth,
+          breakdown: b,
+          name: d.name,
+        };
+      });
+      return scores;
+    }
+    // Fallback to mock data calculation
+    return calculateDistrictScores(mockPermitLocations);
+  }, [districtData]);
+
+  // Check if we have real data
+  const hasRealData = districtData && districtData.length > 0;
 
   // Filter permits based on signal type (supports single or array)
   const filteredPermits = mockPermitLocations.filter((p) => {
@@ -271,6 +310,12 @@ export function PermitMap({
         const normalized = Math.min(score.generatorRatio, 1);
         return `rgba(249, 115, 22, ${0.3 + normalized * 0.6})`;
       }
+      case "equity": {
+        // Purple gradient - higher rate = more electrification equity
+        const equityRate = (score as { equityRate?: number }).equityRate ?? 0;
+        const normalized = Math.min(equityRate / 0.5, 1);  // Scale 0-0.5%
+        return `rgba(168, 85, 247, ${0.3 + normalized * 0.6})`;
+      }
       default:
         return "rgba(255,255,255,0.1)";
     }
@@ -290,6 +335,10 @@ export function PermitMap({
         return score.resilience.toFixed(1);
       case "paradox":
         return score.generatorRatio.toFixed(2);
+      case "equity": {
+        const equityRate = (score as { equityRate?: number }).equityRate ?? 0;
+        return `${equityRate.toFixed(3)}%`;
+      }
       default:
         return score.total.toString();
     }
@@ -302,6 +351,7 @@ export function PermitMap({
       case "stress": return "Grid Stress";
       case "resilience": return "Resilience Score";
       case "paradox": return "Generator Ratio";
+      case "equity": return "Electrification Rate";
       default: return "Permits";
     }
   };
@@ -476,55 +526,12 @@ export function PermitMap({
         )}
       </Map>
 
-      {/* View Mode Toggle */}
-      <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-sm rounded-lg p-1 border border-white/10 flex gap-1">
-        <button
-          onClick={() => setViewMode("points")}
-          className={`px-3 py-1.5 rounded text-xs transition-all flex items-center gap-1.5 ${
-            viewMode === "points" ? "bg-white text-black" : "text-white/60 hover:text-white"
-          }`}
-          title="Individual permits"
-        >
-          <MapIcon size={12} />
-          Points
-        </button>
-        <button
-          onClick={() => setViewMode("electrification")}
-          className={`px-3 py-1.5 rounded text-xs transition-all ${
-            viewMode === "electrification" ? "bg-green-500 text-white" : "text-white/60 hover:text-white"
-          }`}
-          title="Electrification Score"
-        >
-          ⚡ Electrify
-        </button>
-        <button
-          onClick={() => setViewMode("stress")}
-          className={`px-3 py-1.5 rounded text-xs transition-all ${
-            viewMode === "stress" ? "bg-red-500 text-white" : "text-white/60 hover:text-white"
-          }`}
-          title="Grid Stress"
-        >
-          📊 Stress
-        </button>
-        <button
-          onClick={() => setViewMode("resilience")}
-          className={`px-3 py-1.5 rounded text-xs transition-all ${
-            viewMode === "resilience" ? "bg-blue-500 text-white" : "text-white/60 hover:text-white"
-          }`}
-          title="Resilience Score"
-        >
-          🛡️ Resilience
-        </button>
-        <button
-          onClick={() => setViewMode("paradox")}
-          className={`px-3 py-1.5 rounded text-xs transition-all ${
-            viewMode === "paradox" ? "bg-orange-500 text-white" : "text-white/60 hover:text-white"
-          }`}
-          title="Generator Paradox"
-        >
-          🔥 Paradox
-        </button>
-      </div>
+      {/* Data source indicator */}
+      {hasRealData && viewMode !== "points" && (
+        <div className="absolute top-4 left-4 bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs border border-green-500/30">
+          Live Data
+        </div>
+      )}
 
       {/* Score Legend */}
       {viewMode !== "points" && (
@@ -535,12 +542,17 @@ export function PermitMap({
               background: viewMode === "electrification" ? "linear-gradient(to right, rgba(34,197,94,0.3), rgba(34,197,94,0.9))" :
                          viewMode === "stress" ? "linear-gradient(to right, rgba(34,197,94,0.9), rgba(239,68,68,0.9))" :
                          viewMode === "resilience" ? "linear-gradient(to right, rgba(59,130,246,0.3), rgba(59,130,246,0.9))" :
+                         viewMode === "equity" ? "linear-gradient(to right, rgba(168,85,247,0.3), rgba(168,85,247,0.9))" :
                          "linear-gradient(to right, rgba(249,115,22,0.3), rgba(249,115,22,0.9))"
             }} />
             <span className="text-xs text-white/60">
-              {viewMode === "stress" ? "Surplus → Stressed" : "Low → High"}
+              {viewMode === "stress" ? "Surplus → Stressed" :
+               viewMode === "equity" ? "Low Equity → High Equity" : "Low → High"}
             </span>
           </div>
+          {viewMode === "equity" && (
+            <p className="text-xs text-white/40 mt-2">Energy permits ÷ Total permits</p>
+          )}
         </div>
       )}
 
