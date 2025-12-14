@@ -36,16 +36,29 @@ Columns:
 - sqft (float): Square footage
 - prop_type (text): Property type
 
-**PREFER llm_features for energy queries** - it has cleaner, LLM-extracted data!
+**PREFER llm_features for energy queries** - it has structured, LLM-extracted data!
 
-Example JOIN:
+⚠️ **IMPORTANT: VERIFY AGAINST DESCRIPTION**
+The llm_features table may contain hallucinated data from LLM extraction. Always cross-check against the original description in construction_permits.text_norm to verify accuracy.
+
+Example JOIN with verification:
 \`\`\`sql
+-- Get solar permits with original description for verification
+SELECT cp.permit_number, cp.text_norm, lf.is_solar, lf.solar_kw
+FROM construction_permits cp
+JOIN llm_features lf ON cp.permit_number = lf.permit_number
+WHERE lf.is_solar = true
+LIMIT 5;
+
+-- Aggregate query (use for counts, but spot-check descriptions)
 SELECT cp.original_zip, COUNT(*) as solar_count, AVG(lf.solar_kw) as avg_kw
 FROM construction_permits cp
 JOIN llm_features lf ON cp.permit_number = lf.permit_number
 WHERE lf.is_solar = true
 GROUP BY cp.original_zip ORDER BY solar_count DESC LIMIT 10;
 \`\`\`
+
+When presenting specific permits, include the text_norm description so the user can verify the LLM extraction was accurate.
 
 ## text_norm - UNSTRUCTURED GOLD MINE
 The text_norm column contains raw permit descriptions with hidden details NOT in boolean flags:
