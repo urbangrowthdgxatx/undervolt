@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       model: openai('gpt-4o-mini'),
       schema: z.object({
         questions: z.array(z.string()).describe('20-28 short follow-up questions'),
-        reasoning: z.string().describe('Why these questions fit the current mode'),
+        reasoning: z.string().optional().describe('Why these questions fit the current mode'),
       }),
       system: `You are helping users explore Austin through 1.2 million construction permits.
 
