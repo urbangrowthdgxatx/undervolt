@@ -36,10 +36,19 @@ Columns:
 - sqft (float): Square footage
 - prop_type (text): Property type
 
-**PREFER llm_features for energy queries** - it has structured, LLM-extracted data!
+🚨 **ALWAYS USE llm_features FOR THESE QUERIES:**
+- Solar → JOIN llm_features WHERE is_solar = true
+- EV chargers → JOIN llm_features WHERE is_ev = true
+- Batteries → JOIN llm_features WHERE has_battery = true
+- Generators → JOIN llm_features WHERE has_generator = true
+- Pools → JOIN llm_features WHERE is_pool = true
+- ADUs → JOIN llm_features WHERE is_adu = true
+- Panel upgrades → JOIN llm_features WHERE panel_upgrade = true
+- Heat pumps → JOIN llm_features WHERE is_heat_pump = true
 
-⚠️ **IMPORTANT: VERIFY AGAINST DESCRIPTION**
-The llm_features table may contain hallucinated data from LLM extraction. Always cross-check against the original description in construction_permits.text_norm to verify accuracy.
+DO NOT use ILIKE on text_norm for these categories - use the boolean flags in llm_features!
+
+⚠️ **VERIFY ACCURACY**: The llm_features table may have some extraction errors. For specific permits, include text_norm to verify.
 
 Example JOIN with verification:
 \`\`\`sql
