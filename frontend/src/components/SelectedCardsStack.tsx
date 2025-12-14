@@ -57,7 +57,7 @@ export function SelectedCardsStack({ cards, selectedIds, onDeselect }: SelectedC
   };
 
   return (
-    <div className="fixed bottom-24 right-6 z-40 flex flex-col items-end gap-2">
+    <div className="fixed bottom-32 right-6 z-40 flex flex-col items-end gap-2 pointer-events-auto">
       {/* Collapse/Expand toggle */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}

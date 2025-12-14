@@ -6,6 +6,7 @@ import { FloatingQuestions } from "@/components/FloatingQuestions";
 import { StorylineCards, STORYLINES, type Storyline } from "@/components/StorylineCards";
 import { StoryCards, type StoryCardItem } from "@/components/StoryCards";
 import { SelectedCardsStack } from "@/components/SelectedCardsStack";
+import { SynthesizedInsightView } from "@/components/SynthesizedInsightView";
 import { OnboardingWizard } from "@/components/OnboardingWizard";
 import type { ChatResponse, StoryBlock } from "@/lib/chat-schema";
 
@@ -45,6 +46,12 @@ export default function ExplorationPage() {
   const [cards, setCards] = useState<StoryCardItem[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isSynthesizing, setIsSynthesizing] = useState(false);
+
+  // Synthesized insight with source cards
+  const [synthesizedInsight, setSynthesizedInsight] = useState<{
+    insight: StoryBlock;
+    sources: StoryBlock[];
+  } | null>(null);
 
   // Custom question input (for story mode)
   const [customQuestion, setCustomQuestion] = useState("");
@@ -523,8 +530,8 @@ export default function ExplorationPage() {
     });
   };
 
-  // Synthesize selected cards into a theme
-  const synthesizeTheme = async () => {
+  // Synthesize selected cards into an insight
+  const synthesizeInsight = async () => {
     const selectedBlocks = cards
       .filter(
         (card): card is { type: "insight"; block: StoryBlock } =>
@@ -543,16 +550,13 @@ export default function ExplorationPage() {
       });
 
       if (res.ok) {
-        const theme = await res.json();
-        // Remove selected cards and add theme card
-        setCards((prev) => {
-          const newCards = prev.filter((card) => {
-            const cardId = card.type === "insight" ? card.block.id : card.id;
-            return !selectedIds.has(cardId);
-          });
-          newCards.push({ type: "insight", block: { ...theme, isTheme: true } });
-          return newCards;
+        const newInsight = await res.json();
+        // Store the synthesized insight with its sources
+        setSynthesizedInsight({
+          insight: { ...newInsight, id: `synthesis-${Date.now()}` },
+          sources: selectedBlocks,
         });
+        // Clear selection
         setSelectedIds(new Set());
       }
     } catch (error) {
@@ -560,6 +564,22 @@ export default function ExplorationPage() {
     } finally {
       setIsSynthesizing(false);
     }
+  };
+
+  // Clear synthesized insight and add it to main cards
+  const acceptSynthesizedInsight = () => {
+    if (synthesizedInsight) {
+      setCards((prev) => [
+        ...prev,
+        { type: "insight", block: synthesizedInsight.insight },
+      ]);
+      setSynthesizedInsight(null);
+    }
+  };
+
+  // Discard synthesized insight
+  const discardSynthesizedInsight = () => {
+    setSynthesizedInsight(null);
   };
 
   // Handle custom question submit
@@ -649,15 +669,27 @@ export default function ExplorationPage() {
               </div>
             </div>
 
-            {/* Selected cards stack - floating on right side */}
-            <SelectedCardsStack
-              cards={cards}
-              selectedIds={selectedIds}
-              onDeselect={handleSelectCard}
-            />
+            {/* Synthesized insight view - shows when insight is generated */}
+            {synthesizedInsight && (
+              <SynthesizedInsightView
+                insight={synthesizedInsight.insight}
+                sources={synthesizedInsight.sources}
+                onAccept={acceptSynthesizedInsight}
+                onDiscard={discardSynthesizedInsight}
+              />
+            )}
+
+            {/* Selected cards stack - only show when selecting, not when synthesized */}
+            {!synthesizedInsight && selectedIds.size > 0 && (
+              <SelectedCardsStack
+                cards={cards}
+                selectedIds={selectedIds}
+                onDeselect={handleSelectCard}
+              />
+            )}
 
             {/* Bottom bar - title, input, question chips, find theme */}
-            <div className="px-6 py-4 border-t border-white/10 bg-black/50 backdrop-blur-sm">
+            <div className="relative z-50 px-6 py-4 border-t border-white/10 bg-black/50 backdrop-blur-sm">
               <div className="max-w-6xl mx-auto">
                 {/* Main row */}
                 <div className="flex items-center gap-4">
@@ -710,10 +742,10 @@ export default function ExplorationPage() {
                     </button>
                   </div>
 
-                  {/* Find Theme button - right */}
+                  {/* Generate Insight button - right */}
                   {selectedIds.size >= 2 && (
                     <button
-                      onClick={synthesizeTheme}
+                      onClick={synthesizeInsight}
                       disabled={isSynthesizing}
                       className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-full text-sm font-medium hover:bg-white/90 transition-colors disabled:opacity-50"
                     >
