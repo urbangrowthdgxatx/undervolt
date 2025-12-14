@@ -291,11 +291,6 @@ export default function StoryBuilder() {
     <div className="flex h-full">
       {/* Left Panel - Chat */}
       <div className="w-[420px] border-r border-white/10 flex flex-col">
-        {/* Header */}
-        <div className="p-6 border-b border-white/10">
-          <h1 className="text-xl font-light text-white">Undervolt</h1>
-          <p className="text-sm text-white/40 mt-1">Build your Austin energy story</p>
-        </div>
 
         {/* Chat Messages */}
         <div className="flex-1 overflow-auto p-6 space-y-4">
@@ -368,6 +363,21 @@ export default function StoryBuilder() {
               </button>
             </div>
           </form>
+
+          {/* Suggested Questions */}
+          {suggestedQuestions.length > 0 && !isLoading && (
+            <div className="mt-3 space-y-1.5">
+              {suggestedQuestions.map((q, i) => (
+                <button
+                  key={i}
+                  onClick={() => setChatInput(q)}
+                  className="block w-full text-left text-xs text-white/50 hover:text-white hover:bg-white/5 rounded-lg px-3 py-2 transition-colors"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -466,27 +476,8 @@ export default function StoryBuilder() {
         </div>
 
         {/* Story Footer */}
+        {storyBlocks.length > 0 && (
         <div className="p-4 border-t border-white/10">
-          {/* Suggested Questions from Story LLM */}
-          {suggestedQuestions.length > 0 && !isLoading && (
-            <div className="mb-4">
-              <p className="text-xs text-white/40 mb-2">
-                {storyBlocks.length === 0 ? "Start exploring" : "Deepen your story"}
-              </p>
-              <div className="space-y-2">
-                {suggestedQuestions.map((q, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setChatInput(q)}
-                    className="block w-full text-left text-sm text-white/60 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-3 py-2 transition-colors"
-                  >
-                    {q}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Synthesize button */}
           {storyBlocks.length >= 2 && !synthesizedTheme && (
             <button
@@ -508,24 +499,23 @@ export default function StoryBuilder() {
             </button>
           )}
 
-          {storyBlocks.length > 0 && (
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-white/30">
-                {storyBlocks.length} insight{storyBlocks.length !== 1 ? "s" : ""}
-                {synthesizedTheme ? " + 1 theme" : ""}
-              </p>
-              <button
-                onClick={() => {
-                  setStoryBlocks([]);
-                  setSynthesizedTheme(null);
-                }}
-                className="text-xs text-white/40 hover:text-white transition-colors"
-              >
-                Clear all
-              </button>
-            </div>
-          )}
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-white/30">
+              {storyBlocks.length} insight{storyBlocks.length !== 1 ? "s" : ""}
+              {synthesizedTheme ? " + 1 theme" : ""}
+            </p>
+            <button
+              onClick={() => {
+                setStoryBlocks([]);
+                setSynthesizedTheme(null);
+              }}
+              className="text-xs text-white/40 hover:text-white transition-colors"
+            >
+              Clear all
+            </button>
+          </div>
         </div>
+        )}
       </div>
     </div>
   );
