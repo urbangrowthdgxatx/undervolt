@@ -32,3 +32,4 @@ feature_store/
 # Secrets
 .env
 *.pem
+frontend/bun.lockb
