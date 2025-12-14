@@ -246,10 +246,27 @@ export default function ExplorationPage() {
   // Handle LLM response - convert to cards
   const handleResponse = (response: ChatResponse) => {
     console.log("handleResponse called:", response);
-    const block = response.storyBlock;
+    let block = response.storyBlock;
+
+    // If no storyBlock, create one from the message
+    if (!block && response.message) {
+      // Extract first sentence or first 100 chars for headline
+      const firstSentence = response.message.split(/[.!?]/)[0].trim();
+      const headline = firstSentence.length > 50
+        ? firstSentence.substring(0, 47) + "..."
+        : firstSentence || "Response";
+
+      block = {
+        id: `response-${Date.now()}`,
+        headline,
+        insight: response.message,
+        whyStoryWorthy: "turning-point",
+        confidence: "medium",
+      };
+    }
 
     if (!block) {
-      console.warn("No storyBlock in response");
+      console.warn("No storyBlock or message in response");
       return;
     }
 
