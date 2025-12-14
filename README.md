@@ -1,5 +1,6 @@
 # Undervolt
-Welcome to our Project, UnderVolt — Your Urban Growth Intelligence Partner
+
+Welcome to **UnderVolt** — Your Urban Growth Intelligence Partner
 
 ## Problem Statemement
 > **Urban growth is happening faster than cities can understand it.**
@@ -52,13 +53,33 @@ So we built a **DGX-native pipeline** that:
 - **A natural-language assistant that understands urban growth**
 
 Queries that once took minutes now run in **milliseconds**, **locally** and **privately**.
----
+
 
 ## Demo Video
 🔗 [Link here](https://www.loom.com/share/a473f2934db0409bacf54b767490cd19)
 
-## Architecture
+## Meet our Hackathon Team
+### Ravinder Jilkapally
+**LinkedIn**: https://www.linkedin.com/in/jravinder  
+**Email**: jravinderreddy@gmail.com  
+**Role**: GenAI systems lead, pipeline design, GPU optimization, VLLM deployment  
 
+### Avanish Joshi
+**LinkedIn**: https://www.linkedin.com/in/avanishj  
+**Email**: avanishjoshi@gmail.com  
+**Role**: Exploratory data analysis, trend identification, Feature Engineering  
+
+### Tyrone Avnit
+**LinkedIn**: https://www.linkedin.com/in/tyroneavnit/  
+**Email**: tyronemichael@gmail.com  
+**Role**: Rapid prototyping, application UI, end‑to‑end integration  
+
+### Siddharth Gargava
+**LinkedIn**: https://www.linkedin.com/in/siddharthgargava/  
+**Email**: siddharth27gargava@gmail.com  
+**Role**: Data ingestion, cleansing, ZIP/geo extraction, structured datasets, Feature Engineering  
+
+## Architecture
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                           UNDERVOLT SYSTEM                              │
