@@ -6,3 +6,55 @@
  14-12-2025 00:55:02:481 [pid=1605228 tid=1605228] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
  14-12-2025 00:56:14:756 [pid=1611071 tid=1611071] NOTICE  cufio-drv:851 running in compatible mode
  14-12-2025 00:56:15:373 [pid=1611071 tid=1611071] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 03:44:31:326 [pid=2989513 tid=2989513] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 03:44:32:216 [pid=2989513 tid=2989513] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 04:50:47:141 [pid=3109689 tid=3109689] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 04:50:47:578 [pid=3109689 tid=3109732] ERROR  cufio_core:56 Threadpool Thread ID:  269257606689152 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 04:52:32:884 [pid=3109831 tid=3109831] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 04:52:33:293 [pid=3109831 tid=3109870] ERROR  cufio_core:56 Threadpool Thread ID:  266745538605440 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 04:53:50:300 [pid=3109947 tid=3109947] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 04:53:50:728 [pid=3109947 tid=3109987] ERROR  cufio_core:56 Threadpool Thread ID:  250678891835776 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 04:54:38:786 [pid=3110028 tid=3110028] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 04:54:39:491 [pid=3110028 tid=3110028] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 04:55:44:660 [pid=3110177 tid=3110177] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 04:55:45:240 [pid=3110177 tid=3110177] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 04:56:31:494 [pid=3110280 tid=3110280] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 04:56:32:101 [pid=3110280 tid=3110280] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 04:56:48:589 [pid=3110365 tid=3110365] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 04:56:49:187 [pid=3110365 tid=3110365] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 04:57:56:668 [pid=3110474 tid=3110474] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 04:57:57:276 [pid=3110474 tid=3110474] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 04:59:44:887 [pid=3110589 tid=3110589] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 04:59:45:499 [pid=3110589 tid=3110589] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 05:07:10:3 [pid=3111273 tid=3111273] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 05:07:10:625 [pid=3111273 tid=3111273] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 05:07:45:438 [pid=3111383 tid=3111383] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 05:07:46:51 [pid=3111383 tid=3111383] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 05:17:09:20 [pid=3114331 tid=3114331] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 05:17:09:868 [pid=3114331 tid=3114331] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 05:24:57:556 [pid=3116983 tid=3116983] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 05:24:57:981 [pid=3116983 tid=3117028] ERROR  cufio_core:56 Threadpool Thread ID:  273606713930112 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 05:25:21:655 [pid=3117078 tid=3117078] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 05:25:22:79 [pid=3117078 tid=3117118] ERROR  cufio_core:56 Threadpool Thread ID:  258965978739072 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 05:27:35:256 [pid=3117254 tid=3117254] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 05:27:35:689 [pid=3117254 tid=3117294] ERROR  cufio_core:56 Threadpool Thread ID:  249126799798656 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 05:29:40:779 [pid=3118423 tid=3118423] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 05:29:41:227 [pid=3118423 tid=3118462] ERROR  cufio_core:56 Threadpool Thread ID:  251032078184832 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 05:30:40:857 [pid=3118931 tid=3118931] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 05:30:41:261 [pid=3118931 tid=3118970] ERROR  cufio_core:56 Threadpool Thread ID:  263987002274176 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 05:30:51:693 [pid=3119183 tid=3119183] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 05:30:52:97 [pid=3119183 tid=3119224] ERROR  cufio_core:56 Threadpool Thread ID:  280434227081600 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 05:31:46:383 [pid=3119996 tid=3119996] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 05:31:46:967 [pid=3119996 tid=3119996] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 05:40:39:964 [pid=3123772 tid=3123772] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 05:40:40:613 [pid=3123772 tid=3123772] ERROR  cufio-fs:80 mount option not found in mount table data device: /dev/nvme0n1p2
+ 14-12-2025 06:40:37:685 [pid=3141519 tid=3141519] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 06:40:38:545 [pid=3141519 tid=3141566] ERROR  cufio_core:56 Threadpool Thread ID:  252993617785216 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 06:44:00:291 [pid=3143094 tid=3143094] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 06:44:00:992 [pid=3143094 tid=3143147] ERROR  cufio_core:56 Threadpool Thread ID:  256694061166976 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 06:47:00:330 [pid=3143471 tid=3143471] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 06:47:01:34 [pid=3143471 tid=3143522] ERROR  cufio_core:56 Threadpool Thread ID:  279017827004800 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 06:47:50:662 [pid=3143645 tid=3143645] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 06:47:51:367 [pid=3143645 tid=3143685] ERROR  cufio_core:56 Threadpool Thread ID:  250278320796032 cuDevicePrimaryCtxRetain failed with error 2
+ 14-12-2025 06:47:57:672 [pid=3143727 tid=3143727] NOTICE  cufio-drv:851 running in compatible mode
+ 14-12-2025 06:47:58:481 [pid=3143727 tid=3143767] ERROR  cufio_core:56 Threadpool Thread ID:  273494457708928 cuDevicePrimaryCtxRetain failed with error 2
