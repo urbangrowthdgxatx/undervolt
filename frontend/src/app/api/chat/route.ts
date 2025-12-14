@@ -3,6 +3,7 @@ import { streamText, generateObject } from 'ai';
 import { ChatResponseSchema } from '@/lib/chat-schema';
 import { SYSTEM_PROMPT, DATA_QUERY_PROMPT } from '@/lib/chat-context';
 import { getMcpTools } from '@/lib/mcp-client';
+import { MODE_CONFIG, GUARDRAILS, type Mode } from '@/lib/modes';
 
 export const maxDuration = 60;
 
@@ -13,11 +14,14 @@ function sendEvent(controller: ReadableStreamDefaultController, event: string, d
 }
 
 export async function POST(req: Request) {
-  const { message } = await req.json();
+  const { message, mode = 'scout' } = await req.json();
 
   if (!message || typeof message !== 'string') {
     return Response.json({ error: 'Message is required' }, { status: 400 });
   }
+
+  // Get mode-specific prompt modifier
+  const modeConfig = MODE_CONFIG[mode as Mode] || MODE_CONFIG.scout;
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -71,10 +75,12 @@ export async function POST(req: Request) {
           sendEvent(controller, 'status', { step: 'analyzing', message: 'Analyzing results...' });
         }
 
-        // Step 3: Generate structured response
+        // Step 3: Generate structured response with mode context
+        const modePrompt = `## Current Mode: ${modeConfig.label}\n${modeConfig.promptModifier}`;
+        const systemWithMode = `${SYSTEM_PROMPT}\n\n${modePrompt}\n\n${GUARDRAILS}`;
         const systemWithData = hasTools && dataContext
-          ? `${SYSTEM_PROMPT}\n\n## Live Data from Database:\n${dataContext}`
-          : SYSTEM_PROMPT;
+          ? `${systemWithMode}\n\n## Live Data from Database:\n${dataContext}`
+          : systemWithMode;
 
         const response = await generateObject({
           model: openai('gpt-5.2'),
