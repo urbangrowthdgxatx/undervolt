@@ -23,10 +23,15 @@ function extractSQL(input: unknown): string | null {
   if (typeof input === "string") return input;
   if (typeof input === "object" && input !== null) {
     const obj = input as Record<string, unknown>;
-    // Common field names for SQL
-    if (obj.sql) return String(obj.sql);
-    if (obj.query) return String(obj.query);
-    if (obj.statement) return String(obj.statement);
+    // Common field names for SQL - check all possibilities
+    const sqlFields = ['sql', 'query', 'statement', 'text', 'command', 'q'];
+    for (const field of sqlFields) {
+      if (obj[field] && typeof obj[field] === 'string') {
+        return String(obj[field]);
+      }
+    }
+    // If it's a simple object, just stringify it nicely
+    return JSON.stringify(obj, null, 2);
   }
   return null;
 }
@@ -42,9 +47,7 @@ export function ToolCallsPanel({ calls, isLoading, onClear }: ToolCallsPanelProp
     }
   }, [calls.length, isExpanded]);
 
-  // Always show if there's history or loading
-  if (calls.length === 0 && !isLoading) return null;
-
+  // Always show the panel (user can collapse it)
   return (
     <div className="fixed bottom-20 left-4 z-40 w-[500px]">
       {/* Toggle button */}

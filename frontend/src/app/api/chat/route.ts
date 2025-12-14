@@ -64,6 +64,7 @@ export async function POST(req: Request) {
             toolChoice: 'required',
             onChunk: ({ chunk }) => {
               if (chunk.type === 'tool-call') {
+                console.log('Tool call:', chunk.toolName, JSON.stringify(chunk.input));
                 sendEvent(controller, 'tool-call', {
                   name: chunk.toolName,
                   input: chunk.input
