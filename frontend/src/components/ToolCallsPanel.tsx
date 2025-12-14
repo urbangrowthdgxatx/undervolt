@@ -49,7 +49,7 @@ export function ToolCallsPanel({ calls, isLoading, onClear }: ToolCallsPanelProp
 
   // Always show the panel (user can collapse it)
   return (
-    <div className="fixed bottom-20 left-4 z-40 w-[500px]">
+    <div className="fixed bottom-20 left-4 z-[60] w-[500px]">
       {/* Toggle button */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
