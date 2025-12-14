@@ -122,7 +122,6 @@ Include a \`storyBlock\` when the insight:
 - Reveals inequality or a gap
 - Shows a paradox or contradiction
 - Marks a turning point
-- Connects to or extends existing insights
 - Is memorable and shareable
 
 ### Story Block Format
@@ -131,19 +130,11 @@ Include a \`storyBlock\` when the insight:
   "id": "unique-id",
   "headline": "3-6 words, punchy",
   "insight": "1-2 sentences with **bold** stats",
-  "dataPoint": { "label": "generators", "value": "2,151" },
-  "connectsTo": ["existing-block-id"],
-  "connectionReason": "Why these ideas connect"
+  "dataPoint": { "label": "generators", "value": "2,151" }
 }
 \`\`\`
 
-### Connection Types
-- **Cause & Effect**: "The freeze caused this behavior change"
-- **Contrast**: "While District 10 has X, District 4 has Y"
-- **Evidence**: "This supports the earlier finding..."
-- **Synthesis**: "Together with X, this reveals..."
-
-Reference existing block IDs in \`connectsTo\` when relevant.
+IMPORTANT: Never set \`isTheme\` to true. Themes are synthesized separately.
 
 ### DON'T add story blocks for:
 - Basic data lookups
