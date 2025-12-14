@@ -9,7 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^2.0.56",
+    "@ai-sdk/mcp": "^0.0.12",
+    "@ai-sdk/openai": "^2.0.86",
+    "@fal-ai/client": "^1.7.2",
+    "@google/genai": "^1.33.0",
+    "@google/generative-ai": "^0.24.1",
     "@neondatabase/serverless": "^1.0.2",
+    "ai": "^5.0.113",
     "clsx": "^2.1.1",
     "lucide-react": "^0.561.0",
     "mapbox-gl": "^3.17.0",
@@ -18,7 +25,8 @@
     "react-dom": "19.2.1",
     "react-map-gl": "^8.1.0",
     "recharts": "^3.5.1",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Map, { Marker, Popup, NavigationControl } from "react-map-gl/mapbox";
+import { useState, useMemo } from "react";
+import Map, { Marker, Popup, NavigationControl, Source, Layer } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { Zap, Sun, Battery, Home, Gauge } from "lucide-react";
+import { Zap, Sun, Battery, Home, Gauge, CircuitBoard, Map as MapIcon, BarChart3 } from "lucide-react";
+import type { DistrictDataItem } from "@/lib/chat-schema";
 
 // You'll need to add your Mapbox token
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "YOUR_MAPBOX_TOKEN";
 
-export type SignalType = "ev" | "solar" | "battery" | "adu" | "generator" | "all";
+export type SignalType = "ev" | "solar" | "battery" | "adu" | "generator" | "panel" | "all";
 
 interface PermitLocation {
   id: string;
@@ -97,6 +98,18 @@ const mockPermitLocations: PermitLocation[] = [
   { id: "50", lat: 30.2780, lng: -97.6850, signal: "adu", description: "ADU Construction", zip: "78721", district: 4, value: "480 sqft", year: 2024 },
   { id: "51", lat: 30.2750, lng: -97.6880, signal: "ev", description: "EV Charger Install", zip: "78721", district: 4, value: "residential", year: 2024 },
   { id: "52", lat: 30.2810, lng: -97.6820, signal: "solar", description: "7.2 kW Solar", zip: "78721", district: 4, value: "7.2 kW", year: 2025 },
+
+  // Panel Upgrades - Infrastructure strain indicators
+  { id: "53", lat: 30.2430, lng: -97.7610, signal: "panel", description: "200A Panel Upgrade", zip: "78704", district: 3, value: "200A", year: 2024 },
+  { id: "54", lat: 30.2960, lng: -97.8090, signal: "panel", description: "Service Upgrade 200A", zip: "78746", district: 10, value: "200A", year: 2024 },
+  { id: "55", lat: 30.2630, lng: -97.7170, signal: "panel", description: "Panel Upgrade for EV", zip: "78702", district: 9, value: "200A", year: 2024 },
+  { id: "56", lat: 30.2070, lng: -97.7860, signal: "panel", description: "Electrical Service Upgrade", zip: "78745", district: 8, value: "200A", year: 2023 },
+  { id: "57", lat: 30.3560, lng: -97.7590, signal: "panel", description: "200A Main Panel", zip: "78731", district: 7, value: "200A", year: 2024 },
+  { id: "58", lat: 30.3370, lng: -97.7290, signal: "panel", description: "Panel Upgrade + Subpanel", zip: "78757", district: 1, value: "200A", year: 2025 },
+  { id: "59", lat: 30.2340, lng: -97.7270, signal: "panel", description: "Service Upgrade", zip: "78741", district: 2, value: "200A", year: 2024 },
+  { id: "60", lat: 30.1760, lng: -97.8170, signal: "panel", description: "200A Panel for Solar", zip: "78748", district: 5, value: "200A", year: 2024 },
+  { id: "61", lat: 30.4140, lng: -97.8060, signal: "panel", description: "Main Panel Replacement", zip: "78750", district: 6, value: "200A", year: 2024 },
+  { id: "62", lat: 30.2770, lng: -97.6860, signal: "panel", description: "Electrical Upgrade", zip: "78721", district: 4, value: "200A", year: 2024 },
 ];
 
 // Black & white color scheme - differentiate by opacity/style
@@ -106,8 +119,79 @@ const signalConfig: Record<SignalType, { color: string; icon: typeof Zap; label:
   battery: { color: "#a3a3a3", icon: Battery, label: "Battery", style: "solid" },
   adu: { color: "#737373", icon: Home, label: "ADU", style: "solid" },
   generator: { color: "#ffffff", icon: Gauge, label: "Generator", style: "ring" },
+  panel: { color: "#a3a3a3", icon: CircuitBoard, label: "Panel Upgrade", style: "ring" },
   all: { color: "#ffffff", icon: Zap, label: "All Signals", style: "solid" },
 };
+
+// District centroids for heatmap display
+const districtCentroids: Record<number, { lat: number; lng: number; name: string }> = {
+  1: { lat: 30.3380, lng: -97.7280, name: "North Austin" },
+  2: { lat: 30.2320, lng: -97.7280, name: "Southeast" },
+  3: { lat: 30.2420, lng: -97.7620, name: "South Central" },
+  4: { lat: 30.2780, lng: -97.6850, name: "East" },
+  5: { lat: 30.1750, lng: -97.8200, name: "Far South" },
+  6: { lat: 30.4150, lng: -97.8050, name: "Far Northwest" },
+  7: { lat: 30.3550, lng: -97.7580, name: "Northwest" },
+  8: { lat: 30.2080, lng: -97.7850, name: "South Austin" },
+  9: { lat: 30.2650, lng: -97.7150, name: "East Austin" },
+  10: { lat: 30.2950, lng: -97.8100, name: "Westlake" },
+};
+
+// Calculate district scores from permits
+function calculateDistrictScores(permits: PermitLocation[]) {
+  const scores: Record<number, {
+    electrification: number;
+    gridStress: number;
+    resilience: number;
+    generatorRatio: number;
+    total: number;
+    breakdown: { solar: number; ev: number; battery: number; generator: number; adu: number; panel: number };
+  }> = {};
+
+  // Initialize all districts
+  for (let d = 1; d <= 10; d++) {
+    scores[d] = {
+      electrification: 0,
+      gridStress: 0,
+      resilience: 0,
+      generatorRatio: 0,
+      total: 0,
+      breakdown: { solar: 0, ev: 0, battery: 0, generator: 0, adu: 0, panel: 0 },
+    };
+  }
+
+  // Count permits by district and type
+  permits.forEach((p) => {
+    if (p.district >= 1 && p.district <= 10) {
+      scores[p.district].total++;
+      if (p.signal in scores[p.district].breakdown) {
+        scores[p.district].breakdown[p.signal as keyof typeof scores[number]["breakdown"]]++;
+      }
+    }
+  });
+
+  // Calculate scores
+  Object.keys(scores).forEach((d) => {
+    const district = Number(d);
+    const b = scores[district].breakdown;
+
+    // Electrification Score: solar + ev + battery + panel (forward-looking clean energy)
+    scores[district].electrification = (b.solar * 2) + (b.ev * 1.5) + (b.battery * 3) + (b.panel * 0.5);
+
+    // Grid Stress: (ev + adu + panel demand) - (solar + battery supply)
+    scores[district].gridStress = ((b.ev * 2) + (b.adu * 1) + (b.panel * 0.5)) - ((b.solar * 1.5) + (b.battery * 2));
+
+    // Resilience: solar + battery + generator (can survive outage)
+    scores[district].resilience = (b.solar * 1) + (b.battery * 3) + (b.generator * 2);
+
+    // Generator Paradox Ratio: generator / (solar + 1)
+    scores[district].generatorRatio = b.generator / (b.solar + 1);
+  });
+
+  return scores;
+}
+
+export type ViewMode = "points" | "electrification" | "stress" | "resilience" | "paradox" | "equity";
 
 interface PermitMapProps {
   filter?: SignalType | SignalType[];
@@ -115,15 +199,72 @@ interface PermitMapProps {
   highlightDistrict?: number;
   className?: string;
   showLegend?: boolean;
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
+  districtData?: DistrictDataItem[];  // Real data from LLM
 }
 
-export function PermitMap({ filter = "all", highlightZip, highlightDistrict, className = "", showLegend = false }: PermitMapProps) {
+export function PermitMap({
+  filter = "all",
+  highlightZip,
+  highlightDistrict,
+  className = "",
+  showLegend = false,
+  viewMode: externalViewMode,
+  onViewModeChange,
+  districtData,
+}: PermitMapProps) {
   const [selectedPermit, setSelectedPermit] = useState<PermitLocation | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<number | null>(null);
+  const [internalViewMode, setInternalViewMode] = useState<ViewMode>("points");
+
+  const viewMode = externalViewMode ?? internalViewMode;
+  const setViewMode = onViewModeChange ?? setInternalViewMode;
+
   const [viewState, setViewState] = useState({
     latitude: 30.2672,
     longitude: -97.7431,
     zoom: 11,
   });
+
+  // Use real district data from LLM if available, otherwise calculate from mock
+  const districtScores = useMemo(() => {
+    if (districtData && districtData.length > 0) {
+      // Convert LLM data to our score format
+      const scores: Record<number, {
+        electrification: number;
+        gridStress: number;
+        resilience: number;
+        generatorRatio: number;
+        equityRate: number;
+        total: number;
+        totalGrowth: number;
+        breakdown: { solar: number; ev: number; battery: number; generator: number; adu: number; panel: number };
+        name: string;
+      }> = {};
+
+      districtData.forEach((d) => {
+        const b = { solar: d.solar, ev: d.ev, battery: d.battery, generator: d.generator, adu: d.adu, panel: d.panel };
+        scores[d.district] = {
+          electrification: (b.solar * 2) + (b.ev * 1.5) + (b.battery * 3) + (b.panel * 0.5),
+          gridStress: ((b.ev * 2) + (b.adu * 1) + (b.panel * 0.5)) - ((b.solar * 1.5) + (b.battery * 2)),
+          resilience: (b.solar * 1) + (b.battery * 3) + (b.generator * 2),
+          generatorRatio: b.generator / (b.solar + 1),
+          equityRate: d.electrificationRate,
+          total: d.totalEnergy,
+          totalGrowth: d.totalGrowth,
+          breakdown: b,
+          name: d.name,
+        };
+      });
+      return scores;
+    }
+    // Fallback to mock data calculation
+    return calculateDistrictScores(mockPermitLocations);
+  }, [districtData]);
+
+  // Check if we have real data
+  const hasRealData = districtData && districtData.length > 0;
 
   // Filter permits based on signal type (supports single or array)
   const filteredPermits = mockPermitLocations.filter((p) => {
@@ -139,6 +280,82 @@ export function PermitMap({ filter = "all", highlightZip, highlightDistrict, cla
     return true;
   };
 
+  // Get color for district based on score and view mode
+  const getDistrictColor = (district: number): string => {
+    const score = districtScores[district];
+    if (!score) return "rgba(255,255,255,0.1)";
+
+    switch (viewMode) {
+      case "electrification": {
+        // Green gradient - higher = greener
+        const normalized = Math.min(score.electrification / 30, 1);
+        return `rgba(34, 197, 94, ${0.3 + normalized * 0.6})`;
+      }
+      case "stress": {
+        // Red/Green gradient - positive = red (stressed), negative = green (surplus)
+        const normalized = Math.max(-1, Math.min(1, score.gridStress / 10));
+        if (normalized > 0) {
+          return `rgba(239, 68, 68, ${0.3 + normalized * 0.6})`;
+        } else {
+          return `rgba(34, 197, 94, ${0.3 + Math.abs(normalized) * 0.6})`;
+        }
+      }
+      case "resilience": {
+        // Blue gradient - higher = more resilient
+        const normalized = Math.min(score.resilience / 25, 1);
+        return `rgba(59, 130, 246, ${0.3 + normalized * 0.6})`;
+      }
+      case "paradox": {
+        // Orange gradient - higher ratio = more paradox
+        const normalized = Math.min(score.generatorRatio, 1);
+        return `rgba(249, 115, 22, ${0.3 + normalized * 0.6})`;
+      }
+      case "equity": {
+        // Purple gradient - higher rate = more electrification equity
+        const equityRate = (score as { equityRate?: number }).equityRate ?? 0;
+        const normalized = Math.min(equityRate / 0.5, 1);  // Scale 0-0.5%
+        return `rgba(168, 85, 247, ${0.3 + normalized * 0.6})`;
+      }
+      default:
+        return "rgba(255,255,255,0.1)";
+    }
+  };
+
+  // Get score value for display
+  const getScoreValue = (district: number): string => {
+    const score = districtScores[district];
+    if (!score) return "N/A";
+
+    switch (viewMode) {
+      case "electrification":
+        return score.electrification.toFixed(1);
+      case "stress":
+        return score.gridStress > 0 ? `+${score.gridStress.toFixed(1)}` : score.gridStress.toFixed(1);
+      case "resilience":
+        return score.resilience.toFixed(1);
+      case "paradox":
+        return score.generatorRatio.toFixed(2);
+      case "equity": {
+        const equityRate = (score as { equityRate?: number }).equityRate ?? 0;
+        return `${equityRate.toFixed(3)}%`;
+      }
+      default:
+        return score.total.toString();
+    }
+  };
+
+  // Get score label
+  const getScoreLabel = (): string => {
+    switch (viewMode) {
+      case "electrification": return "Electrification Score";
+      case "stress": return "Grid Stress";
+      case "resilience": return "Resilience Score";
+      case "paradox": return "Generator Ratio";
+      case "equity": return "Electrification Rate";
+      default: return "Permits";
+    }
+  };
+
   return (
     <div className={`relative rounded-xl overflow-hidden ${className}`}>
       <Map
@@ -150,7 +367,46 @@ export function PermitMap({ filter = "all", highlightZip, highlightDistrict, cla
       >
         <NavigationControl position="top-right" />
 
-        {filteredPermits.map((permit) => {
+        {/* District circles for heatmap views */}
+        {viewMode !== "points" && Object.entries(districtCentroids).map(([d, centroid]) => {
+          const district = Number(d);
+          const score = districtScores[district];
+          const isHighlighted = !highlightDistrict || highlightDistrict === district;
+
+          return (
+            <Marker
+              key={`district-${district}`}
+              latitude={centroid.lat}
+              longitude={centroid.lng}
+              anchor="center"
+              onClick={(e) => {
+                e.originalEvent.stopPropagation();
+                setSelectedDistrict(district);
+              }}
+            >
+              <div
+                className={`flex items-center justify-center cursor-pointer transition-all hover:scale-110 ${
+                  isHighlighted ? "opacity-100" : "opacity-30"
+                }`}
+                style={{
+                  width: 60 + (score?.total || 0) * 3,
+                  height: 60 + (score?.total || 0) * 3,
+                  borderRadius: "50%",
+                  backgroundColor: getDistrictColor(district),
+                  border: "2px solid rgba(255,255,255,0.3)",
+                }}
+              >
+                <div className="text-center">
+                  <div className="text-white font-bold text-lg">{getScoreValue(district)}</div>
+                  <div className="text-white/60 text-xs">D{district}</div>
+                </div>
+              </div>
+            </Marker>
+          );
+        })}
+
+        {/* Individual permit markers (only in points mode) */}
+        {viewMode === "points" && filteredPermits.map((permit) => {
           const config = signalConfig[permit.signal];
           const Icon = config.icon;
           const isHighlighted = isPermitHighlighted(permit);
@@ -183,7 +439,8 @@ export function PermitMap({ filter = "all", highlightZip, highlightDistrict, cla
           );
         })}
 
-        {selectedPermit && (
+        {/* Permit popup */}
+        {selectedPermit && viewMode === "points" && (
           <Popup
             latitude={selectedPermit.lat}
             longitude={selectedPermit.lng}
@@ -219,10 +476,88 @@ export function PermitMap({ filter = "all", highlightZip, highlightDistrict, cla
             </div>
           </Popup>
         )}
+
+        {/* District popup */}
+        {selectedDistrict && viewMode !== "points" && (
+          <Popup
+            latitude={districtCentroids[selectedDistrict].lat}
+            longitude={districtCentroids[selectedDistrict].lng}
+            anchor="bottom"
+            onClose={() => setSelectedDistrict(null)}
+            closeButton={true}
+            closeOnClick={false}
+            className="permit-popup"
+          >
+            <div className="p-3 min-w-[220px]">
+              <div className="font-medium text-gray-900 mb-2">
+                District {selectedDistrict} - {districtCentroids[selectedDistrict].name}
+              </div>
+              <div className="text-2xl font-bold text-gray-800 mb-2">
+                {getScoreLabel()}: {getScoreValue(selectedDistrict)}
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="text-center p-1 bg-gray-100 rounded">
+                  <div className="font-medium">{districtScores[selectedDistrict]?.breakdown.solar || 0}</div>
+                  <div className="text-gray-500">Solar</div>
+                </div>
+                <div className="text-center p-1 bg-gray-100 rounded">
+                  <div className="font-medium">{districtScores[selectedDistrict]?.breakdown.ev || 0}</div>
+                  <div className="text-gray-500">EV</div>
+                </div>
+                <div className="text-center p-1 bg-gray-100 rounded">
+                  <div className="font-medium">{districtScores[selectedDistrict]?.breakdown.battery || 0}</div>
+                  <div className="text-gray-500">Battery</div>
+                </div>
+                <div className="text-center p-1 bg-gray-100 rounded">
+                  <div className="font-medium">{districtScores[selectedDistrict]?.breakdown.generator || 0}</div>
+                  <div className="text-gray-500">Generator</div>
+                </div>
+                <div className="text-center p-1 bg-gray-100 rounded">
+                  <div className="font-medium">{districtScores[selectedDistrict]?.breakdown.adu || 0}</div>
+                  <div className="text-gray-500">ADU</div>
+                </div>
+                <div className="text-center p-1 bg-gray-100 rounded">
+                  <div className="font-medium">{districtScores[selectedDistrict]?.breakdown.panel || 0}</div>
+                  <div className="text-gray-500">Panel</div>
+                </div>
+              </div>
+            </div>
+          </Popup>
+        )}
       </Map>
 
-      {/* Legend - only show if showLegend is true */}
-      {showLegend && (
+      {/* Data source indicator */}
+      {hasRealData && viewMode !== "points" && (
+        <div className="absolute top-4 left-4 bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs border border-green-500/30">
+          Live Data
+        </div>
+      )}
+
+      {/* Score Legend */}
+      {viewMode !== "points" && (
+        <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur-sm rounded-lg p-3 border border-white/10">
+          <p className="text-xs text-white/60 mb-2">{getScoreLabel()}</p>
+          <div className="flex items-center gap-2">
+            <div className="w-24 h-2 rounded-full" style={{
+              background: viewMode === "electrification" ? "linear-gradient(to right, rgba(34,197,94,0.3), rgba(34,197,94,0.9))" :
+                         viewMode === "stress" ? "linear-gradient(to right, rgba(34,197,94,0.9), rgba(239,68,68,0.9))" :
+                         viewMode === "resilience" ? "linear-gradient(to right, rgba(59,130,246,0.3), rgba(59,130,246,0.9))" :
+                         viewMode === "equity" ? "linear-gradient(to right, rgba(168,85,247,0.3), rgba(168,85,247,0.9))" :
+                         "linear-gradient(to right, rgba(249,115,22,0.3), rgba(249,115,22,0.9))"
+            }} />
+            <span className="text-xs text-white/60">
+              {viewMode === "stress" ? "Surplus → Stressed" :
+               viewMode === "equity" ? "Low Equity → High Equity" : "Low → High"}
+            </span>
+          </div>
+          {viewMode === "equity" && (
+            <p className="text-xs text-white/40 mt-2">Energy permits ÷ Total permits</p>
+          )}
+        </div>
+      )}
+
+      {/* Legend - only show if showLegend is true and in points mode */}
+      {showLegend && viewMode === "points" && (
         <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur-sm rounded-lg p-3 border border-white/10">
           <p className="text-xs text-gray-400 mb-2">Signals</p>
           <div className="flex flex-wrap gap-3">
