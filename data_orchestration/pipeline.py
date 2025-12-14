@@ -6,19 +6,15 @@ import subprocess
 # -------------------------
 # GPU IMPORT (optional)
 # -------------------------
-try:
-    import cudf
-    GPU_ENABLED = True
-except Exception:
-    import pandas as pd
-    GPU_ENABLED = False
+import pandas as pd
+GPU_ENABLED = False
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s ",
     handlers=[logging.StreamHandler()]
 )
-log = logging.getLogger("permits", level=logging.INFO, )
+log = logging.getLogger("permits")
 
 
 # -------------------------
