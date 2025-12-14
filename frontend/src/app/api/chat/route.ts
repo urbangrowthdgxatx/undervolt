@@ -57,7 +57,7 @@ export async function POST(req: Request) {
           sendEvent(controller, 'status', { step: 'querying', message: 'Running SQL query...' });
 
           const dataResult = await streamText({
-            model: openai('gpt-5.1-mini'),
+            model: openai('gpt-5-mini'),
             system: DATA_QUERY_PROMPT,
             prompt: `User question: "${message}"\n\nWrite and execute SQL queries to answer this. Use the postgres-query tool. If a query fails or returns no results, try alternative approaches (different columns, simpler aggregations, etc). Always return useful data.`,
             tools: mcpTools,
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
           : systemWithConversation;
 
         const response = await generateObject({
-          model: openai('gpt-5.1-mini'),
+          model: openai('gpt-5-mini'),
           schema: ChatResponseSchema,
           system: systemWithData,
           prompt: message,
