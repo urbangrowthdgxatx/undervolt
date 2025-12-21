@@ -77,7 +77,7 @@ Queries that once took minutes now run in **milliseconds**, **locally** and **pr
 ### Siddharth Gargava
 **LinkedIn**: https://www.linkedin.com/in/siddharthgargava/  
 **Email**: siddharth27gargava@gmail.com  
-**Role**: Data ingestion, cleansing, ZIP/geo extraction, structured datasets, Feature Engineering  
+**Role**: LLM driven NLP system, GPU-accelerated feature extraction, ML ready dataset design  
 
 ## Architecture
 ```
