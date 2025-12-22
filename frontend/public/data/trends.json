@@ -1,0 +1,1310 @@
+{
+  "monthly_trends": [
+    {
+      "year_month": "2020-01",
+      "total_permits": 73
+    },
+    {
+      "year_month": "2020-02",
+      "total_permits": 80
+    },
+    {
+      "year_month": "2020-03",
+      "total_permits": 108
+    },
+    {
+      "year_month": "2020-04",
+      "total_permits": 76
+    },
+    {
+      "year_month": "2020-05",
+      "total_permits": 81
+    },
+    {
+      "year_month": "2020-06",
+      "total_permits": 105
+    },
+    {
+      "year_month": "2020-07",
+      "total_permits": 76
+    },
+    {
+      "year_month": "2020-08",
+      "total_permits": 81
+    },
+    {
+      "year_month": "2020-09",
+      "total_permits": 79
+    },
+    {
+      "year_month": "2020-10",
+      "total_permits": 82
+    },
+    {
+      "year_month": "2020-11",
+      "total_permits": 87
+    },
+    {
+      "year_month": "2020-12",
+      "total_permits": 86
+    },
+    {
+      "year_month": "2021-01",
+      "total_permits": 73
+    },
+    {
+      "year_month": "2021-02",
+      "total_permits": 78
+    },
+    {
+      "year_month": "2021-03",
+      "total_permits": 89
+    },
+    {
+      "year_month": "2021-04",
+      "total_permits": 117
+    },
+    {
+      "year_month": "2021-05",
+      "total_permits": 93
+    },
+    {
+      "year_month": "2021-06",
+      "total_permits": 102
+    },
+    {
+      "year_month": "2021-07",
+      "total_permits": 190
+    },
+    {
+      "year_month": "2021-08",
+      "total_permits": 175
+    },
+    {
+      "year_month": "2021-09",
+      "total_permits": 279
+    },
+    {
+      "year_month": "2021-10",
+      "total_permits": 191
+    },
+    {
+      "year_month": "2021-11",
+      "total_permits": 181
+    },
+    {
+      "year_month": "2021-12",
+      "total_permits": 136
+    },
+    {
+      "year_month": "2022-01",
+      "total_permits": 111
+    },
+    {
+      "year_month": "2022-02",
+      "total_permits": 126
+    },
+    {
+      "year_month": "2022-03",
+      "total_permits": 185
+    },
+    {
+      "year_month": "2022-04",
+      "total_permits": 203
+    },
+    {
+      "year_month": "2022-05",
+      "total_permits": 177
+    },
+    {
+      "year_month": "2022-06",
+      "total_permits": 206
+    },
+    {
+      "year_month": "2022-07",
+      "total_permits": 343
+    },
+    {
+      "year_month": "2022-08",
+      "total_permits": 421
+    },
+    {
+      "year_month": "2022-09",
+      "total_permits": 318
+    },
+    {
+      "year_month": "2022-10",
+      "total_permits": 361
+    },
+    {
+      "year_month": "2022-11",
+      "total_permits": 564
+    },
+    {
+      "year_month": "2022-12",
+      "total_permits": 706
+    },
+    {
+      "year_month": "2023-01",
+      "total_permits": 1702
+    },
+    {
+      "year_month": "2023-02",
+      "total_permits": 1800
+    },
+    {
+      "year_month": "2023-03",
+      "total_permits": 391
+    },
+    {
+      "year_month": "2023-04",
+      "total_permits": 62
+    },
+    {
+      "year_month": "2023-05",
+      "total_permits": 87
+    },
+    {
+      "year_month": "2023-06",
+      "total_permits": 78
+    },
+    {
+      "year_month": "2023-07",
+      "total_permits": 89
+    },
+    {
+      "year_month": "2023-08",
+      "total_permits": 78
+    },
+    {
+      "year_month": "2023-09",
+      "total_permits": 56
+    },
+    {
+      "year_month": "2023-10",
+      "total_permits": 75
+    },
+    {
+      "year_month": "2023-11",
+      "total_permits": 63
+    },
+    {
+      "year_month": "2023-12",
+      "total_permits": 73
+    },
+    {
+      "year_month": "2024-01",
+      "total_permits": 70
+    },
+    {
+      "year_month": "2024-02",
+      "total_permits": 66
+    },
+    {
+      "year_month": "2024-03",
+      "total_permits": 75
+    },
+    {
+      "year_month": "2024-04",
+      "total_permits": 99
+    },
+    {
+      "year_month": "2024-05",
+      "total_permits": 2834
+    },
+    {
+      "year_month": "2024-06",
+      "total_permits": 4071
+    },
+    {
+      "year_month": "2024-07",
+      "total_permits": 4891
+    },
+    {
+      "year_month": "2024-08",
+      "total_permits": 4515
+    },
+    {
+      "year_month": "2024-09",
+      "total_permits": 4712
+    },
+    {
+      "year_month": "2024-10",
+      "total_permits": 4537
+    },
+    {
+      "year_month": "2024-11",
+      "total_permits": 3990
+    },
+    {
+      "year_month": "2024-12",
+      "total_permits": 3741
+    },
+    {
+      "year_month": "2025-01",
+      "total_permits": 4033
+    },
+    {
+      "year_month": "2025-02",
+      "total_permits": 3822
+    },
+    {
+      "year_month": "2025-03",
+      "total_permits": 5311
+    },
+    {
+      "year_month": "2025-04",
+      "total_permits": 5150
+    },
+    {
+      "year_month": "2025-05",
+      "total_permits": 5257
+    },
+    {
+      "year_month": "2025-06",
+      "total_permits": 5020
+    },
+    {
+      "year_month": "2025-07",
+      "total_permits": 5064
+    },
+    {
+      "year_month": "2025-08",
+      "total_permits": 4351
+    },
+    {
+      "year_month": "2025-09",
+      "total_permits": 4313
+    },
+    {
+      "year_month": "2025-10",
+      "total_permits": 4453
+    },
+    {
+      "year_month": "2025-11",
+      "total_permits": 3724
+    },
+    {
+      "year_month": "2025-12",
+      "total_permits": 3172
+    }
+  ],
+  "cluster_trends": [
+    {
+      "year_month": "2020-01",
+      "New Residential Construction": 3,
+      "General Construction & Repairs": 43,
+      "Electrical & Roofing Work": 20,
+      "Major Residential Remodels": 1,
+      "HVAC Installations": 5,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 1,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2020-02",
+      "New Residential Construction": 5,
+      "General Construction & Repairs": 48,
+      "Electrical & Roofing Work": 24,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 3,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2020-03",
+      "New Residential Construction": 4,
+      "General Construction & Repairs": 55,
+      "Electrical & Roofing Work": 37,
+      "Major Residential Remodels": 1,
+      "HVAC Installations": 9,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 1,
+      "Foundation Repairs": 1
+    },
+    {
+      "year_month": "2020-04",
+      "New Residential Construction": 2,
+      "General Construction & Repairs": 45,
+      "Electrical & Roofing Work": 19,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 8,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 2,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2020-05",
+      "New Residential Construction": 7,
+      "General Construction & Repairs": 45,
+      "Electrical & Roofing Work": 21,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 8,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2020-06",
+      "New Residential Construction": 2,
+      "General Construction & Repairs": 69,
+      "Electrical & Roofing Work": 21,
+      "Major Residential Remodels": 1,
+      "HVAC Installations": 12,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2020-07",
+      "New Residential Construction": 2,
+      "General Construction & Repairs": 44,
+      "Electrical & Roofing Work": 19,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 11,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2020-08",
+      "New Residential Construction": 3,
+      "General Construction & Repairs": 50,
+      "Electrical & Roofing Work": 20,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 8,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2020-09",
+      "New Residential Construction": 7,
+      "General Construction & Repairs": 50,
+      "Electrical & Roofing Work": 19,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 3,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2020-10",
+      "New Residential Construction": 1,
+      "General Construction & Repairs": 51,
+      "Electrical & Roofing Work": 25,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 5,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2020-11",
+      "New Residential Construction": 8,
+      "General Construction & Repairs": 49,
+      "Electrical & Roofing Work": 25,
+      "Major Residential Remodels": 1,
+      "HVAC Installations": 3,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 1
+    },
+    {
+      "year_month": "2020-12",
+      "New Residential Construction": 5,
+      "General Construction & Repairs": 49,
+      "Electrical & Roofing Work": 23,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 7,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 2,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2021-01",
+      "New Residential Construction": 3,
+      "General Construction & Repairs": 45,
+      "Electrical & Roofing Work": 23,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 1,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 1,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2021-02",
+      "New Residential Construction": 4,
+      "General Construction & Repairs": 42,
+      "Electrical & Roofing Work": 28,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 4,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2021-03",
+      "New Residential Construction": 5,
+      "General Construction & Repairs": 45,
+      "Electrical & Roofing Work": 35,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 4,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2021-04",
+      "New Residential Construction": 7,
+      "General Construction & Repairs": 78,
+      "Electrical & Roofing Work": 29,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 3,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2021-05",
+      "New Residential Construction": 5,
+      "General Construction & Repairs": 51,
+      "Electrical & Roofing Work": 28,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 6,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 3,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2021-06",
+      "New Residential Construction": 3,
+      "General Construction & Repairs": 52,
+      "Electrical & Roofing Work": 33,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 11,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 2,
+      "Foundation Repairs": 1
+    },
+    {
+      "year_month": "2021-07",
+      "New Residential Construction": 20,
+      "General Construction & Repairs": 82,
+      "Electrical & Roofing Work": 59,
+      "Major Residential Remodels": 6,
+      "HVAC Installations": 23,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2021-08",
+      "New Residential Construction": 22,
+      "General Construction & Repairs": 66,
+      "Electrical & Roofing Work": 65,
+      "Major Residential Remodels": 2,
+      "HVAC Installations": 16,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 3,
+      "Foundation Repairs": 1
+    },
+    {
+      "year_month": "2021-09",
+      "New Residential Construction": 23,
+      "General Construction & Repairs": 131,
+      "Electrical & Roofing Work": 91,
+      "Major Residential Remodels": 3,
+      "HVAC Installations": 29,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 2,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2021-10",
+      "New Residential Construction": 20,
+      "General Construction & Repairs": 85,
+      "Electrical & Roofing Work": 57,
+      "Major Residential Remodels": 1,
+      "HVAC Installations": 24,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 1,
+      "Foundation Repairs": 3
+    },
+    {
+      "year_month": "2021-11",
+      "New Residential Construction": 22,
+      "General Construction & Repairs": 100,
+      "Electrical & Roofing Work": 51,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 8,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2021-12",
+      "New Residential Construction": 9,
+      "General Construction & Repairs": 73,
+      "Electrical & Roofing Work": 42,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 11,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 1
+    },
+    {
+      "year_month": "2022-01",
+      "New Residential Construction": 16,
+      "General Construction & Repairs": 48,
+      "Electrical & Roofing Work": 34,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 9,
+      "Demolition Projects": 1,
+      "Window Installations & Multi-Trade Remodels": 2,
+      "Foundation Repairs": 1
+    },
+    {
+      "year_month": "2022-02",
+      "New Residential Construction": 12,
+      "General Construction & Repairs": 45,
+      "Electrical & Roofing Work": 54,
+      "Major Residential Remodels": 1,
+      "HVAC Installations": 14,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2022-03",
+      "New Residential Construction": 18,
+      "General Construction & Repairs": 88,
+      "Electrical & Roofing Work": 57,
+      "Major Residential Remodels": 2,
+      "HVAC Installations": 17,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 1,
+      "Foundation Repairs": 2
+    },
+    {
+      "year_month": "2022-04",
+      "New Residential Construction": 19,
+      "General Construction & Repairs": 99,
+      "Electrical & Roofing Work": 65,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 17,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 2,
+      "Foundation Repairs": 1
+    },
+    {
+      "year_month": "2022-05",
+      "New Residential Construction": 12,
+      "General Construction & Repairs": 74,
+      "Electrical & Roofing Work": 62,
+      "Major Residential Remodels": 2,
+      "HVAC Installations": 20,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 2,
+      "Foundation Repairs": 5
+    },
+    {
+      "year_month": "2022-06",
+      "New Residential Construction": 21,
+      "General Construction & Repairs": 95,
+      "Electrical & Roofing Work": 65,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 22,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 3,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2022-07",
+      "New Residential Construction": 45,
+      "General Construction & Repairs": 112,
+      "Electrical & Roofing Work": 112,
+      "Major Residential Remodels": 10,
+      "HVAC Installations": 62,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 1,
+      "Foundation Repairs": 1
+    },
+    {
+      "year_month": "2022-08",
+      "New Residential Construction": 53,
+      "General Construction & Repairs": 137,
+      "Electrical & Roofing Work": 139,
+      "Major Residential Remodels": 6,
+      "HVAC Installations": 78,
+      "Demolition Projects": 1,
+      "Window Installations & Multi-Trade Remodels": 2,
+      "Foundation Repairs": 5
+    },
+    {
+      "year_month": "2022-09",
+      "New Residential Construction": 43,
+      "General Construction & Repairs": 98,
+      "Electrical & Roofing Work": 109,
+      "Major Residential Remodels": 10,
+      "HVAC Installations": 52,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 1,
+      "Foundation Repairs": 5
+    },
+    {
+      "year_month": "2022-10",
+      "New Residential Construction": 59,
+      "General Construction & Repairs": 124,
+      "Electrical & Roofing Work": 105,
+      "Major Residential Remodels": 8,
+      "HVAC Installations": 53,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 8,
+      "Foundation Repairs": 4
+    },
+    {
+      "year_month": "2022-11",
+      "New Residential Construction": 102,
+      "General Construction & Repairs": 156,
+      "Electrical & Roofing Work": 172,
+      "Major Residential Remodels": 29,
+      "HVAC Installations": 94,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 9,
+      "Foundation Repairs": 2
+    },
+    {
+      "year_month": "2022-12",
+      "New Residential Construction": 166,
+      "General Construction & Repairs": 180,
+      "Electrical & Roofing Work": 218,
+      "Major Residential Remodels": 44,
+      "HVAC Installations": 80,
+      "Demolition Projects": 1,
+      "Window Installations & Multi-Trade Remodels": 7,
+      "Foundation Repairs": 10
+    },
+    {
+      "year_month": "2023-01",
+      "New Residential Construction": 417,
+      "General Construction & Repairs": 407,
+      "Electrical & Roofing Work": 414,
+      "Major Residential Remodels": 216,
+      "HVAC Installations": 141,
+      "Demolition Projects": 19,
+      "Window Installations & Multi-Trade Remodels": 53,
+      "Foundation Repairs": 35
+    },
+    {
+      "year_month": "2023-02",
+      "New Residential Construction": 404,
+      "General Construction & Repairs": 345,
+      "Electrical & Roofing Work": 595,
+      "Major Residential Remodels": 156,
+      "HVAC Installations": 177,
+      "Demolition Projects": 14,
+      "Window Installations & Multi-Trade Remodels": 83,
+      "Foundation Repairs": 26
+    },
+    {
+      "year_month": "2023-03",
+      "New Residential Construction": 91,
+      "General Construction & Repairs": 104,
+      "Electrical & Roofing Work": 104,
+      "Major Residential Remodels": 40,
+      "HVAC Installations": 29,
+      "Demolition Projects": 1,
+      "Window Installations & Multi-Trade Remodels": 17,
+      "Foundation Repairs": 5
+    },
+    {
+      "year_month": "2023-04",
+      "New Residential Construction": 10,
+      "General Construction & Repairs": 26,
+      "Electrical & Roofing Work": 18,
+      "Major Residential Remodels": 2,
+      "HVAC Installations": 5,
+      "Demolition Projects": 1,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2023-05",
+      "New Residential Construction": 10,
+      "General Construction & Repairs": 47,
+      "Electrical & Roofing Work": 16,
+      "Major Residential Remodels": 1,
+      "HVAC Installations": 10,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 2,
+      "Foundation Repairs": 1
+    },
+    {
+      "year_month": "2023-06",
+      "New Residential Construction": 8,
+      "General Construction & Repairs": 39,
+      "Electrical & Roofing Work": 16,
+      "Major Residential Remodels": 1,
+      "HVAC Installations": 13,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 1,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2023-07",
+      "New Residential Construction": 7,
+      "General Construction & Repairs": 47,
+      "Electrical & Roofing Work": 19,
+      "Major Residential Remodels": 1,
+      "HVAC Installations": 14,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 1,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2023-08",
+      "New Residential Construction": 9,
+      "General Construction & Repairs": 40,
+      "Electrical & Roofing Work": 13,
+      "Major Residential Remodels": 0,
+      "HVAC Installations": 15,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 1
+    },
+    {
+      "year_month": "2023-09",
+      "New Residential Construction": 3,
+      "General Construction & Repairs": 28,
+      "Electrical & Roofing Work": 14,
+      "Major Residential Remodels": 2,
+      "HVAC Installations": 9,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2023-10",
+      "New Residential Construction": 5,
+      "General Construction & Repairs": 44,
+      "Electrical & Roofing Work": 20,
+      "Major Residential Remodels": 1,
+      "HVAC Installations": 4,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 1,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2023-11",
+      "New Residential Construction": 9,
+      "General Construction & Repairs": 24,
+      "Electrical & Roofing Work": 21,
+      "Major Residential Remodels": 2,
+      "HVAC Installations": 5,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 2
+    },
+    {
+      "year_month": "2023-12",
+      "New Residential Construction": 6,
+      "General Construction & Repairs": 44,
+      "Electrical & Roofing Work": 15,
+      "Major Residential Remodels": 1,
+      "HVAC Installations": 4,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 1,
+      "Foundation Repairs": 2
+    },
+    {
+      "year_month": "2024-01",
+      "New Residential Construction": 5,
+      "General Construction & Repairs": 39,
+      "Electrical & Roofing Work": 18,
+      "Major Residential Remodels": 3,
+      "HVAC Installations": 3,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 2
+    },
+    {
+      "year_month": "2024-02",
+      "New Residential Construction": 6,
+      "General Construction & Repairs": 38,
+      "Electrical & Roofing Work": 20,
+      "Major Residential Remodels": 1,
+      "HVAC Installations": 0,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 1,
+      "Foundation Repairs": 0
+    },
+    {
+      "year_month": "2024-03",
+      "New Residential Construction": 4,
+      "General Construction & Repairs": 34,
+      "Electrical & Roofing Work": 26,
+      "Major Residential Remodels": 2,
+      "HVAC Installations": 8,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 1
+    },
+    {
+      "year_month": "2024-04",
+      "New Residential Construction": 8,
+      "General Construction & Repairs": 55,
+      "Electrical & Roofing Work": 25,
+      "Major Residential Remodels": 3,
+      "HVAC Installations": 6,
+      "Demolition Projects": 0,
+      "Window Installations & Multi-Trade Remodels": 0,
+      "Foundation Repairs": 2
+    },
+    {
+      "year_month": "2024-05",
+      "New Residential Construction": 597,
+      "General Construction & Repairs": 613,
+      "Electrical & Roofing Work": 640,
+      "Major Residential Remodels": 325,
+      "HVAC Installations": 392,
+      "Demolition Projects": 39,
+      "Window Installations & Multi-Trade Remodels": 161,
+      "Foundation Repairs": 67
+    },
+    {
+      "year_month": "2024-06",
+      "New Residential Construction": 863,
+      "General Construction & Repairs": 805,
+      "Electrical & Roofing Work": 837,
+      "Major Residential Remodels": 507,
+      "HVAC Installations": 685,
+      "Demolition Projects": 60,
+      "Window Installations & Multi-Trade Remodels": 252,
+      "Foundation Repairs": 62
+    },
+    {
+      "year_month": "2024-07",
+      "New Residential Construction": 1075,
+      "General Construction & Repairs": 919,
+      "Electrical & Roofing Work": 1032,
+      "Major Residential Remodels": 638,
+      "HVAC Installations": 782,
+      "Demolition Projects": 47,
+      "Window Installations & Multi-Trade Remodels": 325,
+      "Foundation Repairs": 73
+    },
+    {
+      "year_month": "2024-08",
+      "New Residential Construction": 925,
+      "General Construction & Repairs": 908,
+      "Electrical & Roofing Work": 996,
+      "Major Residential Remodels": 604,
+      "HVAC Installations": 668,
+      "Demolition Projects": 47,
+      "Window Installations & Multi-Trade Remodels": 299,
+      "Foundation Repairs": 68
+    },
+    {
+      "year_month": "2024-09",
+      "New Residential Construction": 1046,
+      "General Construction & Repairs": 921,
+      "Electrical & Roofing Work": 1108,
+      "Major Residential Remodels": 556,
+      "HVAC Installations": 650,
+      "Demolition Projects": 61,
+      "Window Installations & Multi-Trade Remodels": 285,
+      "Foundation Repairs": 85
+    },
+    {
+      "year_month": "2024-10",
+      "New Residential Construction": 1127,
+      "General Construction & Repairs": 831,
+      "Electrical & Roofing Work": 1061,
+      "Major Residential Remodels": 636,
+      "HVAC Installations": 435,
+      "Demolition Projects": 59,
+      "Window Installations & Multi-Trade Remodels": 276,
+      "Foundation Repairs": 112
+    },
+    {
+      "year_month": "2024-11",
+      "New Residential Construction": 948,
+      "General Construction & Repairs": 826,
+      "Electrical & Roofing Work": 940,
+      "Major Residential Remodels": 497,
+      "HVAC Installations": 407,
+      "Demolition Projects": 55,
+      "Window Installations & Multi-Trade Remodels": 229,
+      "Foundation Repairs": 88
+    },
+    {
+      "year_month": "2024-12",
+      "New Residential Construction": 844,
+      "General Construction & Repairs": 791,
+      "Electrical & Roofing Work": 795,
+      "Major Residential Remodels": 465,
+      "HVAC Installations": 444,
+      "Demolition Projects": 56,
+      "Window Installations & Multi-Trade Remodels": 240,
+      "Foundation Repairs": 106
+    },
+    {
+      "year_month": "2025-01",
+      "New Residential Construction": 1017,
+      "General Construction & Repairs": 823,
+      "Electrical & Roofing Work": 883,
+      "Major Residential Remodels": 475,
+      "HVAC Installations": 457,
+      "Demolition Projects": 49,
+      "Window Installations & Multi-Trade Remodels": 237,
+      "Foundation Repairs": 92
+    },
+    {
+      "year_month": "2025-02",
+      "New Residential Construction": 925,
+      "General Construction & Repairs": 748,
+      "Electrical & Roofing Work": 865,
+      "Major Residential Remodels": 474,
+      "HVAC Installations": 412,
+      "Demolition Projects": 69,
+      "Window Installations & Multi-Trade Remodels": 230,
+      "Foundation Repairs": 99
+    },
+    {
+      "year_month": "2025-03",
+      "New Residential Construction": 1591,
+      "General Construction & Repairs": 1025,
+      "Electrical & Roofing Work": 1037,
+      "Major Residential Remodels": 626,
+      "HVAC Installations": 498,
+      "Demolition Projects": 66,
+      "Window Installations & Multi-Trade Remodels": 353,
+      "Foundation Repairs": 115
+    },
+    {
+      "year_month": "2025-04",
+      "New Residential Construction": 1634,
+      "General Construction & Repairs": 840,
+      "Electrical & Roofing Work": 956,
+      "Major Residential Remodels": 644,
+      "HVAC Installations": 563,
+      "Demolition Projects": 73,
+      "Window Installations & Multi-Trade Remodels": 326,
+      "Foundation Repairs": 114
+    },
+    {
+      "year_month": "2025-05",
+      "New Residential Construction": 1343,
+      "General Construction & Repairs": 845,
+      "Electrical & Roofing Work": 953,
+      "Major Residential Remodels": 868,
+      "HVAC Installations": 717,
+      "Demolition Projects": 76,
+      "Window Installations & Multi-Trade Remodels": 341,
+      "Foundation Repairs": 114
+    },
+    {
+      "year_month": "2025-06",
+      "New Residential Construction": 1288,
+      "General Construction & Repairs": 818,
+      "Electrical & Roofing Work": 1067,
+      "Major Residential Remodels": 667,
+      "HVAC Installations": 744,
+      "Demolition Projects": 69,
+      "Window Installations & Multi-Trade Remodels": 286,
+      "Foundation Repairs": 81
+    },
+    {
+      "year_month": "2025-07",
+      "New Residential Construction": 1286,
+      "General Construction & Repairs": 902,
+      "Electrical & Roofing Work": 1011,
+      "Major Residential Remodels": 699,
+      "HVAC Installations": 664,
+      "Demolition Projects": 94,
+      "Window Installations & Multi-Trade Remodels": 289,
+      "Foundation Repairs": 119
+    },
+    {
+      "year_month": "2025-08",
+      "New Residential Construction": 918,
+      "General Construction & Repairs": 856,
+      "Electrical & Roofing Work": 984,
+      "Major Residential Remodels": 520,
+      "HVAC Installations": 677,
+      "Demolition Projects": 57,
+      "Window Installations & Multi-Trade Remodels": 244,
+      "Foundation Repairs": 95
+    },
+    {
+      "year_month": "2025-09",
+      "New Residential Construction": 946,
+      "General Construction & Repairs": 870,
+      "Electrical & Roofing Work": 914,
+      "Major Residential Remodels": 464,
+      "HVAC Installations": 630,
+      "Demolition Projects": 63,
+      "Window Installations & Multi-Trade Remodels": 292,
+      "Foundation Repairs": 134
+    },
+    {
+      "year_month": "2025-10",
+      "New Residential Construction": 1177,
+      "General Construction & Repairs": 725,
+      "Electrical & Roofing Work": 917,
+      "Major Residential Remodels": 609,
+      "HVAC Installations": 502,
+      "Demolition Projects": 66,
+      "Window Installations & Multi-Trade Remodels": 336,
+      "Foundation Repairs": 121
+    },
+    {
+      "year_month": "2025-11",
+      "New Residential Construction": 963,
+      "General Construction & Repairs": 738,
+      "Electrical & Roofing Work": 797,
+      "Major Residential Remodels": 414,
+      "HVAC Installations": 375,
+      "Demolition Projects": 72,
+      "Window Installations & Multi-Trade Remodels": 253,
+      "Foundation Repairs": 112
+    },
+    {
+      "year_month": "2025-12",
+      "New Residential Construction": 740,
+      "General Construction & Repairs": 596,
+      "Electrical & Roofing Work": 710,
+      "Major Residential Remodels": 374,
+      "HVAC Installations": 375,
+      "Demolition Projects": 59,
+      "Window Installations & Multi-Trade Remodels": 224,
+      "Foundation Repairs": 94
+    }
+  ],
+  "growth_rates": [
+    {
+      "cluster_id": 5,
+      "years": [
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "permits": [
+        3,
+        35,
+        424,
+        813
+      ],
+      "cagr": 547.13,
+      "total_growth": 27000.0
+    },
+    {
+      "cluster_id": 3,
+      "years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "permits": [
+        4,
+        12,
+        112,
+        423,
+        4237,
+        6834
+      ],
+      "cagr": 343.12,
+      "total_growth": 170750.0
+    },
+    {
+      "cluster_id": 7,
+      "years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "permits": [
+        2,
+        6,
+        36,
+        72,
+        666,
+        1290
+      ],
+      "cagr": 264.68,
+      "total_growth": 64400.0
+    },
+    {
+      "cluster_id": 6,
+      "years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "permits": [
+        6,
+        12,
+        38,
+        159,
+        2068,
+        3411
+      ],
+      "cagr": 255.59,
+      "total_growth": 56750.0
+    },
+    {
+      "cluster_id": 0,
+      "years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "permits": [
+        49,
+        143,
+        566,
+        979,
+        7448,
+        13828
+      ],
+      "cagr": 209.11,
+      "total_growth": 28120.4
+    },
+    {
+      "cluster_id": 4,
+      "years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "permits": [
+        82,
+        140,
+        518,
+        426,
+        4480,
+        6614
+      ],
+      "cagr": 140.62,
+      "total_growth": 7965.9
+    },
+    {
+      "cluster_id": 2,
+      "years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "permits": [
+        273,
+        541,
+        1192,
+        1265,
+        7498,
+        11094
+      ],
+      "cagr": 109.79,
+      "total_growth": 3963.7
+    },
+    {
+      "cluster_id": 1,
+      "years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "permits": [
+        598,
+        850,
+        1256,
+        1195,
+        6780,
+        9786
+      ],
+      "cagr": 74.9,
+      "total_growth": 1536.5
+    }
+  ],
+  "seasonal_patterns": [
+    {
+      "month": 1,
+      "avg_permits": 1010
+    },
+    {
+      "month": 2,
+      "avg_permits": 995
+    },
+    {
+      "month": 3,
+      "avg_permits": 1026
+    },
+    {
+      "month": 4,
+      "avg_permits": 951
+    },
+    {
+      "month": 5,
+      "avg_permits": 1421
+    },
+    {
+      "month": 6,
+      "avg_permits": 1597
+    },
+    {
+      "month": 7,
+      "avg_permits": 1775
+    },
+    {
+      "month": 8,
+      "avg_permits": 1603
+    },
+    {
+      "month": 9,
+      "avg_permits": 1626
+    },
+    {
+      "month": 10,
+      "avg_permits": 1616
+    },
+    {
+      "month": 11,
+      "avg_permits": 1434
+    },
+    {
+      "month": 12,
+      "avg_permits": 1319
+    }
+  ],
+  "metadata": {
+    "total_permits": 98264,
+    "date_range": {
+      "start": "2020-01-02",
+      "end": "2025-12-20"
+    },
+    "clusters_analyzed": 8
+  }
+}

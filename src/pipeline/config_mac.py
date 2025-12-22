@@ -32,3 +32,8 @@ PLATFORM = "Mac"
 # Mac-specific: Use all available cores
 import multiprocessing
 N_JOBS = multiprocessing.cpu_count()
+# Mac LLM Configuration
+# Ollama works great on Mac - can handle full models
+LLM_BACKEND = "ollama"  # Ollama recommended for Mac
+LLM_MODEL = "neural-chat"  # or mistral-7b, llama2-7b
+LLM_ENABLED = False  # Set to True to enable, requires ollama serve running

@@ -78,6 +78,16 @@ NLP_KEYWORDS = [
 ]
 
 # ==========================================================
+# LLM Configuration (Optional, for energy infrastructure extraction)
+# ==========================================================
+# Options: 'ollama', 'vllm-quantized', 'vllm', or None (keyword-only extraction)
+LLM_BACKEND = None  # Override in platform-specific configs
+LLM_MODEL = None    # Override in platform-specific configs
+LLM_ENABLED = False  # Set to True to enable LLM extraction
+OLLAMA_BASE_URL = "http://localhost:11434"
+VLLM_QUANTIZATION = "awq"
+
+# ==========================================================
 # Clustering Parameters
 # ==========================================================
 
