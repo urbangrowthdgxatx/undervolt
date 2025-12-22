@@ -137,6 +137,9 @@ export default function StoryBuilder() {
                     console.log("Has storyBlock:", !!data.storyBlock);
                     handleResponse(data as ChatResponse);
                     break;
+                  case "done":
+                    // Stream completed successfully
+                    break;
                   case "error":
                     console.error("Stream error:", data);
                     useFallback(userMessage);
@@ -160,7 +163,9 @@ export default function StoryBuilder() {
 
   // Handle LLM response - new insights go to the TOP
   const handleResponse = (response: ChatResponse) => {
-    setChatMessages((prev) => [...prev, { role: "assistant", content: response.message }]);
+    // API returns 'text' but interface expects 'message'
+    const message = response.message || (response as any).text || '';
+    setChatMessages((prev) => [...prev, { role: "assistant", content: message }]);
 
     if (response.storyBlock) {
       // Add new insight to the FRONT (top)
@@ -408,6 +413,40 @@ export default function StoryBuilder() {
   const topThemesCount = getTopThemes().length;
   const totalItems = storyItems.length;
 
+  // Simple markdown renderer for chat messages
+  const renderMarkdown = (text: string) => {
+    const lines = text.split('\n');
+    return lines.map((line, i) => {
+      // Headers: ## Title
+      if (line.startsWith('## ')) {
+        return <h3 key={i} className="text-sm font-bold text-white mt-2 mb-1">{line.slice(3)}</h3>;
+      }
+      // Bullet points: - item
+      if (line.startsWith('- ')) {
+        const content = line.slice(2).split('**').map((part, j) =>
+          j % 2 === 1 ? <strong key={j} className="text-white font-medium">{part}</strong> : part
+        );
+        return <div key={i} className="text-sm text-white/70 ml-2">• {content}</div>;
+      }
+      // Numbered list: 1. item
+      if (/^\d+\./.test(line)) {
+        const content = line.replace(/^\d+\.\s*/, '').split('**').map((part, j) =>
+          j % 2 === 1 ? <strong key={j} className="text-white font-medium">{part}</strong> : part
+        );
+        return <div key={i} className="text-sm text-white/70 ml-2">{content}</div>;
+      }
+      // Regular text with bold
+      if (line.trim()) {
+        const content = line.split('**').map((part, j) =>
+          j % 2 === 1 ? <strong key={j} className="text-white font-medium">{part}</strong> : part
+        );
+        return <div key={i} className="text-sm text-white/70">{content}</div>;
+      }
+      // Empty line for spacing
+      return <div key={i} className="h-1" />;
+    });
+  };
+
   return (
     <div className="flex h-full">
       {/* Left Panel - Chat */}
@@ -425,16 +464,8 @@ export default function StoryBuilder() {
                   <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
                     <MessageSquare size={14} className="text-white/70" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap">
-                      {msg.content.split("**").map((part, j) =>
-                        j % 2 === 1 ? (
-                          <strong key={j} className="text-white font-medium">{part}</strong>
-                        ) : (
-                          part
-                        )
-                      )}
-                    </p>
+                  <div className="flex-1 space-y-1">
+                    {renderMarkdown(msg.content)}
                   </div>
                 </div>
               )}
