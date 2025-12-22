@@ -157,7 +157,8 @@ def clean_permit_data(df):
             df[col] = df[col].astype("str").str.replace(",", "", regex=False)
 
             # Safe parse
-            col_cpu = pd.to_numeric(df[col].to_pandas(), errors="coerce")
+            col_cpu = df[col].to_pandas() if GPU_ENABLED else df[col]
+            col_cpu = pd.to_numeric(col_cpu, errors="coerce")
             df[col] = cudf.from_pandas(col_cpu) if GPU_ENABLED else col_cpu
 
     # ZIP CODE extraction
@@ -261,12 +262,21 @@ def nlp_enrich(df, text_cols):
 
     log.info("NLP enrichment complete.")
     return df
-from cuml.cluster import KMeans
-from cuml.preprocessing import StandardScaler
-from cuml.decomposition import PCA
+
+try:
+    from cuml.cluster import KMeans as cuKMeans
+    from cuml.preprocessing import StandardScaler as cuStandardScaler
+    from cuml.decomposition import PCA as cuPCA
+    CUML_CLUSTERING_AVAILABLE = True
+except Exception:
+    CUML_CLUSTERING_AVAILABLE = False
+    from sklearn.cluster import KMeans as cuKMeans
+    from sklearn.preprocessing import StandardScaler as cuStandardScaler
+    from sklearn.decomposition import PCA as cuPCA
 
 def run_cuml_clustering(df, feature_prefix="f_"):
-    print("⚡ Running cuML clustering on NLP features...")
+    mode = "GPU (cuML)" if CUML_CLUSTERING_AVAILABLE else "CPU (sklearn)"
+    log.info(f"⚡ Running {mode} clustering on NLP features...")
 
     # pick only the features created by NLP
     feature_cols = [c for c in df.columns if c.startswith(feature_prefix)]
@@ -275,21 +285,44 @@ def run_cuml_clustering(df, feature_prefix="f_"):
         log.warning("No NLP feature columns found for clustering")
         return df
 
-    X = df[feature_cols].astype("float32")
+    # Convert to CPU pandas if needed for sklearn
+    if not CUML_CLUSTERING_AVAILABLE and GPU_ENABLED:
+        X = df[feature_cols].to_pandas().astype("float32")
+    else:
+        X = df[feature_cols].astype("float32")
 
-    # Scale on GPU
-    scaler = StandardScaler()
+    # Scale
+    scaler = cuStandardScaler()
     X_scaled = scaler.fit_transform(X)
 
     # Dimensionality reduction (optional but recommended)
-    pca = PCA(n_components=10)
-    X_pca = pca.fit_transform(X_scaled)
+    n_samples = len(X)
+    n_components = min(10, len(feature_cols), n_samples)
 
-    # GPU KMeans
-    kmeans = KMeans(n_clusters=8, max_iter=300)
+    if n_components < 2:
+        log.warning(f"Too few components ({n_components}) for PCA, using raw features")
+        X_pca = X_scaled
+    else:
+        pca = cuPCA(n_components=n_components)
+        X_pca = pca.fit_transform(X_scaled)
+
+    # KMeans (ensure n_clusters <= n_samples)
+    n_clusters = min(8, n_samples)
+    if n_clusters < 2:
+        log.warning(f"Too few samples ({n_samples}) for clustering, skipping")
+        df["f_cluster"] = 0
+        return df
+
+    kmeans = cuKMeans(n_clusters=n_clusters, max_iter=300)
     clusters = kmeans.fit_predict(X_pca)
 
-    df["f_cluster"] = clusters
+    # Convert back to appropriate format
+    if CUML_CLUSTERING_AVAILABLE:
+        df["f_cluster"] = clusters
+    elif GPU_ENABLED:
+        df["f_cluster"] = cudf.from_pandas(pd.Series(clusters))
+    else:
+        df["f_cluster"] = clusters
 
     log.info("Clustering complete. Added column 'f_cluster'.")
     return df
@@ -299,18 +332,29 @@ def run_cuml_clustering(df, feature_prefix="f_"):
 # MAIN
 # ==========================================================
 
-DATA_PATH = "/home/asus/atx-hackathon/data/Issued_Construction_Permits_20251213.csv"
+DATA_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "data",
+    "Issued_Construction_Permits_20251212.csv"
+)
 
 def main():
+    # Check if data file exists
+    if not os.path.exists(DATA_PATH):
+        log.error(f"Data file not found: {DATA_PATH}")
+        log.error("Download from: https://data.austintexas.gov/Building-and-Development/Issued-Construction-Permits/3syk-w9eu")
+        log.error("Save as: Issued_Construction_Permits_20251212.csv in project root")
+        return
+
     print_gpu_info()
     df = load_data(DATA_PATH)
     # Choose text columns to enrich
     TEXT_COLUMNS = [
-        "original_description",
-        "work_class",
-        "permit_class",
-        "project_type",
-        "permit_type"
+        "description",           # Main permit description
+        "work_class",           # Type of work (residential, commercial, etc.)
+        "permit_class",         # Permit classification
+        "permit_type_desc",     # Detailed permit type description
+        "permit_type"           # Permit type code
     ]
     clean_df = clean_permit_data(df)
 
