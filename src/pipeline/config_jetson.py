@@ -38,5 +38,18 @@ NLP_KEYWORDS = [
     "battery", "generator", "electrical"
 ]
 
+# LLM Configuration for Jetson
+# Options: 'ollama' (recommended), 'vllm-quantized', 'vllm', or None (keyword-only)
+LLM_BACKEND = "ollama"
+LLM_MODEL = "neural-chat"  # mistral-7b also good, use openchat-3.5 for Nano
+LLM_ENABLED = False  # Set to True to enable LLM extraction (requires ollama serve)
+
+# Ollama server configuration
+OLLAMA_BASE_URL = "http://localhost:11434"
+
+# vLLM quantization options
+VLLM_QUANTIZATION = "awq"  # or "gptq", "bitsandbytes"
+VLLM_QUANTIZATION = "awq"  # or "gptq", "bitsandbytes"
+
 # Platform identifier
 PLATFORM = "Jetson"

@@ -10,6 +10,14 @@ from .data import load_data, clean_permit_data, save_results
 from .nlp import nlp_enrich
 from .clustering import run_cuml_clustering
 
+# Try importing Jetson LLM support (optional)
+LLM_EXTRACTOR = None
+try:
+    from .nlp.llm_jetson import JetsonLLMExtractor
+    JETSON_LLM_AVAILABLE = True
+except ImportError:
+    JETSON_LLM_AVAILABLE = False
+
 # Setup logging
 log = setup_logging()
 
@@ -43,8 +51,27 @@ def main():
     # Clean data
     clean_df = clean_permit_data(df)
 
-    # NLP enrichment
+    # NLP enrichment (keyword-based)
     nlp_enriched_df = nlp_enrich(clean_df, TEXT_COLUMNS)
+
+    # LLM extraction (optional, energy infrastructure signals)
+    try:
+        from . import config
+        if hasattr(config, 'LLM_ENABLED') and config.LLM_ENABLED and JETSON_LLM_AVAILABLE:
+            log.info(f"🤖 Using {config.LLM_BACKEND} for LLM extraction...")
+            extractor = JetsonLLMExtractor(
+                backend=config.LLM_BACKEND,
+                model=config.LLM_MODEL
+            )
+            nlp_enriched_df = extractor.extract_dataframe(
+                nlp_enriched_df,
+                text_col="description"
+            )
+            log.info("✅ LLM extraction complete - added energy infrastructure features")
+        else:
+            log.info("⏭️  LLM extraction disabled (configure LLM_ENABLED=True to enable)")
+    except Exception as e:
+        log.warning(f"⚠️  LLM extraction skipped: {e}")
 
     # Save enriched dataset
     nlp_enriched_df.to_csv(OUTPUT_ENRICHED, index=False)

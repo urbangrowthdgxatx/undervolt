@@ -3,6 +3,7 @@ import { streamText, generateObject } from 'ai';
 import { ChatResponseSchema } from '@/lib/chat-schema';
 import { SYSTEM_PROMPT, DATA_QUERY_PROMPT } from '@/lib/chat-context';
 import { getMcpTools } from '@/lib/mcp-client';
+import { searchAnalytics, getKeyInsights } from '@/lib/analytics-data';
 
 export const maxDuration = 60;
 
@@ -28,6 +29,10 @@ export async function POST(req: Request) {
         const mcpTools = await getMcpTools();
         const hasTools = Object.keys(mcpTools).length > 0;
         let dataContext = '';
+
+        // Add analytics data to context
+        const analyticsContext = searchAnalytics(message);
+        sendEvent(controller, 'status', { step: 'loading-analytics', message: 'Loading analytics...' });
 
         if (hasTools) {
           // Step 2: Query database
@@ -72,9 +77,17 @@ export async function POST(req: Request) {
         }
 
         // Step 3: Generate structured response
-        const systemWithData = hasTools && dataContext
-          ? `${SYSTEM_PROMPT}\n\n## Live Data from Database:\n${dataContext}`
-          : SYSTEM_PROMPT;
+        let systemWithData = SYSTEM_PROMPT;
+
+        // Add analytics data
+        if (analyticsContext) {
+          systemWithData += `\n\n## Analytics Data:\n${analyticsContext}`;
+        }
+
+        // Add database data if available
+        if (hasTools && dataContext) {
+          systemWithData += `\n\n## Live Data from Database:\n${dataContext}`;
+        }
 
         const response = await generateObject({
           model: openai('gpt-5.2'),

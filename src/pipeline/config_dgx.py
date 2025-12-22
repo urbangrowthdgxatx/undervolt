@@ -32,5 +32,12 @@ CLUSTERING_PARAMS = {
 # Use larger batches on DGX
 BATCH_SIZE = 10000  # Process in larger batches
 
+# DGX LLM Configuration
+# DGX has plenty of VRAM - can use full vLLM or Ollama
+LLM_BACKEND = "ollama"  # or vllm for maximum performance
+LLM_MODEL = "neural-chat"  # Full-sized models work well here
+LLM_ENABLED = False  # Set to True to enable
+OLLAMA_BASE_URL = "http://localhost:11434"
+
 # Platform identifier
 PLATFORM = "DGX"
