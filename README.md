@@ -277,7 +277,49 @@ extraction:
 
 ## Quick Start Guide
 
-### Frontend
+### 1. Download the Data
+
+First, download the Austin Construction Permits dataset (2.4M records, ~1.5GB):
+
+```bash
+# Option 1: Using bash script
+bash scripts/download_data.sh
+
+# Option 2: Using Python script
+python scripts/download_data.py
+```
+
+The data will be saved to `data/Issued_Construction_Permits_20251212.csv`.
+
+### 2. Run the Pipeline
+
+Install Python dependencies:
+
+```bash
+pip install scikit-learn pandas
+```
+
+Run the extraction pipeline:
+
+```bash
+# New modular structure (recommended)
+python run_pipeline.py
+
+# Legacy monolithic script (still works)
+python pipeline_cudf.py
+```
+
+The pipeline will:
+- Clean and normalize 2.4M permit records
+- Extract NLP features (solar, EV, battery, generator keywords)
+- Cluster permits by similarity
+- Generate enriched dataset and summaries
+
+**Output files:**
+- `permit_data_enriched.csv` - Full dataset with features
+- `permit_summary_by_zip.csv` - ZIP code summaries
+
+### 3. Frontend
 
 ```bash
 cd frontend
@@ -286,12 +328,6 @@ bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
-
-### Extraction (requires DGX)
-
-```bash
-python scripts/extract_parallel.py
-```
 
 ---
 
