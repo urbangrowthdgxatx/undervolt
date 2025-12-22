@@ -152,7 +152,7 @@ def visualize_cluster_characteristics(df, output_dir='output/visualizations', cl
     plt.close()
 
 
-def visualize_cluster_sizes(df, output_dir='output/visualizations'):
+def visualize_cluster_sizes(df, output_dir='output/visualizations', cluster_names=None):
     """Create cluster size distribution"""
     print("\n📊 Creating cluster size distribution...")
 
@@ -162,8 +162,16 @@ def visualize_cluster_sizes(df, output_dir='output/visualizations'):
 
     # Bar chart
     colors = plt.cm.tab10(np.linspace(0, 1, len(cluster_counts)))
-    bars = ax1.bar(cluster_counts.index, cluster_counts.values, color=colors, alpha=0.8)
-    ax1.set_xlabel('Cluster ID', fontsize=12)
+
+    # Create labels
+    if cluster_names:
+        labels = [cluster_names.get(i, {}).get("name", f'Cluster {i}') for i in cluster_counts.index]
+    else:
+        labels = [f'Cluster {i}' for i in cluster_counts.index]
+
+    bars = ax1.bar(range(len(cluster_counts)), cluster_counts.values, color=colors, alpha=0.8)
+    ax1.set_xticks(range(len(cluster_counts)))
+    ax1.set_xticklabels(labels, rotation=45, ha='right', fontsize=9)
     ax1.set_ylabel('Number of Permits', fontsize=12)
     ax1.set_title('Cluster Size Distribution', fontsize=14, fontweight='bold')
     ax1.grid(axis='y', alpha=0.3)
@@ -177,7 +185,7 @@ def visualize_cluster_sizes(df, output_dir='output/visualizations'):
 
     # Pie chart
     ax2.pie(cluster_counts.values,
-           labels=[f'Cluster {i}' for i in cluster_counts.index],
+           labels=labels,
            autopct='%1.1f%%',
            colors=colors,
            startangle=90)
@@ -212,11 +220,12 @@ def visualize_geographic_clusters(df, output_dir='output/visualizations'):
 
     # Create stacked bar chart
     fig, ax = plt.subplots(figsize=(14, 8))
+    colors = plt.cm.tab10(np.linspace(0, 1, len(cluster_by_zip.columns)))
     cluster_by_zip.plot(
         kind='barh',
         stacked=True,
         ax=ax,
-        colormap='tab10',
+        color=colors,
         alpha=0.8
     )
 
@@ -307,10 +316,24 @@ def main():
     output_dir = 'output/visualizations'
     os.makedirs(output_dir, exist_ok=True)
 
+    # Load cluster names if available
+    cluster_names = None
+    names_path = 'output/cluster_names.json'
+    if os.path.exists(names_path):
+        print(f"\n📖 Loading cluster names from {names_path}...")
+        import json
+        with open(names_path, 'r') as f:
+            cluster_names = {int(k): v for k, v in json.load(f).items()}
+        print(f"✅ Loaded names for {len(cluster_names)} clusters")
+    else:
+        print(f"\n⚠️  No cluster names found at {names_path}")
+        print("   Visualizations will use generic 'Cluster N' labels")
+        print("   Run 'python scripts/name_clusters.py' to generate names")
+
     # Generate visualizations
-    visualize_cluster_sizes(df, output_dir)
-    visualize_2d_clusters(df, output_dir)
-    visualize_cluster_characteristics(df, output_dir)
+    visualize_cluster_sizes(df, output_dir, cluster_names)
+    visualize_2d_clusters(df, output_dir, cluster_names)
+    visualize_cluster_characteristics(df, output_dir, cluster_names)
     visualize_geographic_clusters(df, output_dir)
     create_cluster_summary_report(df, output_dir)
 
