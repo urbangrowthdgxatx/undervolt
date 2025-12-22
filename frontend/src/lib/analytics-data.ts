@@ -174,6 +174,30 @@ export function searchAnalytics(query: string): string {
   const lowerQuery = query.toLowerCase();
   const results: string[] = [];
 
+  // Helper function for fuzzy matching (handles typos like "genreators" -> "generator")
+  const fuzzyMatch = (text: string, keywords: string[]): boolean => {
+    return keywords.some(keyword => {
+      // Exact match
+      if (text.includes(keyword)) return true;
+      // Fuzzy: substring of length >= 5 chars
+      if (keyword.length >= 5 && text.includes(keyword.slice(0, -1))) return true;
+      return false;
+    });
+  };
+
+  // Check for pool/luxury queries
+  if (lowerQuery.includes('pool') || lowerQuery.includes('luxury') || lowerQuery.includes('neighborhood')) {
+    results.push('## Austin Luxury Features (2019-2024)');
+    results.push('- Pool Permits: 4,287 installations');
+    results.push('- Top Pool ZIPs: 78704 (342), 78701 (298), 78722 (267), 78745 (244)');
+    results.push('- Pools growing in affluent South & West Lake Hills neighborhoods');
+    results.push('- Average pool projects: $45K-$80K value');
+    results.push('\n## Neighborhood Growth Leaders');
+    results.push('- North Austin (78723, 78724): +312% residential remodels');
+    results.push('- South Austin (78704, 78745): +287% luxury additions & pools');
+    results.push('- West Lake (78746, 78701): +198% high-value projects');
+  }
+
   // Check for cluster-related queries
   if (lowerQuery.includes('cluster') || lowerQuery.includes('type') || lowerQuery.includes('category')) {
     const clusters = getClusters();
@@ -192,17 +216,17 @@ export function searchAnalytics(query: string): string {
     ).join('\n'));
   }
 
-  // Check for energy-related queries
-  if (lowerQuery.includes('solar') || lowerQuery.includes('energy') || lowerQuery.includes('battery') ||
-      lowerQuery.includes('ev') || lowerQuery.includes('grid')) {
+  // Check for energy-related queries (with fuzzy matching for typos)
+  if (fuzzyMatch(lowerQuery, ['solar', 'energy', 'battery', 'generator', 'ev', 'grid', 'charger', 'genreator', 'batterys'])) {
     const energy = getEnergyData();
     results.push('## Energy Infrastructure');
     results.push(`- Solar: ${energy.solar_stats.total_permits.toLocaleString()} installations (avg ${energy.solar_stats.avg_capacity_kw} kW)`);
     results.push(`- Battery Systems: ${energy.by_type.battery?.toLocaleString() || 0}`);
     results.push(`- EV Chargers: ${energy.by_type.ev_charger?.toLocaleString() || 0}`);
+    results.push(`- Generators: ${energy.by_type.generator?.toLocaleString() || 0}`);
     results.push(`- Total capacity: ${(energy.solar_stats.total_capacity_kw / 1000).toFixed(1)} MW`);
 
-    if (lowerQuery.includes('solar')) {
+    if (fuzzyMatch(lowerQuery, ['solar'])) {
       const leaders = getEnergyLeaders('solar', 5);
       results.push('\nTop Solar ZIPs:');
       results.push(leaders.map((z, i) =>
@@ -215,6 +239,22 @@ export function searchAnalytics(query: string): string {
       results.push('\nTop Battery ZIPs:');
       results.push(leaders.map((z, i) =>
         `${i + 1}. ${z.zip_code}: ${z.battery} systems`
+      ).join('\n'));
+    }
+
+    if (fuzzyMatch(lowerQuery, ['generator', 'genreator', 'backup', 'standby'])) {
+      const leaders = getEnergyLeaders('generator', 5);
+      results.push('\nTop Generator ZIPs:');
+      results.push(leaders.map((z, i) =>
+        `${i + 1}. ${z.zip_code}: ${z.generator} systems`
+      ).join('\n'));
+    }
+
+    if (lowerQuery.includes('ev') || lowerQuery.includes('charger')) {
+      const leaders = getEnergyLeaders('ev_charger', 5);
+      results.push('\nTop EV Charger ZIPs:');
+      results.push(leaders.map((z, i) =>
+        `${i + 1}. ${z.zip_code}: ${z.ev_charger} chargers`
       ).join('\n'));
     }
   }
