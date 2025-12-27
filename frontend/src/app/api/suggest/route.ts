@@ -24,19 +24,15 @@ export async function POST(req: Request) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: modelName,
-        prompt: `Given these Austin construction insights: ${storyContext}
+        prompt: `Based on: ${storyContext}
 
-Generate 3 follow-up questions a user might ask to dig deeper. Questions should be:
-- Short (5-8 words)
-- Specific and actionable
-- Related but exploring new angles
-
-Output format (just the questions, one per line):`,
+Generate 3 short follow-up questions (5-7 words each):`,
         stream: false,
         keep_alive: '30m',  // Keep model in GPU memory
         options: {
           temperature: 0.8,
-          num_predict: 100,
+          num_predict: 60,  // Reduced for speed (3 questions)
+          num_ctx: 256,     // Minimal context
         }
       })
     });
