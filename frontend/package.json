@@ -21,6 +21,7 @@
     "lucide-react": "^0.561.0",
     "mapbox-gl": "^3.17.0",
     "next": "16.0.10",
+    "ollama-ai-provider": "^1.2.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "react-map-gl": "^8.1.0",

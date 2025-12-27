@@ -1,196 +1,66 @@
-## ✅ LLM Integration Complete - Multi-Platform Support
+# LLM Integration Complete! 🦙
 
-### What Was Integrated
+Your Austin construction explorer now uses **local Llama 3.2 3B** for intelligent, conversational responses.
 
-LLM extraction is now **integrated into the main pipeline** with platform-specific configurations:
+## 🎯 What Changed
 
-| Platform | Config File | Default Backend | Default Model | LLM Enabled |
-|----------|------------|-----------------|---------------|-------------|
-| **Mac** | `config_mac.py` | Ollama | neural-chat | ❌ False |
-| **Jetson** | `config_jetson.py` | Ollama | neural-chat | ❌ False |
-| **DGX** | `config_dgx.py` | Ollama | neural-chat | ❌ False |
+### From: Fuzzy Keyword Matching
+- ❌ Simple keyword matching ("energy" → energy response)
+- ❌ Generic, repetitive responses
+- ❌ Limited understanding of nuance
 
-### How It Works
+### To: Local LLM Intelligence
+- ✅ **Llama 3.2 3B** (2GB model, optimized for Jetson)
+- ✅ Natural language understanding
+- ✅ Contextual, conversational responses
+- ✅ Dynamic follow-up suggestions
+- ✅ Cites specific numbers from analytics context
 
-The pipeline now:
-1. **Tries to import** Jetson LLM support (optional)
-2. **Checks config** for `LLM_ENABLED` setting
-3. **If enabled**, runs LLM extraction after keyword NLP
-4. **If disabled or unavailable**, continues with keyword-only extraction
-5. **Gracefully handles** missing dependencies
+## 🚀 How It Works
 
-### Enable Per Platform
+### Chat Endpoint: `/api/chat-llm`
+1. **Load Analytics Context**: Injects all pre-computed data (clusters, energy stats, growth trends)
+2. **LLM Processing**: Llama 3.2 generates concise, data-driven response
+3. **StoryBlock Creation**: Wraps response in structured format with headline, evidence, confidence
+4. **Stream Response**: Returns via SSE for real-time feedback
 
-**Mac:**
-```python
-# src/pipeline/config_mac.py
-LLM_ENABLED = True
-```
+### Suggestions Endpoint: `/api/suggest`
+1. **Analyze Story**: Reviews existing story blocks
+2. **Generate Questions**: LLM creates 3 contextual follow-up questions
+3. **Fallback**: Static suggestions if LLM fails
 
-**Jetson:**
-```python
-# src/pipeline/config_jetson.py
-LLM_ENABLED = True
-```
+## 📊 Analytics Context Injected
 
-**DGX:**
-```python
-# src/pipeline/config_dgx.py
-LLM_ENABLED = True
-```
+The LLM has access to:
 
-### Platform-Specific Recommendations
+- **8 Permit Clusters** (ML Classification): 2.3M permits categorized
+- **Energy Infrastructure**: 18,050 permits (solar, batteries, EV chargers)
+- **Growth Trends**: CAGR 2020-2025 (Demolition +547%, Battery +89%, etc.)
+- **ZIP Code Stats**: 49 ZIP codes with permit breakdowns
+- **Key Insights**: Battery surprise (4x more than solar), top ZIPs, etc.
 
-| Device | Backend | Model | Status |
-|--------|---------|-------|--------|
-| **Mac (Intel/Apple Silicon)** | Ollama | neural-chat, mistral-7b | ✅ Ready |
-| **Jetson Orin (12GB)** | Ollama | neural-chat, mistral-7b | ✅ Ready |
-| **Jetson Xavier (8GB)** | Ollama | neural-chat, mistral-7b | ✅ Ready |
-| **Jetson Nano (4GB)** | vLLM-quantized | 4-bit GPTQ | ✅ Optimized |
-| **DGX** | Ollama or vLLM | Full models | ✅ Ready |
+## 🎯 Example Interactions
 
-### Usage
+### Query: "What's growing fastest?"
+**LLM Response**: "**Demolition** is exploding at **+547% CAGR** since 2020, with 8,734 permits recorded. This signals intense urban redevelopment as Austin tears down the old to build the new."
 
-**Mac:**
-```bash
-# Start Ollama (one-time setup)
-ollama serve &
+### Query: "Show me energy data"
+**LLM Response**: "Austin has a **battery surprise**: **10,377 battery systems** vs just 2,436 solar installations—that's **4x more batteries than solar**! ZIP 78758 leads with 801 battery permits."
 
-# Enable in config
-# Edit src/pipeline/config_mac.py: LLM_ENABLED = True
+### Query: "Tell me about ZIP 78758"
+**LLM Response**: "ZIP 78758 is Austin's **battery hub** with **801 battery systems**—the highest in the city. It has 2,345 total permits with a strong focus on energy infrastructure."
 
-# Run pipeline
-python run_pipeline_mac.py
-```
+## ✅ What's Working
 
-**Jetson:**
-```bash
-# Start Ollama (one-time setup)
-ollama serve &
+- ✅ LLM responses are concise and conversational
+- ✅ Cites specific statistics from analytics context
+- ✅ Creates unique StoryBlocks for each query type
+- ✅ Generates contextual follow-up suggestions
+- ✅ Runs entirely on local Jetson (no API keys)
+- ✅ Fast responses (3B model optimized for edge)
 
-# Enable in config
-# Edit src/pipeline/config_jetson.py: LLM_ENABLED = True
+## 🎉 You're Ready!
 
-# Run pipeline
-python run_pipeline_jetson.py
-```
+Open http://localhost:3000 and start chatting with your local LLM-powered Austin construction explorer!
 
-### Files Modified
-
-1. **`src/pipeline/main.py`**
-   - Added LLM import handling
-   - Added LLM extraction step after keyword NLP
-   - Graceful fallback if LLM unavailable
-
-2. **`src/pipeline/config.py`**
-   - Added base LLM configuration options
-
-3. **`src/pipeline/config_mac.py`**
-   - Added platform-specific LLM defaults
-
-4. **`src/pipeline/config_jetson.py`**
-   - Updated LLM defaults (neural-chat, LLM_ENABLED=False)
-
-5. **`src/pipeline/config_dgx.py`**
-   - Added LLM configuration for DGX
-
-6. **`docs/LLM_INTEGRATION_BY_PLATFORM.md`** (NEW)
-   - Setup instructions per platform
-   - Enable/disable guide
-   - Troubleshooting
-
-### Features Added
-
-When `LLM_ENABLED = True`, the pipeline extracts 12 energy infrastructure features:
-
-```
-f_is_solar
-f_is_battery
-f_is_generator
-f_is_ev_charger
-f_is_residential
-f_is_commercial
-f_is_adu
-f_is_new_construction
-f_is_remodel
-f_has_hvac
-f_has_electrical
-f_has_plumbing
-```
-
-### Backward Compatibility
-
-✅ **Fully backward compatible**
-- Default: `LLM_ENABLED = False` (no breaking changes)
-- Works with or without Ollama installed
-- Graceful error handling if LLM unavailable
-
-### Quick Enable (Any Platform)
-
-1. Ensure Ollama is running: `ollama serve &`
-2. Edit platform config: Set `LLM_ENABLED = True`
-3. Run pipeline: `python run_pipeline_<platform>.py`
-
-### Current Status
-
-✅ Ollama running locally with neural-chat model loaded
-✅ LLM code integrated into pipeline
-✅ All platform configs updated
-✅ Ready to enable per platform
-
-### Next Steps
-
-To enable LLM extraction:
-
-**Option 1 - Mac Development:**
-```bash
-# Edit src/pipeline/config_mac.py
-LLM_ENABLED = True
-
-# Run
-python run_pipeline_mac.py
-```
-
-**Option 2 - Jetson:**
-```bash
-# Edit src/pipeline/config_jetson.py
-LLM_ENABLED = True
-
-# Run
-python run_pipeline_jetson.py
-```
-
-**Option 3 - Test Extraction:**
-```python
-from src.pipeline.nlp.llm_jetson import JetsonLLMExtractor
-extractor = JetsonLLMExtractor(backend="ollama", model="neural-chat")
-features = extractor.extract_batch(["Solar + battery storage installation"])
-print(features)
-```
-
-### Documentation
-
-- **Full guide:** `docs/LLM_INTEGRATION_BY_PLATFORM.md`
-- **Detailed:** `docs/JETSON_LLM.md`
-- **Quick ref:** `docs/JETSON_LLM_QUICK_REF.md`
-- **Example:** `examples/jetson_llm_example.py`
-
-### Ollama Service
-
-Currently running:
-```bash
-# Check status
-systemctl status ollama
-# Or: lsof -i :11434
-
-# Stop
-systemctl stop ollama
-
-# Start
-systemctl start ollama
-# Or: ollama serve
-```
-
----
-
-**Ready to enable LLM extraction on any platform!** 🚀
+**Status Indicator**: Watch for "🦙 Llama 3.2 3B (local)" in the chat status to confirm LLM is being used.

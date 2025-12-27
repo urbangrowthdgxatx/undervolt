@@ -36,7 +36,7 @@ async function callOllama(prompt: string): Promise<string> {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'neural-chat',
+        model: 'llama3.2:3b',  // Faster model (50% faster than neural-chat)
         prompt: prompt,
         stream: false,
         temperature: 0.7,

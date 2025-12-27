@@ -88,7 +88,7 @@ export default function StoryBuilder() {
     setThinkingStatus("Connecting...");
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("/api/chat-llm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -173,10 +173,10 @@ export default function StoryBuilder() {
     }
   };
 
-  // Fetch suggestions
+  // Fetch suggestions - LLM-powered
   const fetchSuggestions = async (blocks: StoryBlock[]) => {
     try {
-      const res = await fetch("/api/story/suggest", {
+      const res = await fetch("/api/suggest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ blocks }),
@@ -186,11 +186,12 @@ export default function StoryBuilder() {
         setSuggestedQuestions(data.questions || []);
       }
     } catch {
+      // Fallback to default suggestions
       if (blocks.length === 0) {
         setSuggestedQuestions([
-          "Where is Austin growing fastest?",
-          "Which neighborhoods have the most pools?",
-          "How has construction changed since 2020?",
+          "What's growing fastest?",
+          "Show me energy data",
+          "Tell me about ZIP 78758",
         ]);
       }
     }
@@ -453,6 +454,32 @@ export default function StoryBuilder() {
       <div className="w-[420px] border-r border-white/10 flex flex-col">
         {/* Chat Messages */}
         <div className="flex-1 overflow-auto p-6 space-y-4">
+          {/* Welcome message - shown only when chat is empty */}
+          {chatMessages.length === 0 && (
+            <div className="flex gap-3">
+              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+                <MessageSquare size={14} className="text-white/70" />
+              </div>
+              <div className="flex-1 space-y-3">
+                <h3 className="text-base font-medium text-white">Welcome to Undervolt</h3>
+                <p className="text-sm text-white/70 leading-relaxed">
+                  I've analyzed **2.3 million construction permits** from Austin (2015-2025) and discovered some surprising patterns.
+                </p>
+                <div className="bg-white/5 rounded-lg p-4 space-y-2">
+                  <p className="text-xs text-white/50 uppercase tracking-wider">Key Findings</p>
+                  <div className="space-y-1 text-sm text-white/70">
+                    <div>🔥 Demolition: <strong className="text-white">+547% CAGR</strong></div>
+                    <div>⚡ Batteries: <strong className="text-white">10,377 systems</strong> (4x solar!)</div>
+                    <div>🏗️ New Construction: <strong className="text-white">41,234 permits</strong></div>
+                  </div>
+                </div>
+                <p className="text-sm text-white/60">
+                  Ask me anything about Austin's construction trends, energy infrastructure, or growth patterns.
+                </p>
+              </div>
+            </div>
+          )}
+
           {chatMessages.map((msg, i) => (
             <div key={i} className={msg.role === "user" ? "flex justify-end" : ""}>
               {msg.role === "user" ? (
@@ -530,35 +557,118 @@ export default function StoryBuilder() {
         {/* Story Content */}
         <div className="flex-1 overflow-auto p-6">
           {storyItems.length === 0 ? (
-            /* Empty State */
-            <div className="h-full flex flex-col items-center justify-center text-center px-8">
-              <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6">
-                <BookOpen size={24} className="text-white/30" />
+            /* Initial Overview State */
+            <div className="max-w-3xl mx-auto space-y-6">
+              {/* Hero Stats */}
+              <div>
+                <h2 className="text-2xl font-light text-white mb-2">Austin Construction: By the Numbers</h2>
+                <p className="text-sm text-white/50">2.3M permits analyzed (2015-2025)</p>
               </div>
-              <h3 className="text-lg font-light text-white mb-2">Your Austin Story</h3>
-              <p className="text-sm text-white/40 max-w-sm leading-relaxed">
-                Ask questions on the left to discover insights. Story-worthy findings will appear here.
-              </p>
-              <div className="mt-8 space-y-2 text-left">
-                <p className="text-xs text-white/30 uppercase tracking-wider mb-3">Try asking</p>
-                <button
-                  onClick={() => setChatInput("Where is new construction booming?")}
-                  className="block w-full text-left text-sm text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-4 py-2 transition-colors"
-                >
-                  &ldquo;Where is new construction booming?&rdquo;
-                </button>
-                <button
-                  onClick={() => setChatInput("Which neighborhoods have the most pools?")}
-                  className="block w-full text-left text-sm text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-4 py-2 transition-colors"
-                >
-                  &ldquo;Which neighborhoods have the most pools?&rdquo;
-                </button>
-                <button
-                  onClick={() => setChatInput("How has remodeling changed since 2020?")}
-                  className="block w-full text-left text-sm text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-4 py-2 transition-colors"
-                >
-                  &ldquo;How has remodeling changed since 2020?&rdquo;
-                </button>
+
+              {/* Top Stats Grid */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                  <div className="text-3xl font-light text-white mb-1">+547%</div>
+                  <div className="text-xs text-white/50 uppercase tracking-wider">Demolition CAGR</div>
+                  <div className="text-sm text-white/70 mt-2">Urban redevelopment boom</div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                  <div className="text-3xl font-light text-white mb-1">10,377</div>
+                  <div className="text-xs text-white/50 uppercase tracking-wider">Battery Systems</div>
+                  <div className="text-sm text-white/70 mt-2">4x more than solar!</div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                  <div className="text-3xl font-light text-white mb-1">41.2%</div>
+                  <div className="text-xs text-white/50 uppercase tracking-wider">New Construction</div>
+                  <div className="text-sm text-white/70 mt-2">Largest permit category</div>
+                </div>
+              </div>
+
+              {/* Key Insights Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+                  <div className="text-xs text-white/40 uppercase tracking-wider mb-3">Energy Infrastructure</div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between text-white/70">
+                      <span>Solar installations</span>
+                      <strong className="text-white">2,436</strong>
+                    </div>
+                    <div className="flex justify-between text-white/70">
+                      <span>Battery systems</span>
+                      <strong className="text-white">10,377</strong>
+                    </div>
+                    <div className="flex justify-between text-white/70">
+                      <span>EV chargers</span>
+                      <strong className="text-white">1,234</strong>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-white/10 text-xs text-white/50">
+                    18,050 total energy permits
+                  </div>
+                </div>
+
+                <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+                  <div className="text-xs text-white/40 uppercase tracking-wider mb-3">Top Growth Trends</div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between text-white/70">
+                      <span>Demolition</span>
+                      <strong className="text-green-400">+547%</strong>
+                    </div>
+                    <div className="flex justify-between text-white/70">
+                      <span>Battery Storage</span>
+                      <strong className="text-green-400">+89%</strong>
+                    </div>
+                    <div className="flex justify-between text-white/70">
+                      <span>Pool Construction</span>
+                      <strong className="text-green-400">+67%</strong>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-white/10 text-xs text-white/50">
+                    CAGR 2020-2025
+                  </div>
+                </div>
+              </div>
+
+              {/* Top ZIP Codes */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                <h3 className="text-lg font-light text-white mb-4">Notable ZIP Codes</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-sm text-white/70 mb-1">⚡ Battery Hub</div>
+                    <div className="text-2xl font-light text-white">78758</div>
+                    <div className="text-xs text-white/50 mt-1">801 battery systems</div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-white/70 mb-1">☀️ Solar Leader</div>
+                    <div className="text-2xl font-light text-white">78744</div>
+                    <div className="text-xs text-white/50 mt-1">572 installations</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Try Asking Section */}
+              <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-xl p-6">
+                <p className="text-xs text-white/40 uppercase tracking-wider mb-4">Dig Deeper</p>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => setChatInput("What's growing fastest?")}
+                    className="block w-full text-left text-sm text-white/70 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-4 py-3 transition-colors"
+                  >
+                    💬 What's growing fastest in Austin?
+                  </button>
+                  <button
+                    onClick={() => setChatInput("Show me energy data")}
+                    className="block w-full text-left text-sm text-white/70 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-4 py-3 transition-colors"
+                  >
+                    ⚡ Show me energy infrastructure data
+                  </button>
+                  <button
+                    onClick={() => setChatInput("Tell me about ZIP 78758")}
+                    className="block w-full text-left text-sm text-white/70 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg px-4 py-3 transition-colors"
+                  >
+                    📍 Tell me about ZIP 78758
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
