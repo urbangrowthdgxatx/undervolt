@@ -2,6 +2,21 @@ import { getClusters, getEnergyData, getFastestGrowingClusters } from '@/lib/ana
 
 export const maxDuration = 60;
 
+// Cache analytics data in memory (recompute only on module reload)
+let analyticsCache: { clusters: any[], energy: any, growing: any[] } | null = null;
+
+function getAnalyticsData() {
+  if (!analyticsCache) {
+    console.log('[LLM] Loading analytics data into cache...');
+    analyticsCache = {
+      clusters: getClusters(),
+      energy: getEnergyData(),
+      growing: getFastestGrowingClusters(5)
+    };
+  }
+  return analyticsCache;
+}
+
 // Helper to send SSE events
 function sendEvent(controller: ReadableStreamDefaultController, event: string, data: unknown) {
   const encoder = new TextEncoder();
@@ -23,39 +38,13 @@ export async function POST(req: Request) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        // Load analytics context
+        // Load analytics context (cached after first call)
         sendEvent(controller, 'status', { step: 'loading-analytics', message: '🦙 Llama 3.2 3B (local)' });
 
-        const clusters = getClusters();
-        const energy = getEnergyData();
-        const growing = getFastestGrowingClusters(5);
+        const { clusters, energy, growing } = getAnalyticsData();
 
-        // Build rich context
-        const analyticsContext = `
-# Austin Construction Data (2.3M Permits Analyzed)
-
-## 8 Permit Clusters (ML Classification)
-${clusters.map(c => `- ${c.name}: ${c.size.toLocaleString()} permits (${c.percentage.toFixed(1)}%)`).join('\n')}
-
-## Energy Infrastructure (18,050 permits)
-- Solar: ${energy.solar_stats.total_permits.toLocaleString()} installations, ${(energy.solar_stats.total_capacity_kw / 1000).toFixed(1)} MW total
-- Batteries: ${(energy.by_type.battery || 0).toLocaleString()} systems (4x more than solar!)
-- EV Chargers: ${(energy.by_type.ev_charger || 0).toLocaleString()}
-- Top Battery ZIP: ${energy.by_zip.sort((a, b) => b.battery - a.battery)[0].zip_code}
-- Top Solar ZIP: ${energy.by_zip.sort((a, b) => b.solar - a.solar)[0].zip_code}
-
-## Growth Trends (CAGR 2020-2025)
-${growing.map(g => `- ${g.name}: +${g.cagr.toFixed(1)}%`).join('\n')}
-
-## Key Insights
-- Demolition exploded +547% CAGR - urban redevelopment boom
-- Battery surprise: 10,377 systems vs 2,436 solar
-- ZIP 78758: Battery hub (801 systems)
-- ZIP 78744: Solar leader (572 installations)
-`;
-
-        // Simplified, shorter prompt for faster responses
-        const systemPrompt = `Austin construction analyst. 2-3 sentences max. Bold key stats with **. Context: ${clusters[0].name} (${clusters[0].size.toLocaleString()} permits), Demolition +547%, Batteries: 10,377 vs Solar: 2,436.`;
+        // Minimal prompt for speed (no verbose context)
+        const systemPrompt = `Austin permits analyst. 2 sentences max. Bold stats with **. Data: Demolition +547%, Batteries 10K, New Construction 41%, Solar 2.4K.`;
 
         // Generate LLM response using Ollama HTTP API
         sendEvent(controller, 'status', { step: 'generating', message: 'Thinking...' });
@@ -73,8 +62,8 @@ ${growing.map(g => `- ${g.name}: +${g.cagr.toFixed(1)}%`).join('\n')}
             keep_alive: '30m',  // Keep model in GPU memory for 30 minutes
             options: {
               temperature: 0.5,  // Lower temp = faster, more focused
-              num_predict: 80,   // Reduced from 200 for speed
-              num_ctx: 512,      // Smaller context window
+              num_predict: 50,   // Short responses (2 sentences)
+              num_ctx: 256,      // Minimal context window for speed
             }
           })
         });
