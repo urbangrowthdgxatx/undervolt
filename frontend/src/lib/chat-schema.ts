@@ -99,7 +99,7 @@ export const StoryBlockSchema = z.object({
 
 export const ChatResponseSchema = z.object({
   message: z.string().describe('Response text with **bold** for emphasis on key statistics'),
-  storyBlock: StoryBlockSchema.nullable().optional().describe('If this insight is story-worthy, include a story block to add to the narrative'),
+  storyBlock: StoryBlockSchema.nullable().describe('Include a story block ONLY for real data-backed insights. Set to null for errors, failures, or conversational responses.'),
 });
 
 export type SignalType = z.infer<typeof SignalTypeSchema>;
