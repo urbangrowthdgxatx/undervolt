@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, permits } from '../../../../../src/db';
+import { db, permits } from '@/db';
 import { eq } from 'drizzle-orm';
 
 export async function GET(request: NextRequest) {
