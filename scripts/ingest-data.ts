@@ -156,18 +156,18 @@ async function ingestPermits() {
   for (let i = 0; i < records.length; i += BATCH_SIZE) {
     const batch = records.slice(i, i + BATCH_SIZE);
 
-    const values = batch.map((record: any) => ({
-      permitNumber: record.permit_number || `UNKNOWN_${i}`,
+    const values = batch.map((record: any, idx: number) => ({
+      permitNumber: record.permit_number || `ENERGY_${i + idx}_${Date.now()}`,
       address: record.address || null,
-      zipCode: record.zip_code,
-      latitude: record.latitude,
-      longitude: record.longitude,
-      clusterId: record.cluster_id,
-      workDescription: record.work_description || null,
+      zipCode: record.zip_code ? String(record.zip_code).replace('.0', '') : 'UNKNOWN',
+      latitude: record.latitude ? parseFloat(record.latitude) : null,
+      longitude: record.longitude ? parseFloat(record.longitude) : null,
+      clusterId: record.cluster_id ? parseInt(record.cluster_id) : null,
+      workDescription: record.description || null,
       isEnergyPermit: true, // All records in energy_permits.csv are energy permits
-      energyType: record.energy_type || null,
-      solarCapacityKw: record.solar_capacity_kw || null,
-      issueDate: record.issue_date || null,
+      energyType: record.type || null, // CSV uses 'type' not 'energy_type'
+      solarCapacityKw: record.capacity_kw ? parseFloat(record.capacity_kw) : null,
+      issueDate: record.issued_date || null, // CSV uses 'issued_date' not 'issue_date'
     }));
 
     await db.insert(permits).values(values).onConflictDoNothing();

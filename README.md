@@ -314,49 +314,59 @@ undervolt/
 ### 1. Download the Data
 
 ```bash
-# Option 1: Shell script
+# Shell script (recommended)
 bash scripts/shell/download_data.sh
 
-# Option 2: Python script
+# Or Python script
 python scripts/python/download_data.py
 ```
 
 Data saved to `data/Issued_Construction_Permits_20251212.csv` (~1.5GB, 2.4M records).
 
-### 2. Run the Pipeline
+### 2. Run the Unified Pipeline
 
 ```bash
-# Unified entry point (auto-detects platform: Jetson/DGX/Mac)
-python run.py
+# Auto-detects platform (Jetson/DGX/Mac) and uses GPU when available
+python run_unified.py
 
-# Or specify platform
-python run.py --platform jetson
-python run.py --platform dgx
-python run.py --platform mac
+# Test with sample first
+python run_unified.py --sample 100000
+
+# Skip clustering for faster testing
+python run_unified.py --sample 50000 --skip-clustering
 
 # Show help
-python run.py --help
+python run_unified.py --help
 ```
 
-Pipeline output:
-- `output/permit_data_enriched.csv` - Full dataset with 80+ NLP features
-- `output/permit_summary_by_zip.csv` - ZIP code summaries
-- `output/cluster_names.json` - Cluster metadata
+**Pipeline output:**
+- `output/permit_data_enriched.csv` - 2.3M permits with NLP features + clusters
+- `output/energy_permits.csv` - 192K energy permits (solar, battery, EV, etc.)
+- `frontend/public/data/energy_infrastructure.json` - Frontend data
 
-### 3. Precompute Stats (for frontend performance)
+**Platform detection:**
+- ✅ **Jetson AGX Orin**: Uses cuDF/cuML if installed, falls back to pandas/sklearn
+- ✅ **NVIDIA DGX**: Uses cuDF/cuML if installed
+- ✅ **Mac**: Uses pandas/sklearn (CPU only)
+
+[Install RAPIDS for GPU acceleration →](docs/guides/install-rapids-jetson.md)
+
+### 3. Load Database
 
 ```bash
-node scripts/node/precompute_stats.js
-```
+# Create schema and ingest data
+npm run db:reset
 
-Generates `output/.stats-cache.json` for fast API responses (58ms vs 60s).
+# View database
+npm run db:studio  # Opens http://localhost:4983
+```
 
 ### 4. Run Frontend
 
 ```bash
 cd frontend
-bun install
-bun run dev
+bun install  # or npm install
+bun run dev  # or npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)

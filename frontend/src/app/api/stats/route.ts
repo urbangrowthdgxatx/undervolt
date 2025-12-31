@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db, clusters, clusterKeywords, energyStatsByZip, permits } from '../../../../../src/db';
+import { db, clusters, clusterKeywords, energyStatsByZip, permits } from '@/db';
 import { eq, sql, desc } from 'drizzle-orm';
 
 // Use global to persist across hot reloads in development

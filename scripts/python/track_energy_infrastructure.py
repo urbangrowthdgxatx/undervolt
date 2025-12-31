@@ -19,10 +19,14 @@ import re
 from collections import defaultdict
 
 
-def load_permit_data(path='output/permit_data_named_clusters.csv', sample_size=500000):
+def load_permit_data(path='output/permit_data_named_clusters.csv', sample_size=None):
     """Load permit data"""
-    print(f"Loading {sample_size:,} permits from {path}...")
-    df = pd.read_csv(path, nrows=sample_size, low_memory=False)
+    if sample_size:
+        print(f"Loading {sample_size:,} permits from {path}...")
+        df = pd.read_csv(path, nrows=sample_size, low_memory=False)
+    else:
+        print(f"Loading ALL permits from {path}...")
+        df = pd.read_csv(path, low_memory=False)
     print(f"Loaded {len(df):,} permits")
     return df
 
@@ -127,8 +131,12 @@ def analyze_energy_permits(df):
 
         if classification['is_energy']:
             energy_data.append({
+                'permit_number': row.get('permit_num', ''),
                 'description': row.get('description', ''),
+                'address': row.get('original_address_1', ''),
                 'zip_code': row.get('zip_code', ''),
+                'latitude': row.get('latitude', ''),
+                'longitude': row.get('longitude', ''),
                 'cluster_id': row.get('f_cluster', 0),
                 'cluster_name': row.get('cluster_name', ''),
                 'issued_date': row.get('issued_date', ''),

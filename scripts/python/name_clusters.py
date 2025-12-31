@@ -157,7 +157,7 @@ def main():
         return
 
     print(f"\nLoading data from {data_path}...")
-    df = pd.read_csv(data_path, nrows=100000, low_memory=False)
+    df = pd.read_csv(data_path, low_memory=False)  # Load ALL data, not just 100K
 
     if 'f_cluster' not in df.columns:
         print("❌ Error: No 'f_cluster' column found!")
