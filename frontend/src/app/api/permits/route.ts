@@ -1,83 +1,82 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-
-// Cache the data in memory
-let cachedData: any[] | null = null;
-let clusterNames: Record<string, any> | null = null;
-
-function loadData() {
-  if (cachedData && clusterNames) {
-    return { permits: cachedData, names: clusterNames };
-  }
-
-  try {
-    // Load cluster names
-    const namesPath = join(process.cwd(), '..', 'output', 'cluster_names.json');
-    const namesContent = readFileSync(namesPath, 'utf-8');
-    clusterNames = JSON.parse(namesContent);
-
-    // Load permit data (sample for now - full dataset is too large)
-    const dataPath = join(process.cwd(), '..', 'output', 'permit_summary_by_zip.csv');
-    const csvContent = readFileSync(dataPath, 'utf-8');
-
-    // Parse CSV (simple parser for demo - could use papaparse for production)
-    const lines = csvContent.split('\n');
-    const headers = lines[0].split(',');
-
-    // Take first 10,000 rows for performance
-    cachedData = lines.slice(1, 10001)
-      .filter(line => line.trim())
-      .map(line => {
-        const values = line.split(',');
-        const row: any = {};
-        headers.forEach((header, i) => {
-          row[header.trim()] = values[i]?.trim() || '';
-        });
-        return row;
-      });
-
-    return { permits: cachedData, names: clusterNames };
-  } catch (error) {
-    console.error('Error loading data:', error);
-    return { permits: [], names: {} };
-  }
-}
+import { db, permits, clusters } from '@/db';
+import { eq, sql, and } from 'drizzle-orm';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const cluster = searchParams.get('cluster');
   const zip = searchParams.get('zip');
+  const energyType = searchParams.get('energyType');
   const limit = parseInt(searchParams.get('limit') || '100');
   const offset = parseInt(searchParams.get('offset') || '0');
 
-  const { permits, names } = loadData();
+  try {
+    console.log(`[Permits API] Query: cluster=${cluster}, zip=${zip}, energyType=${energyType}, limit=${limit}, offset=${offset}`);
+    const startTime = Date.now();
 
-  // Filter data
-  let filtered = permits;
+    // Build dynamic where conditions
+    const conditions = [];
 
-  if (cluster) {
-    filtered = filtered.filter((p: any) => p.f_cluster === cluster);
+    if (cluster) {
+      conditions.push(eq(permits.clusterId, parseInt(cluster)));
+    }
+
+    if (zip) {
+      conditions.push(eq(permits.zipCode, zip));
+    }
+
+    if (energyType) {
+      conditions.push(eq(permits.energyType, energyType));
+    }
+
+    // Get total count with filters
+    const countQuery = conditions.length > 0
+      ? db.select({ count: sql<number>`count(*)` }).from(permits).where(and(...conditions))
+      : db.select({ count: sql<number>`count(*)` }).from(permits);
+
+    const countResult = await countQuery;
+    const total = Number(countResult[0]?.count) || 0;
+
+    // Get paginated results
+    let dataQuery = db.select().from(permits);
+
+    if (conditions.length > 0) {
+      dataQuery = dataQuery.where(and(...conditions)) as any;
+    }
+
+    const data = await dataQuery.limit(limit).offset(offset);
+
+    // Get cluster names for enrichment
+    const clustersData = await db.select().from(clusters);
+    const clusterNames = clustersData.reduce((acc, c) => {
+      acc[c.id] = { name: c.name, percentage: c.percentage };
+      return acc;
+    }, {} as Record<number, { name: string; percentage: number }>);
+
+    // Enrich with cluster names
+    const enriched = data.map((p) => ({
+      ...p,
+      cluster_name: clusterNames[p.clusterId || 0]?.name || `Cluster ${p.clusterId}`,
+    }));
+
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+    console.log(`[Permits API] Returned ${data.length}/${total} permits in ${elapsed}s`);
+
+    return NextResponse.json({
+      data: enriched,
+      total,
+      offset,
+      limit,
+      cluster_names: clusterNames,
+    });
+  } catch (error) {
+    console.error('Error loading permits:', error);
+    return NextResponse.json({
+      data: [],
+      total: 0,
+      offset,
+      limit,
+      error: 'Failed to load permits',
+    }, { status: 500 });
   }
-
-  if (zip) {
-    filtered = filtered.filter((p: any) => p.zip_code === zip);
-  }
-
-  // Paginate
-  const paginated = filtered.slice(offset, offset + limit);
-
-  // Add cluster names to response
-  const enriched = paginated.map((p: any) => ({
-    ...p,
-    cluster_name: names?.[p.f_cluster]?.name || `Cluster ${p.f_cluster}`,
-  }));
-
-  return NextResponse.json({
-    data: enriched,
-    total: filtered.length,
-    offset,
-    limit,
-    cluster_names: names,
-  });
 }
