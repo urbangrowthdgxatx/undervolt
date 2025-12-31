@@ -1,0 +1,22 @@
+{
+  "name": "undervolt",
+  "version": "1.0.0",
+  "description": "Austin infrastructure energy permit analyzer",
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:ingest": "tsx scripts/ingest-data.ts",
+    "db:reset": "rm -f data/undervolt.db && npm run db:push && npm run db:ingest"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.5.0",
+    "drizzle-orm": "^0.45.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "csv-parse": "^6.1.0",
+    "drizzle-kit": "^0.31.8",
+    "tsx": "^4.21.0"
+  }
+}

@@ -24,18 +24,18 @@ export function StatCard({
   const changeColor = {
     positive: "text-emerald-400",
     negative: "text-red-400",
-    neutral: "text-gray-400",
+    neutral: "text-white/70",
   }[changeType];
 
   return (
     <div className="bg-[#141414] border border-[#262626] rounded-xl p-5 hover:border-[#333] transition-colors">
-      <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
+      <div className="flex items-center gap-2 text-white/70 text-sm mb-1">
         {Icon && <Icon size={14} />}
         <span>{label}</span>
       </div>
 
       {sublabel && (
-        <p className="text-gray-500 text-xs mb-3">{sublabel}</p>
+        <p className="text-white/50 text-xs mb-3">{sublabel}</p>
       )}
 
       <div className="flex items-baseline gap-3">
@@ -46,7 +46,7 @@ export function StatCard({
       </div>
 
       {footer && (
-        <p className="text-gray-500 text-xs mt-2">{footer}</p>
+        <p className="text-white/50 text-xs mt-2">{footer}</p>
       )}
     </div>
   );

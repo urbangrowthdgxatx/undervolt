@@ -1,18 +1,19 @@
 # Examples
 
-Example scripts and test data.
+Example code and usage patterns for Undervolt.
 
 ## Files
 
-- `test_pipeline.py` - Test script using sample data
-- `test_permits.csv` - Sample dataset (5 permits)
+- `jetson_llm_example.py` - Example of using local LLM on Jetson
+- `run_llm_api.py` - Example of running LLM API server
 
 ## Usage
 
-Test the pipeline without processing the full dataset:
+These are reference examples showing how to use various components of Undervolt.
 
+For the main pipeline, use:
 ```bash
-python examples/test_pipeline.py
+python run.py
 ```
 
-This runs on 5 sample permits and completes in seconds.
+From the project root directory.

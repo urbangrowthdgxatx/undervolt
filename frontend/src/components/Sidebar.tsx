@@ -42,7 +42,7 @@ export function Sidebar() {
               className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
                 isActive
                   ? "bg-white/10 text-white"
-                  : "text-gray-500 hover:text-white hover:bg-white/5"
+                  : "text-white/60 hover:text-white hover:bg-white/5"
               }`}
               title={item.label}
             >
@@ -58,7 +58,7 @@ export function Sidebar() {
       {/* Settings */}
       <Link
         href="/settings"
-        className="w-10 h-10 rounded-lg flex items-center justify-center text-gray-500 hover:text-white hover:bg-white/5 transition-colors"
+        className="w-10 h-10 rounded-lg flex items-center justify-center text-white/60 hover:text-white hover:bg-white/5 transition-colors"
         title="Settings"
       >
         <Settings size={20} />
