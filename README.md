@@ -275,51 +275,83 @@ extraction:
     Return: {"is_solar": bool, "solar_kw": number|null}
 ```
 
+## Project Structure
+
+```
+undervolt/
+├── docs/                    # 📚 Documentation
+│   ├── architecture/        # System architecture
+│   ├── guides/             # Setup guides
+│   ├── features/           # Features & findings
+│   ├── performance/        # Performance docs
+│   └── changelog/          # Change history
+│
+├── src/                    # 🐍 Python Source
+│   ├── pipeline/          # Data processing
+│   ├── ml/                # Machine learning
+│   └── utils/             # Shared utilities
+│
+├── frontend/              # ⚛️  Next.js Application
+│   ├── src/app/           # Pages & API routes
+│   ├── src/components/    # React components
+│   └── public/            # Static assets
+│
+├── scripts/               # 🔧 Utilities
+│   ├── python/            # Data scripts
+│   ├── node/              # Build scripts
+│   └── shell/             # Setup scripts
+│
+├── data/                  # 📊 Raw Data (not in git)
+├── output/                # 📈 Processed Data (not in git)
+├── config/                # ⚙️  Configuration
+├── tests/                 # 🧪 Tests
+├── examples/              # 💡 Example Code
+└── run.py                 # ▶️  Main Entry Point
+```
+
 ## Quick Start Guide
 
 ### 1. Download the Data
 
-First, download the Austin Construction Permits dataset (2.4M records, ~1.5GB):
-
 ```bash
-# Option 1: Using bash script
-bash scripts/download_data.sh
+# Option 1: Shell script
+bash scripts/shell/download_data.sh
 
-# Option 2: Using Python script
-python scripts/download_data.py
+# Option 2: Python script
+python scripts/python/download_data.py
 ```
 
-The data will be saved to `data/Issued_Construction_Permits_20251212.csv`.
+Data saved to `data/Issued_Construction_Permits_20251212.csv` (~1.5GB, 2.4M records).
 
 ### 2. Run the Pipeline
 
-Install Python dependencies:
-
 ```bash
-pip install scikit-learn pandas
+# Unified entry point (auto-detects platform: Jetson/DGX/Mac)
+python run.py
+
+# Or specify platform
+python run.py --platform jetson
+python run.py --platform dgx
+python run.py --platform mac
+
+# Show help
+python run.py --help
 ```
 
-Run the extraction pipeline:
+Pipeline output:
+- `output/permit_data_enriched.csv` - Full dataset with 80+ NLP features
+- `output/permit_summary_by_zip.csv` - ZIP code summaries
+- `output/cluster_names.json` - Cluster metadata
+
+### 3. Precompute Stats (for frontend performance)
 
 ```bash
-# New modular structure (recommended)
-python run_pipeline.py
-
-# Legacy monolithic script (still works)
-python pipeline_cudf.py
+node scripts/node/precompute_stats.js
 ```
 
-The pipeline will:
-- Clean and normalize 2.4M permit records
-- Extract NLP features (solar, EV, battery, generator keywords)
-- Cluster permits by similarity
-- Generate enriched dataset and summaries
+Generates `output/.stats-cache.json` for fast API responses (58ms vs 60s).
 
-**Output files:**
-- `permit_data_enriched.csv` - Full dataset with features
-- `permit_summary_by_zip.csv` - ZIP code summaries
-
-### 3. Frontend
+### 4. Run Frontend
 
 ```bash
 cd frontend

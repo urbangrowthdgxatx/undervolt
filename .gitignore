@@ -36,3 +36,7 @@ feature_store/
 .env
 *.pem
 frontend/bun.lockb
+# Database
+data/undervolt.db
+data/undervolt.db-shm
+data/undervolt.db-wal

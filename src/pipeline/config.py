@@ -109,3 +109,69 @@ DATA_PATH = os.path.join(DATA_DIR, "Issued_Construction_Permits_20251212.csv")
 # Output paths
 OUTPUT_ENRICHED = "permit_data_enriched.csv"
 OUTPUT_SUMMARY = "permit_summary_by_zip.csv"
+
+# ==========================================================
+# Platform Detection and Configuration Loading
+# ==========================================================
+
+import platform as plat_module
+
+
+def detect_platform():
+    """Auto-detect current platform."""
+    system = plat_module.system()
+    machine = plat_module.machine()
+
+    if machine.startswith('aarch64'):
+        return 'jetson'
+    elif machine == 'arm64' and system == 'Darwin':
+        return 'mac'
+    else:
+        return 'dgx'
+
+
+def get_config(platform_name='auto', config_path=None):
+    """
+    Get configuration for specified platform.
+    
+    Args:
+        platform_name: 'jetson', 'dgx', 'mac', or 'auto'
+        config_path: Optional path to custom config file
+    
+    Returns:
+        dict: Configuration dictionary
+    """
+    if platform_name == 'auto':
+        platform_name = detect_platform()
+    
+    # Import platform-specific config
+    if platform_name == 'jetson':
+        from . import config_jetson as platform_config
+    elif platform_name == 'dgx':
+        from . import config_dgx as platform_config
+    elif platform_name == 'mac':
+        from . import config_mac as platform_config
+    else:
+        raise ValueError(f"Unknown platform: {platform_name}")
+    
+    # Build config dict from platform module
+    config = {}
+    for key in dir(platform_config):
+        if key.isupper() and not key.startswith('_'):
+            config[key] = getattr(platform_config, key)
+    
+    # Add platform name
+    config['PLATFORM'] = platform_name
+    
+    # Override with custom config if provided
+    if config_path:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("custom_config", config_path)
+        custom_config = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(custom_config)
+        
+        for key in dir(custom_config):
+            if key.isupper() and not key.startswith('_'):
+                config[key] = getattr(custom_config, key)
+    
+    return config

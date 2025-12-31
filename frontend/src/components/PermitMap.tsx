@@ -217,6 +217,7 @@ export function PermitMap({
   const [selectedPermit, setSelectedPermit] = useState<PermitLocation | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<number | null>(null);
   const [internalViewMode, setInternalViewMode] = useState<ViewMode>("points");
+  const [mapError, setMapError] = useState<string | null>(null);
 
   const viewMode = externalViewMode ?? internalViewMode;
   const setViewMode = onViewModeChange ?? setInternalViewMode;
@@ -358,9 +359,23 @@ export function PermitMap({
 
   return (
     <div className={`relative rounded-xl overflow-hidden ${className}`}>
+      {mapError && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-500/20 text-red-400 px-4 py-2 rounded-lg text-sm border border-red-500/30 z-50 max-w-md">
+          <p className="font-medium">Map Error:</p>
+          <p className="text-xs">{mapError}</p>
+        </div>
+      )}
       <Map
         {...viewState}
         onMove={(evt) => setViewState(evt.viewState)}
+        onError={(e) => {
+          console.error("Mapbox error:", e);
+          setMapError(e.error?.message || "Unknown map error");
+        }}
+        onLoad={() => {
+          console.log("Map loaded successfully");
+          setMapError(null);
+        }}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/dark-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
