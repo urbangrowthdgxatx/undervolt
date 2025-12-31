@@ -236,7 +236,8 @@ export function LeafletMap({
     const L = require("leaflet");
     const displayCount = count > 999 ? (count/1000).toFixed(1) + 'k' : count;
     // Shorten cluster name for display
-    const shortName = name.length > 18 ? name.substring(0, 16) + '...' : name;
+    const clusterName = name || 'Unknown';
+    const shortName = clusterName.length > 18 ? clusterName.substring(0, 16) + '...' : clusterName;
     const size = highlighted ? 84 : 72;
 
     return new L.DivIcon({
