@@ -16,7 +16,7 @@ from .platform import get_config
 # Try importing both backends
 try:
     import cudf as df_lib
-    DataFrame = cudf.DataFrame
+    DataFrame = df_lib.DataFrame
     GPU_AVAILABLE = True
 except ImportError:
     import pandas as df_lib
