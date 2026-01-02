@@ -7,9 +7,7 @@ Clean, organized structure for the Austin infrastructure mapping pipeline.
 ```
 undervolt/
 ├── run_pipeline.py          # Default pipeline runner (auto-detect platform)
-├── run_pipeline_dgx.py      # DGX-optimized runner
-├── run_pipeline_jetson.py   # Jetson-optimized runner
-├── run_pipeline_mac.py      # Mac (CPU) runner
+├── run_unified.py           # Unified runner entry point
 ├── README.md                # Main project README
 ├── CLAUDE.md                # Project instructions for Claude
 │
@@ -87,10 +85,8 @@ undervolt/
 # Default (auto-detect)
 python run_pipeline.py
 
-# Platform-specific
-python run_pipeline_dgx.py      # For NVIDIA DGX
-python run_pipeline_jetson.py   # For NVIDIA Jetson
-python run_pipeline_mac.py      # For Mac/CPU-only
+# Unified runner
+python run_unified.py
 ```
 
 ### 📖 Documentation
