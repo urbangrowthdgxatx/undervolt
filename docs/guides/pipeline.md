@@ -6,10 +6,16 @@
 
 ```bash
 # Run full pipeline (auto-detects GPU on Jetson/DGX, CPU on Mac)
-python run_pipeline.py
+python run_unified.py
 
 # Test with sample
-python run_pipeline.py --sample 100000
+python run_unified.py --sample 100000
+
+# Force platform config (useful for testing)
+python run_unified.py --platform dgx
+
+# Optional LLM enrichment (uses platform defaults)
+python run_unified.py --enable-llm
 
 # After pipeline completes
 npm run db:ingest        # Load into database
@@ -43,10 +49,11 @@ Energy Permits (18K) → Database → Dashboard
 ### Step 1: Load Data
 - **Input**: `data/Issued_Construction_Permits_20251212.csv` (2.4M permits)
 - **Backend**: cuDF (GPU) or pandas (CPU)
+- **Code**: `src/pipeline/data_unified.py`
 - **Output**: DataFrame with 68 columns
 
 ### Step 2: Clean & Normalize
-- **Code**: `src/pipeline/data/cleaner.py`
+- **Code**: `src/pipeline/data_unified.py`
 - **Actions**:
   - Remove invalid lat/lng (~35K permits)
   - Parse 5 date columns
@@ -62,8 +69,12 @@ Energy Permits (18K) → Database → Dashboard
   - Keywords: residential, commercial, hvac, electrical, etc.
 - **Output**: Enriched DataFrame (2.4M permits + 80 features)
 
+**Optional LLM enrichment**
+- Enable with `--enable-llm` (uses platform defaults from `src/pipeline/platform.py`)
+- Override with `--llm-backend` and `--llm-model` if needed
+
 ### Step 4: Clustering
-- **Code**: `src/pipeline/clustering/kmeans.py`
+- **Code**: `src/pipeline/clustering_unified.py`
 - **Actions**:
   - StandardScaler normalization
   - PCA (80 features → 10 components)
@@ -123,7 +134,7 @@ Frontend dashboard data:
 ### Full Production Run
 ```bash
 # Process all 2.4M permits
-python run_pipeline.py
+python run_unified.py
 
 # Outputs:
 # - output/permit_data_enriched.csv (2.4M permits)
@@ -134,10 +145,10 @@ python run_pipeline.py
 ### Development Testing
 ```bash
 # Test with 100K sample (faster)
-python run_pipeline.py --sample 100000
+python run_unified.py --sample 100000
 
 # Skip clustering for faster testing
-python run_pipeline.py --sample 50000 --skip-clustering
+python run_unified.py --sample 50000 --skip-clustering
 ```
 
 ### After Pipeline Completes
@@ -178,7 +189,7 @@ pip install cudf-cu11 cuml-cu11 --extra-index-url=https://pypi.nvidia.com
 ### Memory Issues
 ```bash
 # Run with smaller sample
-python run_pipeline.py --sample 500000
+python run_unified.py --sample 500000
 
 # Or increase swap (Jetson)
 sudo fallocate -l 16G /swapfile
@@ -198,20 +209,16 @@ npm run db:ingest                     # Step 6
 
 **New way** (unified):
 ```bash
-python run_pipeline.py  # All steps in one command
+python run_unified.py  # All steps in one command
 npm run db:ingest      # Load results
 ```
 
 ## Customization
 
 ### Change Number of Clusters
-Edit `src/pipeline/config.py`:
-```python
-CLUSTERING_PARAMS = {
-    "n_clusters": 12,  # Increase from 8 to 12
-    "max_iter": 300,
-    "n_pca_components": 10,
-}
+Use the CLI flag:
+```bash
+python run_unified.py --clusters 12
 ```
 
 ### Add New Energy Keywords
@@ -225,7 +232,7 @@ if any(kw in desc for kw in ['wind turbine', 'windmill']):
 ```
 
 ### Change Sample Size Default
-Edit `run_pipeline.py:282`:
+Edit `run_unified.py`:
 ```python
 parser.add_argument('--sample', type=int, default=100000, ...)
 ```
@@ -233,23 +240,23 @@ parser.add_argument('--sample', type=int, default=100000, ...)
 ## Architecture
 
 ```
-run_pipeline.py (orchestrator)
-├── detect_platform() → Jetson/DGX/Mac
-├── step_1_load_data() → src/pipeline/data/loader.py
-├── step_2_clean_data() → src/pipeline/data/cleaner.py
-├── step_3_nlp_enrich() → src/pipeline/nlp/enrichment.py
-├── step_4_clustering() → src/pipeline/clustering/kmeans.py
+run_unified.py (orchestrator)
+├── platform.py → Jetson/DGX/Mac auto-detect
+├── step_1_load_data() → src/pipeline/data_unified.py
+├── step_2_clean_data() → src/pipeline/data_unified.py
+├── step_3_nlp_enrich() → src/pipeline/nlp/enrichment.py (+ optional LLM)
+├── step_4_clustering() → src/pipeline/clustering_unified.py
 ├── step_5_extract_energy() → scripts/python/track_energy_infrastructure.py
 └── step_6_save_outputs() → CSV + JSON files
 ```
 
 ## Next Steps
 
-1. **Run pipeline**: `python run_pipeline.py`
+1. **Run pipeline**: `python run_unified.py`
 2. **Load database**: `npm run db:ingest`
 3. **Start frontend**: `cd frontend && bun run dev`
 4. **View map**: http://localhost:3000/dashboard
 
 ---
 
-**Questions?** See [DATA_LINEAGE.md](docs/DATA_LINEAGE.md) for complete data flow audit trail.
+**Questions?** See [data-flow-complete.md](../data-flow-complete.md) for complete data flow audit trail.

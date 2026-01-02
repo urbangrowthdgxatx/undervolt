@@ -2,14 +2,14 @@
 
 ## Quick Enable
 
-To enable LLM extraction on any platform, set `LLM_ENABLED = True` in the platform config file.
+Run the unified pipeline with `--enable-llm` to turn on LLM extraction. You can
+override backend/model per run without editing config files.
 
 ### Mac
 ```python
-# src/pipeline/config_mac.py
-LLM_ENABLED = True          # Enable LLM extraction
-LLM_BACKEND = "ollama"      # Ollama works great on Mac
-LLM_MODEL = "neural-chat"   # or mistral-7b, llama2-7b
+# src/pipeline/platform.py (defaults)
+llm_backend = "ollama"      # Ollama works great on Mac
+llm_model = "neural-chat"   # or mistral-7b, llama2-7b
 ```
 
 **Setup:**
@@ -24,17 +24,16 @@ ollama serve &
 ollama pull neural-chat
 
 # Run pipeline
-python run_pipeline_mac.py
+python run_unified.py --platform mac --enable-llm
 ```
 
 ---
 
 ### Jetson (Orin/Xavier)
 ```python
-# src/pipeline/config_jetson.py
-LLM_ENABLED = True          # Enable LLM extraction
-LLM_BACKEND = "ollama"      # Ollama recommended
-LLM_MODEL = "neural-chat"   # Fast, good quality
+# src/pipeline/platform.py (defaults)
+llm_backend = "ollama"      # Ollama recommended
+llm_model = "neural-chat"   # Fast, good quality
 ```
 
 **Setup:**
@@ -49,48 +48,48 @@ ollama serve &
 ollama pull neural-chat
 
 # Run pipeline
-python run_pipeline_jetson.py
+python run_unified.py --platform jetson --enable-llm
 ```
 
 **For Jetson Nano (4GB):**
 ```python
-LLM_MODEL = "openchat-3.5"  # Smaller model
+llm_model = "openchat-3.5"  # Smaller model
 # or use vLLM with quantization:
-LLM_BACKEND = "vllm-quantized"
+llm_backend = "vllm-quantized"
 ```
 
 ---
 
 ### Jetson Nano (Limited VRAM)
 ```python
-# src/pipeline/config_jetson.py
-LLM_ENABLED = True
-LLM_BACKEND = "vllm-quantized"  # Memory efficient
-LLM_MODEL = "TheBloke/Mistral-7B-Instruct-GPTQ"  # 4-bit
+# Use CLI overrides
+llm_backend = "vllm-quantized"  # Memory efficient
+llm_model = "TheBloke/Mistral-7B-Instruct-GPTQ"  # 4-bit
 ```
 
 **Setup:**
 ```bash
 pip install vllm
 
-python run_pipeline_jetson.py
+python run_unified.py --platform jetson --enable-llm \
+  --llm-backend vllm-quantized \
+  --llm-model TheBloke/Mistral-7B-Instruct-GPTQ
 ```
 
 ---
 
 ### DGX
 ```python
-# src/pipeline/config_dgx.py
-LLM_ENABLED = True          # Enable LLM extraction
-LLM_BACKEND = "ollama"      # or "vllm" for max performance
-LLM_MODEL = "mistral-7b"    # Full-sized models work well
+# src/pipeline/platform.py (defaults)
+llm_backend = "vllm"        # or "ollama" if preferred
+llm_model = "meta-llama/Llama-3-8B-Instruct"
 ```
 
 ---
 
 ## Default Behavior
 
-- **LLM_ENABLED = False** by default (backward compatible)
+- LLM extraction is **off** unless `--enable-llm` is provided
 - Pipeline works with or without LLM extraction
 - Graceful fallback if Ollama not running
 
@@ -149,8 +148,8 @@ print(features)
 
 ## Examples
 
-- **Mac:** `python run_pipeline_mac.py`
-- **Jetson:** `python run_pipeline_jetson.py`
-- **DGX:** `python run_pipeline_dgx.py`
+- **Mac:** `python run_unified.py --platform mac --enable-llm`
+- **Jetson:** `python run_unified.py --platform jetson --enable-llm`
+- **DGX:** `python run_unified.py --platform dgx --enable-llm`
 
 Each platform automatically uses the configured backend and model!

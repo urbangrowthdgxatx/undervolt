@@ -6,10 +6,11 @@ Clean, organized structure for the Austin infrastructure mapping pipeline.
 
 ```
 undervolt/
-├── run_pipeline.py          # Default pipeline runner (auto-detect platform)
-├── run_unified.py           # Unified runner entry point
+├── run_pipeline.py          # Legacy pipeline runner (config-based)
+├── run_unified.py           # Unified runner (auto-detect platform)
+├── run.py                   # Helper runner/entry point
 ├── README.md                # Main project README
-├── CLAUDE.md                # Project instructions for Claude
+├── claude.md                # Project instructions for Claude
 │
 ├── src/                     # Source code (modular)
 │   └── pipeline/
@@ -18,14 +19,17 @@ undervolt/
 │       ├── config_jetson.py       # Jetson-specific config
 │       ├── config_mac.py          # Mac-specific config
 │       ├── main.py                # Pipeline orchestrator
-│       ├── data/                  # Data operations
+│       ├── data/                  # Data operations (legacy pipeline)
 │       │   ├── loader.py          # Load/save CSV
 │       │   ├── cleaner.py         # Data cleaning
 │       │   └── analyzer.py        # Analysis
+│       ├── data_unified.py        # Unified load + clean (GPU/CPU aware)
 │       ├── nlp/                   # NLP enrichment
 │       │   └── enrichment.py      # Keyword extraction
 │       ├── clustering/            # Clustering
 │       │   └── kmeans.py          # KMeans (GPU/CPU)
+│       ├── clustering_unified.py  # Unified clustering (GPU/CPU aware)
+│       ├── platform.py            # Platform detection + config
 │       └── utils/                 # Utilities
 │           ├── gpu.py             # GPU detection
 │           └── logging_setup.py   # Logging
@@ -40,26 +44,29 @@ undervolt/
 │   └── download_data.py     # Download Austin permits (python)
 │
 ├── docs/                    # Documentation
-│   ├── README.md            # Documentation index
-│   ├── SETUP.md             # Setup guide
-│   ├── ARCHITECTURE.md      # System architecture
-│   ├── PLATFORM_GUIDE.md    # Platform-specific configs
-│   ├── CODE_ORGANIZATION.md # Code structure
-│   ├── DATASET_COLUMNS.md   # Column reference
-│   ├── COLUMN_FIXES.md      # Column mapping fixes
-│   ├── PIPELINE_USAGE.md    # Usage guide
-│   ├── columns.md           # (legacy column info)
-│   └── PRESENTATION.md      # Presentation materials
+│   ├── readme.md            # Documentation index
+│   ├── guides/              # How-to guides (pipeline, setup, GPU)
+│   ├── architecture/        # Architecture docs & diagrams
+│   ├── performance/         # Benchmarks & optimization notes
+│   ├── platform-guide.md    # Platform-specific guidance
+│   ├── columns.md           # Column reference
+│   └── hackathon.md         # Hackathon summary & narrative
 │
 ├── examples/                # Example code & test data
 │   ├── README.md
-│   ├── test_pipeline.py     # Test with sample data
-│   └── test_permits.csv     # Sample (5 permits)
+│   ├── data_pipeline.ipynb  # Walkthrough notebook
+│   ├── jetson_llm_example.py # Jetson LLM example
+│   └── run_llm_api.py       # LLM API example
+│
+├── tests/                   # Automated tests
+│   └── python/
+│       ├── test_pipeline.py # pytest smoke test
+│       └── test_permits.csv # Sample dataset
 │
 ├── output/                  # Pipeline outputs (not in git)
 │   ├── README.md
 │   ├── permit_data_enriched.csv     (1.8GB - full dataset with features)
-│   └── permit_summary_by_zip.csv    (403MB - ZIP summaries)
+│   └── energy_permits.csv           (small - energy-only permits)
 │
 ├── legacy/                  # Deprecated code
 │   ├── README.md
@@ -82,25 +89,25 @@ undervolt/
 ### 🚀 Running the Pipeline
 
 ```bash
-# Default (auto-detect)
-python run_pipeline.py
-
-# Unified runner
+# Unified runner (auto-detect platform)
 python run_unified.py
+
+# Legacy runner (config-based)
+python run_pipeline.py
 ```
 
 ### 📖 Documentation
 
-- **Setup**: [docs/SETUP.md](docs/SETUP.md)
-- **Architecture**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- **Platform Guide**: [docs/PLATFORM_GUIDE.md](docs/PLATFORM_GUIDE.md)
-- **Dataset Info**: [docs/DATASET_COLUMNS.md](docs/DATASET_COLUMNS.md)
+- **Docs index**: [docs/readme.md](docs/readme.md)
+- **Architecture**: [docs/architecture/](docs/architecture/)
+- **Platform Guide**: [docs/platform-guide.md](docs/platform-guide.md)
+- **Pipeline Guide**: [docs/guides/pipeline.md](docs/guides/pipeline.md)
 
 ### 🧪 Testing
 
 ```bash
-# Quick test with 5 sample permits
-python examples/test_pipeline.py
+# pytest smoke test with sample data
+pytest tests/python/test_pipeline.py
 ```
 
 ### 📥 Get Data
@@ -113,16 +120,15 @@ bash scripts/download_data.sh
 python scripts/download_data.py
 ```
 
-## File Counts
+## File Overview
 
-| Directory | Files | Purpose |
-|-----------|-------|---------|
-| `src/pipeline/` | 15 Python files | Modular pipeline code |
-| `docs/` | 10 Markdown files | Complete documentation |
-| `scripts/` | 2 scripts | Data download utilities |
-| `examples/` | 2 files | Test code and data |
-| `output/` | 2 CSV files | Pipeline results (2.2GB total) |
-| `legacy/` | 1 Python file | Deprecated monolith |
+| Directory | Purpose |
+|-----------|---------|
+| `src/pipeline/` | Modular pipeline code (legacy + unified) |
+| `docs/` | Documentation, guides, and architecture |
+| `scripts/` | Data download + helper utilities |
+| `examples/` | Jupyter + LLM demos |
+| `tests/` | Automated checks |
 
 ## What's in Git vs. Not
 
@@ -163,19 +169,19 @@ undervolt/
 **After:** Organized (clean)
 ```
 undervolt/
-├── run_pipeline.py
+├── run_unified.py
 ├── src/          # Code
 ├── docs/         # Docs
 ├── data/         # Data
 ├── output/       # Results
-└── examples/     # Tests
+└── tests/        # Tests
 ```
 
 ## Next Steps
 
-1. **Run the pipeline**: `python run_pipeline.py`
+1. **Run the pipeline**: `python run_unified.py`
 2. **Explore outputs**: `output/permit_data_enriched.csv`
-3. **Read docs**: Start with `docs/SETUP.md`
-4. **Customize**: Edit configs in `src/pipeline/config*.py`
+3. **Read docs**: Start with `docs/readme.md`
+4. **Customize**: Adjust `run_unified.py` flags or `src/pipeline/platform.py`
 
 Everything is organized and ready to use! 🎉

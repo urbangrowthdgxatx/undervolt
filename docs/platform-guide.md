@@ -17,7 +17,7 @@ Undervolt supports multiple platforms with optimized configurations for each.
 **Optimized for:** Maximum GPU acceleration with RAPIDS
 
 ```bash
-python run_pipeline_dgx.py
+python run_unified.py --platform dgx
 ```
 
 **Configuration:**
@@ -42,7 +42,7 @@ docker pull rapidsai/rapidsai:latest
 **Optimized for:** Limited memory, edge deployment
 
 ```bash
-python run_pipeline_jetson.py
+python run_unified.py --platform jetson
 ```
 
 **Configuration:**
@@ -65,7 +65,7 @@ pip3 install cudf-cu12 --extra-index-url=https://pypi.nvidia.com
 **Optimized for:** Development, testing, no GPU
 
 ```bash
-python run_pipeline_mac.py
+python run_unified.py --platform mac
 ```
 
 **Configuration:**
@@ -83,15 +83,17 @@ pip3 install scikit-learn pandas numpy
 
 ## Platform Detection (Automatic)
 
-You can also use the default runner which auto-detects your platform:
+You can also use the unified runner with automatic platform detection:
 
 ```bash
-python run_pipeline.py  # Auto-detects and uses appropriate config
+python run_unified.py  # Auto-detects and uses appropriate config
 ```
 
 ## Configuration Files
 
-Platform-specific configurations are in `src/pipeline/`:
+Unified pipeline configuration is centralized in `src/pipeline/platform.py`.
+
+Legacy, config-based pipeline settings still live in `src/pipeline/`:
 
 - `config.py` - Base configuration (default)
 - `config_dgx.py` - DGX overrides
@@ -116,7 +118,7 @@ CLUSTERING_PARAMS = {
 PLATFORM = "MyCustom"
 ```
 
-### Create Custom Runner
+### Create Custom Runner (Legacy Pipeline)
 
 ```python
 # run_pipeline_custom.py
@@ -198,7 +200,7 @@ Use DGX config
 FROM rapidsai/rapidsai:latest
 COPY . /app
 WORKDIR /app
-CMD ["python", "run_pipeline_dgx.py"]
+CMD ["python", "run_unified.py", "--platform", "dgx"]
 ```
 
 ### Jetson
@@ -207,7 +209,7 @@ FROM nvcr.io/nvidia/l4t-pytorch:r35.2.1-pth2.0-py3
 COPY . /app
 WORKDIR /app
 RUN pip3 install -r requirements.txt
-CMD ["python", "run_pipeline_jetson.py"]
+CMD ["python", "run_unified.py", "--platform", "jetson"]
 ```
 
 ### CPU-Only (Mac/Linux)
@@ -216,7 +218,7 @@ FROM python:3.10-slim
 COPY . /app
 WORKDIR /app
 RUN pip install -r requirements.txt
-CMD ["python", "run_pipeline_mac.py"]
+CMD ["python", "run_unified.py", "--platform", "mac"]
 ```
 
 ## Next Steps
@@ -224,6 +226,6 @@ CMD ["python", "run_pipeline_mac.py"]
 1. Choose your platform configuration
 2. Install requirements
 3. Download data: `bash scripts/download_data.sh`
-4. Run: `python run_pipeline_<platform>.py`
+4. Run: `python run_unified.py --platform <platform>`
 
 For questions or platform-specific issues, see [ARCHITECTURE.md](ARCHITECTURE.md).

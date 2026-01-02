@@ -8,10 +8,12 @@ Auto-detects: Jetson AGX Orin, NVIDIA DGX, Mac, generic Linux
 import os
 import platform
 import subprocess
+import logging
 from dataclasses import dataclass
 from typing import Optional, Literal
 
 PlatformType = Literal['jetson', 'dgx', 'mac', 'linux']
+SUPPORTED_PLATFORMS = {'jetson', 'dgx', 'mac', 'linux'}
 
 
 @dataclass
@@ -176,7 +178,18 @@ def get_config() -> PlatformConfig:
     """Get or create singleton platform config"""
     global _platform_config
     if _platform_config is None:
-        _platform_config = get_platform_config()
+        override = os.getenv("UNDERVOLT_PLATFORM")
+        if override:
+            override = override.lower().strip()
+            if override not in SUPPORTED_PLATFORMS:
+                raise ValueError(
+                    f"Invalid UNDERVOLT_PLATFORM '{override}'. "
+                    f"Expected one of: {', '.join(sorted(SUPPORTED_PLATFORMS))}"
+                )
+            logging.getLogger(__name__).info(
+                "Platform override detected: %s", override
+            )
+        _platform_config = get_platform_config(override)
     return _platform_config
 
 

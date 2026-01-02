@@ -8,6 +8,8 @@ Auto-detects platform and uses GPU acceleration when available.
 Usage:
     python run_unified.py                    # Full pipeline on all data
     python run_unified.py --sample 100000    # Test with sample
+    python run_unified.py --platform dgx     # Force platform config
+    python run_unified.py --enable-llm       # LLM feature extraction
     python run_unified.py --help             # Show all options
 """
 
@@ -62,7 +64,7 @@ def step_2_clean(df):
     return clean_data(df)
 
 
-def step_3_nlp(df):
+def step_3_nlp(df, enable_llm=False, llm_backend=None, llm_model=None):
     """NLP keyword extraction"""
     banner("STEP 3: NLP ENRICHMENT")
 
@@ -78,13 +80,43 @@ def step_3_nlp(df):
     feature_cols = [c for c in df.columns if c.startswith('f_')]
     log.info(f"✅ Added {len(feature_cols)} feature columns")
 
+    if enable_llm:
+        from pipeline.platform import get_config
+        config = get_config()
+        backend = llm_backend or config.llm_backend
+        model = llm_model or config.llm_model
+
+        if not backend:
+            log.warning("⚠️  LLM enabled, but no backend configured for this platform.")
+            return df
+
+        try:
+            from pipeline.nlp.llm_jetson import JetsonLLMExtractor
+        except ImportError as exc:
+            log.warning("⚠️  LLM extractor unavailable: %s", exc)
+            return df
+
+        try:
+            from pipeline.data_unified import UnifiedDataLoader
+            loader = UnifiedDataLoader()
+            was_gpu_df = hasattr(df, 'to_pandas')
+            df_for_llm = loader.to_pandas(df) if was_gpu_df else df
+
+            log.info("🤖 Running LLM enrichment (%s, %s)...", backend, model)
+            extractor = JetsonLLMExtractor(backend=backend, model=model)
+            df_llm = extractor.extract_dataframe(df_for_llm, text_col="description")
+            df = loader.to_gpu(df_llm) if was_gpu_df else df_llm
+            log.info("✅ LLM enrichment complete")
+        except Exception as exc:
+            log.warning("⚠️  LLM enrichment skipped: %s", exc)
+
     return df
 
 
-def step_4_cluster(df):
+def step_4_cluster(df, n_clusters=8):
     """KMeans clustering"""
     banner("STEP 4: CLUSTERING")
-    return cluster_data(df, n_clusters=8)
+    return cluster_data(df, n_clusters=n_clusters)
 
 
 def step_5_extract_energy(df):
@@ -204,12 +236,42 @@ def main():
         help='Skip clustering step'
     )
     parser.add_argument(
+        '--enable-llm',
+        action='store_true',
+        help='Enable LLM feature extraction (optional)'
+    )
+    parser.add_argument(
+        '--llm-backend',
+        type=str,
+        help='Override LLM backend (e.g., ollama, vllm, vllm-quantized)'
+    )
+    parser.add_argument(
+        '--llm-model',
+        type=str,
+        help='Override LLM model name'
+    )
+    parser.add_argument(
         '--data-path',
         type=str,
         default='data/Issued_Construction_Permits_20251212.csv',
         help='Path to raw CSV data'
     )
+    parser.add_argument(
+        '--clusters',
+        type=int,
+        default=8,
+        help='Number of clusters for KMeans'
+    )
+    parser.add_argument(
+        '--platform',
+        choices=['jetson', 'dgx', 'mac', 'linux'],
+        help='Override platform detection (useful for testing configs)'
+    )
     args = parser.parse_args()
+
+    if args.platform:
+        os.environ["UNDERVOLT_PLATFORM"] = args.platform
+        log.info("Using platform override: %s", args.platform)
 
     banner("UNDERVOLT UNIFIED PIPELINE", char='█')
 
@@ -228,10 +290,15 @@ def main():
         # Execute pipeline
         df = step_1_load(args.data_path, args.sample)
         df = step_2_clean(df)
-        df = step_3_nlp(df)
+        df = step_3_nlp(
+            df,
+            enable_llm=args.enable_llm,
+            llm_backend=args.llm_backend,
+            llm_model=args.llm_model
+        )
 
         if not args.skip_clustering:
-            df = step_4_cluster(df)
+            df = step_4_cluster(df, n_clusters=args.clusters)
         else:
             log.info("⏭️  Skipping clustering (--skip-clustering)")
 
