@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db, permits } from '@/db';
+import { db, permits, clusters } from '@/db';
 import { isNotNull, and, sql } from 'drizzle-orm';
 
 // Cache in memory for performance
@@ -18,6 +18,29 @@ export async function GET() {
   try {
     console.log('[GeoJSON] Loading from database...');
     const startTime = Date.now();
+
+    // Get actual cluster counts from permits
+    const clusterCounts = await db
+      .select({
+        clusterId: permits.clusterId,
+        count: sql<number>`count(*)`,
+      })
+      .from(permits)
+      .groupBy(permits.clusterId);
+
+    const countMap = clusterCounts.reduce((acc, c) => {
+      if (c.clusterId !== null) {
+        acc[c.clusterId] = Number(c.count);
+      }
+      return acc;
+    }, {} as Record<number, number>);
+
+    // Load cluster names for enrichment
+    const clustersData = await db.select().from(clusters);
+    const clusterMap = clustersData.reduce((acc, c) => {
+      acc[c.id] = { name: c.name, count: countMap[c.id] || 0 };
+      return acc;
+    }, {} as Record<number, { name: string; count: number }>);
 
     // Get permits with valid coordinates
     const data = await db
@@ -41,25 +64,30 @@ export async function GET() {
       )
       .limit(50000); // Limit for performance
 
-    // Convert to GeoJSON
+    // Convert to GeoJSON with cluster names
     const geojson = {
       type: 'FeatureCollection',
-      features: data.map((p) => ({
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [p.longitude, p.latitude],
-        },
-        properties: {
-          id: p.id,
-          permit_number: p.permitNumber,
-          zip_code: p.zipCode,
-          cluster_id: p.clusterId,
-          energy_type: p.energyType,
-          solar_capacity_kw: p.solarCapacityKw,
-          issue_date: p.issueDate,
-        },
-      })),
+      features: data.map((p) => {
+        const cluster = clusterMap[p.clusterId || 0];
+        return {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [p.longitude, p.latitude],
+          },
+          properties: {
+            id: p.id,
+            permit_number: p.permitNumber,
+            zip_code: p.zipCode,
+            cluster_id: p.clusterId,
+            cluster_name: cluster?.name || `Cluster ${p.clusterId}`,
+            total_permits: cluster?.count || 0,
+            energy_type: p.energyType,
+            solar_capacity_kw: p.solarCapacityKw,
+            issue_date: p.issueDate,
+          },
+        };
+      }),
     };
 
     // Cache result

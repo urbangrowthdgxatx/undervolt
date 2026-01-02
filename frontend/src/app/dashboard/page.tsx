@@ -192,13 +192,12 @@ export default function Dashboard() {
           clusterGroups.set(clusterId, {
             clusterId,
             clusterName,
-            totalPermits,
+            totalPermits, // This is already the total count for this cluster
             positions: [[lat, lng]],
           });
         } else {
-          // Add to existing cluster type
+          // Add position but don't accumulate totalPermits (it's the same for all features in cluster)
           const existing = clusterGroups.get(clusterId);
-          existing.totalPermits += totalPermits;
           existing.positions.push([lat, lng]);
         }
       });
