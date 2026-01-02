@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Map, BarChart3, Layers, Search } from "lucide-react";
+import { Map, BarChart3, Layers, Search, Zap, Building2, LayoutGrid } from "lucide-react";
 import dynamic from 'next/dynamic';
+import { ViewMode, viewConfigs, getViewConfig, clusterMapping } from '@/config/dashboard';
 
 // Dynamically import Leaflet map (better performance on Jetson - no WebGL required)
 const LeafletMap = dynamic(() => import('@/components/LeafletMap').then(mod => ({ default: mod.LeafletMap })), {
@@ -17,6 +18,7 @@ interface Stats {
     name: string;
     count: number;
     percentage: number;
+    keywords?: Array<{ keyword: string; frequency: number }>;
   }>;
   topZips: Array<{
     zip: string;
@@ -66,6 +68,9 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedCluster, setSelectedCluster] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<ViewMode>('energy');
+
+  const currentConfig = getViewConfig(viewMode);
 
   // Filter clusters based on search query
   const filteredClusters = stats?.clusterDistribution.filter((cluster) => {
@@ -304,9 +309,47 @@ export default function Dashboard() {
 
   return (
     <div className="h-screen flex flex-col bg-black pt-16">
-      {/* Search Bar */}
+      {/* Search Bar with View Mode Switcher */}
       <div className="border-b border-white/10 bg-black/40 backdrop-blur-sm px-6 py-3">
         <div className="max-w-6xl mx-auto flex items-center gap-4">
+          {/* View Mode Switcher */}
+          <div className="flex items-center bg-white/5 rounded-lg p-1 border border-white/10">
+            <button
+              onClick={() => setViewMode('energy')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                viewMode === 'energy'
+                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                  : 'text-white/50 hover:text-white/80 hover:bg-white/5'
+              }`}
+            >
+              <Zap size={14} />
+              Energy
+            </button>
+            <button
+              onClick={() => setViewMode('construction')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                viewMode === 'construction'
+                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                  : 'text-white/50 hover:text-white/80 hover:bg-white/5'
+              }`}
+            >
+              <Building2 size={14} />
+              Construction
+            </button>
+            <button
+              onClick={() => setViewMode('all')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                viewMode === 'all'
+                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                  : 'text-white/50 hover:text-white/80 hover:bg-white/5'
+              }`}
+            >
+              <LayoutGrid size={14} />
+              All
+            </button>
+          </div>
+
+          {/* Search */}
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={16} />
             <input
@@ -328,11 +371,11 @@ export default function Dashboard() {
             <div className="space-y-2">
               <h3 className="text-sm font-medium text-white/70 mb-3 flex items-center gap-2">
                 <BarChart3 size={14} />
-                Key Insights
+                {currentConfig.title}
               </h3>
 
-              {/* Solar Capacity Insight - Clickable */}
-              {stats.energyStats.solarStats && (
+              {/* Solar Capacity Insight - Clickable (Energy view) */}
+              {viewMode === 'energy' && stats.energyStats.solarStats && (
                 <button
                   onClick={() => {
                     // Find cluster with most solar (cluster 2 - Electrical & Roofing)
@@ -354,8 +397,8 @@ export default function Dashboard() {
                 </button>
               )}
 
-              {/* Battery Growth Insight - Clickable */}
-              <button
+              {/* Battery Growth Insight - Clickable (Energy view) */}
+              {viewMode === 'energy' && <button
                 onClick={() => {
                   // Scroll to show battery-heavy areas on map (could enhance with ZIP filter)
                   const batteryCluster = stats.clusterDistribution.find(c => c.id === 4);
@@ -373,7 +416,7 @@ export default function Dashboard() {
                     <p className="text-[9px] text-blue-400/50 mt-1 group-hover:text-blue-400/70">Click to explore battery installations</p>
                   </div>
                 </div>
-              </button>
+              </button>}
 
               {/* Top ZIP Insight - Clickable to show dominant cluster type */}
               {stats.topZips && stats.topZips.length > 0 && (
@@ -382,10 +425,10 @@ export default function Dashboard() {
                     // Find the cluster with most permits (since 78758 has 801 battery, likely HVAC cluster 4)
                     const topZip = stats.topZips[0];
                     // Determine dominant type and select corresponding cluster
-                    if (topZip.battery > topZip.solar && topZip.battery > topZip.ev_charger) {
+                    if ((topZip.battery || 0) > (topZip.solar || 0) && (topZip.battery || 0) > (topZip.ev_charger || 0)) {
                       const hvacCluster = stats.clusterDistribution.find(c => c.id === 4);
                       if (hvacCluster) setSelectedCluster(hvacCluster.id);
-                    } else if (topZip.solar > topZip.battery) {
+                    } else if ((topZip.solar || 0) > (topZip.battery || 0)) {
                       const solarCluster = stats.clusterDistribution.find(c => c.id === 2);
                       if (solarCluster) setSelectedCluster(solarCluster.id);
                     } else {
@@ -483,7 +526,7 @@ export default function Dashboard() {
                           {cluster.keywords.slice(0, 3).map((kw: any, idx: number) => (
                             <span key={kw.keyword} className="text-white/70">
                               {kw.keyword}
-                              {idx < 2 && cluster.keywords.length > idx + 1 ? ', ' : ''}
+                              {idx < 2 && (cluster.keywords?.length || 0) > idx + 1 ? ', ' : ''}
                             </span>
                           ))}
                         </div>
@@ -568,9 +611,9 @@ export default function Dashboard() {
             <div className="space-y-3">
               {/* Main headline stat */}
               <div className="border-b border-white/10 pb-3">
-                <p className="text-[11px] text-white/50 uppercase tracking-wide mb-1">Austin Energy Infrastructure</p>
+                <p className="text-[11px] text-white/50 uppercase tracking-wide mb-1">{currentConfig.statsTitle}</p>
                 <p className="text-2xl font-light text-white">{stats.totalPermits.toLocaleString()}</p>
-                <p className="text-[10px] text-white/40 mt-1">construction permits analyzed</p>
+                <p className="text-[10px] text-white/40 mt-1">{currentConfig.description}</p>
               </div>
 
               {/* Grid of insights */}

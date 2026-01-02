@@ -436,61 +436,44 @@ export function LeafletMap({
           return null;
         })}
 
-        {/* Fallback circles for clusters without boundaries */}
+        {/* Cluster markers with count and name labels */}
         {showClusters && filteredClusters.map((cluster) => {
           const highlighted = isHighlighted(cluster);
           const config = signalConfig[cluster.signal];
 
           if (!cluster.boundary || cluster.boundary.length <= 2) {
-            // Render circle with count and name label
             return (
-              <React.Fragment key={`cluster-${cluster.id}`}>
-                <Circle
-                  center={[cluster.lat, cluster.lng]}
-                  radius={highlighted ? 1800 : 1500}
-                  pathOptions={{
-                    fillColor: config.color,
-                    fillOpacity: highlighted ? 0.5 : 0.25,
-                    color: config.color,
-                    weight: highlighted ? 4 : 2.5,
-                    opacity: highlighted ? 1 : 0.6,
-                  }}
-                  eventHandlers={{
-                    click: () => handleClusterClick(cluster),
-                  }}
-                  className={highlighted ? 'pulse-circle' : ''}
-                >
-                  <Popup>
-                    <div className="p-2 min-w-[180px]">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div
-                          className="w-4 h-4 rounded-full"
-                          style={{ backgroundColor: config.color }}
-                        />
-                        <span className="font-medium text-gray-900">
-                          {cluster.description}
-                        </span>
-                      </div>
-                      <div className="flex justify-between mt-2 text-xs text-gray-500">
-                        {cluster.value && <span>{cluster.value}</span>}
-                      </div>
-                      <p className="text-xs text-gray-400 mt-2">Click to filter • Zoom in to see permit areas</p>
+              <Marker
+                key={`cluster-${cluster.id}`}
+                position={[cluster.lat, cluster.lng]}
+                icon={createClusterLabelWithName(
+                  cluster.count || parseInt(cluster.value?.replace(/[^0-9]/g, '') || '0'),
+                  cluster.description,
+                  config.color,
+                  highlighted
+                )}
+                eventHandlers={{
+                  click: () => handleClusterClick(cluster),
+                }}
+              >
+                <Popup>
+                  <div className="p-2 min-w-[180px]">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: config.color }}
+                      />
+                      <span className="font-medium text-gray-900">
+                        {cluster.description}
+                      </span>
                     </div>
-                  </Popup>
-                </Circle>
-                <Marker
-                  position={[cluster.lat, cluster.lng]}
-                  icon={createClusterLabelWithName(
-                    cluster.count || parseInt(cluster.value?.replace(/[^0-9]/g, '') || '0'),
-                    cluster.description,
-                    config.color,
-                    highlighted
-                  )}
-                  eventHandlers={{
-                    click: () => handleClusterClick(cluster),
-                  }}
-                />
-              </React.Fragment>
+                    <div className="flex justify-between mt-2 text-xs text-gray-500">
+                      {cluster.value && <span>{cluster.value}</span>}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">Click to filter</p>
+                  </div>
+                </Popup>
+              </Marker>
             );
           }
           return null;

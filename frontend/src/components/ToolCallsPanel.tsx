@@ -27,7 +27,7 @@ function extractSQL(input: unknown): string | null {
     const sqlFields = ['sql', 'query', 'statement', 'text', 'command', 'q'];
     for (const field of sqlFields) {
       if (obj[field] && typeof obj[field] === 'string') {
-        return String(obj[field]);
+        return obj[field] as string;
       }
     }
     // If it's a simple object, just stringify it nicely
@@ -88,13 +88,21 @@ export function ToolCallsPanel({ calls, isLoading, onClear }: ToolCallsPanelProp
           {/* Calls list */}
           <div ref={scrollRef} className="p-2 space-y-2 max-h-96 overflow-y-auto">
             {calls.map((call, i) => {
-              const sql = call.type === "call" ? extractSQL(call.input) : null;
+              const sql: string | null = call.type === "call" ? extractSQL(call.input) : null;
+              const isCall = call.type === "call";
+              const isResult = call.type === "result";
+              const hasInput = call.input !== undefined;
+              const resultStr = call.result !== undefined
+                ? (typeof call.result === "string"
+                    ? call.result.substring(0, 1000) + (call.result.length > 1000 ? "\n..." : "")
+                    : JSON.stringify(call.result, null, 2).substring(0, 1000))
+                : "";
 
               return (
                 <div
                   key={i}
                   className={`p-2 rounded-lg text-xs ${
-                    call.type === "call"
+                    isCall
                       ? "bg-blue-500/10 border border-blue-500/20"
                       : "bg-green-500/10 border border-green-500/20"
                   }`}
@@ -102,36 +110,34 @@ export function ToolCallsPanel({ calls, isLoading, onClear }: ToolCallsPanelProp
                   <div className="flex items-center gap-2 mb-1">
                     <span
                       className={`px-1.5 py-0.5 rounded text-[10px] uppercase font-medium ${
-                        call.type === "call"
+                        isCall
                           ? "bg-blue-500/20 text-blue-400"
                           : "bg-green-500/20 text-green-400"
                       }`}
                     >
-                      {call.type === "call" ? "SQL" : "Result"}
+                      {isCall ? "SQL" : "Result"}
                     </span>
                     <span className="text-white/50 font-mono text-[10px]">{call.name}</span>
                   </div>
 
                   {/* SQL Query - show prominently */}
-                  {call.type === "call" && sql && (
+                  {isCall && sql !== null && (
                     <pre className="text-blue-300/80 overflow-x-auto whitespace-pre-wrap text-[11px] mt-1 p-2 bg-black/50 rounded font-mono leading-relaxed">
                       {sql}
                     </pre>
                   )}
 
                   {/* Non-SQL input */}
-                  {call.type === "call" && !sql && call.input && (
+                  {isCall && sql === null && hasInput && (
                     <pre className="text-white/50 overflow-x-auto whitespace-pre-wrap text-[10px] mt-1 p-1.5 bg-black/30 rounded">
                       {JSON.stringify(call.input, null, 2)}
                     </pre>
                   )}
 
                   {/* Result */}
-                  {call.type === "result" && call.result && (
+                  {isResult && resultStr && (
                     <pre className="text-green-300/70 overflow-x-auto whitespace-pre-wrap text-[10px] mt-1 p-2 bg-black/50 rounded max-h-40 overflow-y-auto font-mono">
-                      {typeof call.result === "string"
-                        ? call.result.substring(0, 1000) + (call.result.length > 1000 ? "\n..." : "")
-                        : JSON.stringify(call.result, null, 2).substring(0, 1000)}
+                      {resultStr}
                     </pre>
                   )}
                 </div>

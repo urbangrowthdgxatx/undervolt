@@ -22,21 +22,24 @@ export async function GET() {
     // Try loading from trends table first
     const trendsData = await db.select().from(trends);
 
-    if (trendsData.length > 0) {
-      // Sort by yearMonth descending
-      const sorted = trendsData.sort((a, b) => b.yearMonth.localeCompare(a.yearMonth));
+    // Filter to monthly data only
+    const monthlyTrends = trendsData.filter(t => t.periodType === 'month');
+
+    if (monthlyTrends.length > 0) {
+      // Sort by period descending
+      const sorted = monthlyTrends.sort((a, b) => b.period.localeCompare(a.period));
 
       // Format from trends table
       const result = {
         monthly: sorted.map((t) => ({
-          month: t.yearMonth,
+          month: t.period,
           total: t.totalPermits,
           solar: t.solar,
           battery: t.battery,
           ev_charger: t.evCharger,
-          generator: t.generator,
-          panel_upgrade: t.panelUpgrade,
-          hvac: t.hvac,
+          generator: 0, // Not in schema
+          panel_upgrade: 0, // Not in schema
+          hvac: 0, // Not in schema
         })),
         lastUpdated: new Date().toISOString(),
       };
@@ -44,7 +47,7 @@ export async function GET() {
       globalForTrends.trendsCache = result;
 
       const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
-      console.log(`[Trends] Loaded ${trendsData.length} months from trends table in ${elapsed}s`);
+      console.log(`[Trends] Loaded ${sorted.length} months from trends table in ${elapsed}s`);
 
       return NextResponse.json(result);
     }

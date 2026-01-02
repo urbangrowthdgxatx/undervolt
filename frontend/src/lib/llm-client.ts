@@ -8,7 +8,7 @@
  * - Analytics-only mode (no LLM)
  */
 
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI } from '@ai-sdk/openai';
 
 export function getLLMClient() {
   // Check for local vLLM server
@@ -16,15 +16,16 @@ export function getLLMClient() {
 
   if (vllmUrl) {
     // Use local vLLM with OpenAI-compatible API
-    return openai({
+    const customOpenAI = createOpenAI({
       baseURL: vllmUrl,
       apiKey: process.env.VLLM_API_KEY || 'dummy-key' // vLLM doesn't require real API key
     });
+    return customOpenAI;
   }
 
   // Fallback to OpenAI API
   if (process.env.OPENAI_API_KEY) {
-    return openai();
+    return createOpenAI({ apiKey: process.env.OPENAI_API_KEY });
   }
 
   // No LLM available
