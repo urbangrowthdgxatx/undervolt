@@ -51,7 +51,7 @@ function getAnalyticsData() {
 
 **After**:
 ```
-Austin permits analyst. 2 sentences max. Bold stats with **. 
+Austin permits analyst. 2 sentences max. Bold stats with **bold** markers.
 Data: Demolition +547%, Batteries 10K, New Construction 41%, Solar 2.4K.
 ```
 
