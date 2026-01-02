@@ -1,19 +1,17 @@
-#!/usr/bin/env python
-"""Test script to verify pipeline works with small dataset"""
+"""Smoke test for unified pipeline with sample dataset."""
+from pathlib import Path
 import os
-import sys
 
-# Set the data path to test file
-os.environ['TEST_MODE'] = '1'
+from src.pipeline.data_unified import load_and_clean
 
-# Import and run the pipeline
-import pipeline_cudf as pipeline
 
-# Override the DATA_PATH
-pipeline.DATA_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "test_permits.csv"
-)
+def test_pipeline_smoke(tmp_path):
+    os.environ["TEST_MODE"] = "1"
+    sample_path = Path(__file__).parent / "test_permits.csv"
+    csv_path = tmp_path / "test_permits.csv"
+    csv_path.write_bytes(sample_path.read_bytes())
 
-if __name__ == "__main__":
-    pipeline.main()
+    df = load_and_clean(csv_path)
+
+    assert len(df) > 0
+    assert {"zip_code", "latitude", "longitude"}.issubset(df.columns)
