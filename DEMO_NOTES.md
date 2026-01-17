@@ -110,22 +110,22 @@ Undervolt transforms raw City of Austin permit data into actionable insights abo
 
 ---
 
-## Upcoming Features
+## Roadmap
 
-### Phase 2 (Q1 2025)
-- [ ] Time-series animation of permit growth
-- [ ] Predictive modeling: "Where will construction spike next?"
-- [ ] Export reports as PDF/CSV
+### Phase 2
+- Time-series animation of permit growth
+- Predictive modeling: "Where will construction spike next?"
+- Export reports as PDF/CSV
 
-### Phase 3 (Q2 2025)
-- [ ] Multi-city comparison (Houston, Dallas, San Antonio)
-- [ ] Real-time permit feed integration
-- [ ] Mobile-responsive dashboard
+### Phase 3
+- Multi-city comparison (Houston, Dallas, San Antonio)
+- Real-time permit feed integration
+- Mobile-responsive dashboard
 
-### Phase 4 (Future)
-- [ ] vLLM integration (when CUDA 12 supported on Jetson)
-- [ ] Fine-tuned permit classification model
-- [ ] API for third-party integrations
+### Phase 4
+- vLLM integration (when CUDA 12 supported on Jetson)
+- Fine-tuned permit classification model
+- API for third-party integrations
 
 ---
 

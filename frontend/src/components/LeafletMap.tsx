@@ -14,7 +14,7 @@ export interface PermitLocation {
   signal: SignalType;
   description: string;
   zip: string;
-  district: number;
+  cluster: number;  // ML cluster ID (0-7)
   value?: string;
   year?: number;
   boundary?: number[][]; // Optional polygon boundary points [lat, lng][]
@@ -43,19 +43,25 @@ interface LeafletMapProps {
   individualPermits?: PermitLocation[];  // Individual permits for zoomed-in view
   filter?: SignalType | SignalType[];
   highlightZip?: string;
-  highlightDistrict?: number;
+  highlightCluster?: number;
   className?: string;
   showLegend?: boolean;
   clusterMeta?: ClusterMeta[];  // Cluster metadata for legend
   onClusterClick?: (clusterId: number) => void;  // Callback when cluster is clicked
 }
 
-// Map recenter component
+// Map recenter component - only centers once on mount
 function RecenterMap({ center }: { center: LatLngExpression }) {
   const map = useMap();
+  const initialized = React.useRef(false);
+
   useEffect(() => {
-    map.setView(center);
+    if (!initialized.current) {
+      map.setView(center);
+      initialized.current = true;
+    }
   }, [center, map]);
+
   return null;
 }
 
@@ -79,7 +85,7 @@ export function LeafletMap({
   individualPermits = [],
   filter = "all",
   highlightZip,
-  highlightDistrict,
+  highlightCluster,
   className = "",
   showLegend = true,
   clusterMeta = [],
@@ -99,10 +105,10 @@ export function LeafletMap({
   const showIndividuals = zoom >= INDIVIDUAL_ZOOM;
 
   // Handle cluster click - call parent callback and show popup
-  const handleClusterClick = (cluster: PermitLocation) => {
-    setSelectedPermit(cluster);
-    if (onClusterClick && cluster.district !== undefined) {
-      onClusterClick(cluster.district);
+  const handleClusterClick = (permit: PermitLocation) => {
+    setSelectedPermit(permit);
+    if (onClusterClick && permit.cluster !== undefined) {
+      onClusterClick(permit.cluster);
     }
   };
 
@@ -164,7 +170,7 @@ export function LeafletMap({
         signal: 'all' as SignalType, // Use neutral color
         description: `${group.length} permits in this area`,
         zip: '',
-        district: 0,
+        cluster: 0,
         count: group.length,
       };
     });
@@ -185,11 +191,11 @@ export function LeafletMap({
   // Highlight logic - only highlight when specifically selected
   const isHighlighted = (permit: PermitLocation) => {
     // If nothing is selected, don't highlight anything
-    if (!highlightDistrict && !highlightZip) return false;
+    if (highlightCluster === undefined && !highlightZip) return false;
 
     // Only highlight if this specific permit matches the selection
-    if (highlightDistrict !== undefined && highlightDistrict !== null) {
-      return permit.district === highlightDistrict;
+    if (highlightCluster !== undefined && highlightCluster !== null) {
+      return permit.cluster === highlightCluster;
     }
     if (highlightZip) {
       return permit.zip === highlightZip;
@@ -416,11 +422,14 @@ export function LeafletMap({
           }
         })}
 
-        {/* Cluster count labels (shown on top of polygons) */}
+        {/* Cluster count labels (shown on top of polygons) - skip if no count */}
         {showClusters && filteredClusters.map((cluster) => {
           if (cluster.boundary && cluster.boundary.length > 0) {
             const config = signalConfig[cluster.signal];
             const count = parseInt(cluster.value?.replace(/[^0-9]/g, '') || '0');
+
+            // Don't show label if count is 0
+            if (count === 0) return null;
 
             return (
               <Marker
@@ -470,7 +479,6 @@ export function LeafletMap({
                     <div className="flex justify-between mt-2 text-xs text-gray-500">
                       {cluster.value && <span>{cluster.value}</span>}
                     </div>
-                    <p className="text-xs text-gray-400 mt-2">Click to filter</p>
                   </div>
                 </Popup>
               </Marker>
@@ -512,15 +520,47 @@ export function LeafletMap({
           );
         })}
 
-        {/* Grid group count labels */}
+        {/* Grid group count labels - centered and clickable */}
         {showGridGroups && gridGroups.map((group: any) => {
-          const config = signalConfig[group.signal as SignalType] || signalConfig['all'];
+          if (group.count === 0) return null;
+
+          const L = typeof window !== "undefined" ? require("leaflet") : null;
+          if (!L) return null;
+
+          const icon = new L.DivIcon({
+            className: "grid-count-label",
+            html: `<div style="
+              color: #374151;
+              font-weight: 600;
+              font-size: 13px;
+              text-shadow: 0 0 3px white, 0 0 3px white, 0 0 5px white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 100%;
+              height: 100%;
+              cursor: pointer;
+            ">${group.count > 999 ? (group.count/1000).toFixed(0) + 'k' : group.count}</div>`,
+            iconSize: [50, 30],
+            iconAnchor: [25, 15],
+          });
+
           return (
             <Marker
               key={`grid-label-${group.id}`}
               position={[group.lat, group.lng]}
-              icon={createClusterLabel(group.count, config.color)}
-            />
+              icon={icon}
+              eventHandlers={{
+                click: () => setSelectedPermit(group),
+              }}
+            >
+              <Popup>
+                <div className="p-2 min-w-[140px]">
+                  <p className="font-medium text-gray-900">{group.count.toLocaleString()} permits</p>
+                  <p className="text-xs text-gray-500 mt-1">in this area</p>
+                </div>
+              </Popup>
+            </Marker>
           );
         })}
 
@@ -549,7 +589,7 @@ export function LeafletMap({
                   </div>
                   <p className="text-sm text-gray-600">{permit.description}</p>
                   <div className="flex justify-between mt-2 text-xs text-gray-500">
-                    <span>District {permit.district} • {permit.zip}</span>
+                    <span>{permit.zip}</span>
                     {permit.value && <span>{permit.value}</span>}
                   </div>
                   {permit.year && (
@@ -580,11 +620,20 @@ export function LeafletMap({
         </div>
       )}
 
-      {/* Info banner */}
-      {(showGridGroups || showIndividuals) && (
+      {/* Info banner - only show when there's data */}
+      {showGridGroups && gridGroups.length > 0 && (
         <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-sm text-white/70 px-3 py-1.5 rounded text-xs border border-white/10 z-[1000]">
-          {showGridGroups && `📊 Showing ${gridGroups.length} permit groups`}
-          {showIndividuals && `📍 Showing ${Math.min(500, filteredPermits.length)} permits`}
+          📊 {gridGroups.length} permit areas
+        </div>
+      )}
+      {showIndividuals && filteredPermits.length > 0 && (
+        <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-sm text-white/70 px-3 py-1.5 rounded text-xs border border-white/10 z-[1000]">
+          📍 {Math.min(500, filteredPermits.length)} permits
+        </div>
+      )}
+      {(showGridGroups || showIndividuals) && gridGroups.length === 0 && filteredPermits.length === 0 && (
+        <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-sm text-white/50 px-3 py-1.5 rounded text-xs border border-white/10 z-[1000]">
+          Zoom out or pan to see permits
         </div>
       )}
 
