@@ -1,0 +1,21 @@
+[Unit]
+Description=vLLM Server for Jetson AGX Orin
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=red
+ExecStartPre=-/usr/bin/docker stop vllm-server
+ExecStartPre=-/usr/bin/docker rm vllm-server
+ExecStart=/usr/bin/docker run --rm --gpus all --network host --shm-size=8g \
+  -v /home/red/.cache/huggingface:/root/.cache/huggingface \
+  --name vllm-server \
+  dustynv/vllm:0.7.4-r36.4.0-cu128-24.04 \
+  vllm serve meta-llama/Llama-3.2-3B-Instruct --port 8000 --dtype float16
+ExecStop=/usr/bin/docker stop vllm-server
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
