@@ -8,9 +8,10 @@
  * Usage: npx tsx scripts/ingest-data.ts
  */
 
-import { readFileSync } from 'fs';
+import { readFileSync, createReadStream } from 'fs';
 import { join } from 'path';
 import { parse } from 'csv-parse/sync';
+import { parse as parseStream } from 'csv-parse';
 import { db, permits, clusters, clusterKeywords, energyStatsByZip, cacheMetadata } from '../src/db';
 
 const OUTPUT_DIR = join(process.cwd(), 'output');
@@ -131,66 +132,116 @@ async function ingestEnergyStats() {
   console.log(`[Energy Stats] ✓ Inserted ${zipData.length} ZIP records`);
 }
 
+// Helper to detect energy-related permits from description
+function detectEnergyType(description: string): string | null {
+  if (!description) return null;
+  const desc = description.toLowerCase();
+
+  if (desc.includes('solar') || desc.includes('photovoltaic') || desc.includes('pv system')) return 'solar';
+  if (desc.includes('battery') || desc.includes('energy storage') || desc.includes('powerwall')) return 'battery';
+  if (desc.includes('ev charger') || desc.includes('electric vehicle') || desc.includes('charging station')) return 'ev_charger';
+  if (desc.includes('panel upgrade') || desc.includes('electrical panel') || desc.includes('service upgrade')) return 'panel_upgrade';
+  if (desc.includes('generator') || desc.includes('backup power')) return 'generator';
+  if (desc.includes('hvac') || desc.includes('heat pump') || desc.includes('air conditioning')) return 'hvac';
+
+  return null;
+}
+
 async function ingestPermits() {
-  console.log('[Permits] Loading energy_permits.csv...');
-  const csvPath = join(OUTPUT_DIR, 'energy_permits.csv');
-  const csvContent = readFileSync(csvPath, 'utf-8');
+  console.log('[Permits] Loading permit_data_named_clusters.csv (full dataset) with streaming...');
+  const csvPath = join(OUTPUT_DIR, 'permit_data_named_clusters.csv');
 
-  const records = parse(csvContent, {
-    columns: true,
-    skip_empty_lines: true,
-    cast: (value, context) => {
-      // Cast numeric fields
-      if (context.column === 'cluster_id') return value ? parseInt(value) : null;
-      if (context.column === 'latitude' || context.column === 'longitude') {
-        return value ? parseFloat(value) : null;
-      }
-      if (context.column === 'solar_capacity_kw') return value ? parseFloat(value) : null;
-      return value;
-    },
-  });
-
-  console.log(`[Permits] Inserting ${records.length} permits in batches...`);
-
-  const BATCH_SIZE = 1000;
-  for (let i = 0; i < records.length; i += BATCH_SIZE) {
-    const batch = records.slice(i, i + BATCH_SIZE);
-
-    const values = batch.map((record: any, idx: number) => ({
-      permitNumber: record.permit_number || `ENERGY_${i + idx}_${Date.now()}`,
-      address: record.address || null,
-      zipCode: record.zip_code ? String(record.zip_code).replace('.0', '') : 'UNKNOWN',
-      latitude: record.latitude ? parseFloat(record.latitude) : null,
-      longitude: record.longitude ? parseFloat(record.longitude) : null,
-      clusterId: record.cluster_id ? parseInt(record.cluster_id) : null,
-      workDescription: record.description || null,
-      isEnergyPermit: true, // All records in energy_permits.csv are energy permits
-      energyType: record.type || null, // CSV uses 'type' not 'energy_type'
-      solarCapacityKw: record.capacity_kw ? parseFloat(record.capacity_kw) : null,
-      issueDate: record.issued_date || null, // CSV uses 'issued_date' not 'issue_date'
-    }));
-
-    await db.insert(permits).values(values).onConflictDoNothing();
-
-    if ((i + BATCH_SIZE) % 5000 === 0 || i + BATCH_SIZE >= records.length) {
-      console.log(`[Permits] Inserted ${Math.min(i + BATCH_SIZE, records.length)}/${records.length} permits...`);
-    }
+  // Also try to load LLM categories if available
+  let llmCategories: Record<string, any> = {};
+  try {
+    const llmPath = join(process.cwd(), 'data', 'llm_categories.json');
+    const llmData = JSON.parse(readFileSync(llmPath, 'utf-8'));
+    llmCategories = llmData.permits || {};
+    console.log(`[Permits] Loaded ${Object.keys(llmCategories).length} LLM categories`);
+  } catch {
+    console.log('[Permits] No LLM categories found, continuing without them');
   }
 
-  await db.insert(cacheMetadata).values({
-    key: 'permits',
-    lastUpdated: new Date().toISOString(),
-    recordCount: records.length,
-    sourceFile: 'energy_permits.csv',
-  }).onConflictDoUpdate({
-    target: cacheMetadata.key,
-    set: {
-      lastUpdated: new Date().toISOString(),
-      recordCount: records.length,
-    },
-  });
+  const BATCH_SIZE = 50;  // SQLite has a ~999 variable limit, 50 rows × 17 cols = 850 vars
+  let batch: any[] = [];
+  let totalInserted = 0;
 
-  console.log(`[Permits] ✓ Inserted ${records.length} permits`);
+  return new Promise<void>((resolve, reject) => {
+    const parser = createReadStream(csvPath)
+      .pipe(parseStream({
+        columns: true,
+        skip_empty_lines: true,
+        relax_quotes: true,
+        relax_column_count: true,
+      }));
+
+    parser.on('data', async (record: any) => {
+      const description = record.description || '';
+      const energyType = detectEnergyType(description);
+      const llmCat = llmCategories[record.permit_num] || {};
+
+      batch.push({
+        permitNumber: record.permit_num || `PERMIT_${totalInserted}_${Date.now()}`,
+        address: record.original_address_1 || null,
+        zipCode: record.zip_code ? String(record.zip_code).replace('.0', '') : 'UNKNOWN',
+        latitude: record.latitude ? parseFloat(record.latitude) : null,
+        longitude: record.longitude ? parseFloat(record.longitude) : null,
+        clusterId: record.f_cluster ? parseInt(record.f_cluster) : null,
+        workDescription: description.substring(0, 1000) || null,  // Limit description length
+        isEnergyPermit: energyType !== null,
+        energyType: energyType,
+        solarCapacityKw: null,
+        projectType: llmCat.project_type || null,
+        buildingType: llmCat.building_type || null,
+        scale: llmCat.scale || null,
+        trade: llmCat.trade || null,
+        isGreen: llmCat.is_green === true || llmCat.is_green === 'true',
+        totalJobValuation: record.total_job_valuation ? parseFloat(record.total_job_valuation) : null,
+        issueDate: record.issued_date || null,
+      });
+
+      if (batch.length >= BATCH_SIZE) {
+        parser.pause();
+        try {
+          await db.insert(permits).values(batch).onConflictDoNothing();
+          totalInserted += batch.length;
+          if (totalInserted % 100000 === 0) {
+            console.log(`[Permits] Inserted ${totalInserted.toLocaleString()} permits...`);
+          }
+          batch = [];
+        } catch (err) {
+          console.error('Batch insert error:', err);
+        }
+        parser.resume();
+      }
+    });
+
+    parser.on('end', async () => {
+      // Insert remaining batch
+      if (batch.length > 0) {
+        await db.insert(permits).values(batch).onConflictDoNothing();
+        totalInserted += batch.length;
+      }
+
+      await db.insert(cacheMetadata).values({
+        key: 'permits',
+        lastUpdated: new Date().toISOString(),
+        recordCount: totalInserted,
+        sourceFile: 'permit_data_named_clusters.csv',
+      }).onConflictDoUpdate({
+        target: cacheMetadata.key,
+        set: {
+          lastUpdated: new Date().toISOString(),
+          recordCount: totalInserted,
+        },
+      });
+
+      console.log(`[Permits] ✓ Inserted ${totalInserted.toLocaleString()} permits`);
+      resolve();
+    });
+
+    parser.on('error', reject);
+  });
 }
 
 async function main() {
