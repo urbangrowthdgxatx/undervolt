@@ -214,11 +214,18 @@ The Next.js frontend connects to the database via MCP (Model Context Protocol):
 
 | Signal | Count | Insight |
 |--------|-------|---------|
-| Solar | 25,610 | Grid-tied, saves money but useless when grid fails |
-| EV Chargers | 119,727 | Electrification is real |
-| Generators | 7,116 | +246% after 2021 freeze — trust is broken |
-| Batteries | 878 | Only 1 for every 29 solar — storage is the bottleneck |
-| ADUs | 2,549 | Density growing in central Austin |
+| Solar | 25,982 | Grid-tied, saves money but useless when grid fails |
+| EV Chargers | 3,642 | Electrification accelerating |
+| Generators | 7,248 | +246% after 2021 freeze — trust is broken |
+| Batteries | 1,161 | Only 1 for every 22 solar — storage is the bottleneck |
+| HVAC | 71,331 | Climate adaptation in progress |
+
+**LLM Categorization (86% coverage):**
+| Category | Top Values |
+|----------|-----------|
+| Project Type | new_construction (849K), renovation (435K), repair (384K) |
+| Building Type | residential_single (946K), commercial (251K), residential_multi (143K) |
+| Trade | general (1.4M), landscaping (349K), electrical (184K), hvac (145K) |
 
 **Post-Freeze Effect (2021):**
 - Battery permits: +214%
@@ -309,64 +316,68 @@ undervolt/
 └── run.py                 # ▶️  Main Entry Point
 ```
 
-## Quick Start Guide
+## Quick Start (Jetson Deployment)
+
+### 1. Start Services
+
+```bash
+# Services auto-start on boot, but to start manually:
+sudo systemctl start ollama
+sudo systemctl start undervolt-frontend
+
+# Check status
+systemctl status ollama undervolt-frontend
+```
+
+### 2. Access Dashboard
+
+Open [http://localhost:3000/dashboard](http://localhost:3000/dashboard)
+
+### 3. Run Categorization (if needed)
+
+```bash
+# Fast rule-based categorization (~10K permits/sec)
+python3 scripts/python/fast_categorize.py
+
+# LLM-based categorization (~1 permit/sec, more accurate)
+python3 scripts/python/llm_categorize_batch.py
+```
+
+### 4. Development Setup
+
+```bash
+# Frontend development
+cd frontend
+npm install
+npm run dev
+
+# Database operations
+npm run db:reset    # Reset and reload data
+npm run db:studio   # Opens Drizzle Studio
+```
+
+## Original Quick Start (DGX/Full Pipeline)
 
 ### 1. Download the Data
 
 ```bash
-# Shell script (recommended)
 bash scripts/shell/download_data.sh
-
-# Or Python script
-python scripts/python/download_data.py
+# Or: python scripts/python/download_data.py
 ```
-
-Data saved to `data/Issued_Construction_Permits_20251212.csv` (~1.5GB, 2.4M records).
 
 ### 2. Run the Unified Pipeline
 
 ```bash
-# Auto-detects platform (Jetson/DGX/Mac) and uses GPU when available
-python run_unified.py
-
-# Test with sample first
-python run_unified.py --sample 100000
-
-# Skip clustering for faster testing
-python run_unified.py --sample 50000 --skip-clustering
-
-# Show help
-python run_unified.py --help
+python run_unified.py              # Full pipeline
+python run_unified.py --sample 100000  # Test with sample
+python run_unified.py --help       # Show options
 ```
 
-**Pipeline output:**
-- `output/permit_data_enriched.csv` - 2.3M permits with NLP features + clusters
-- `output/energy_permits.csv` - 192K energy permits (solar, battery, EV, etc.)
-- `frontend/public/data/energy_infrastructure.json` - Frontend data
-
-**Platform detection:**
-- ✅ **Jetson AGX Orin**: Uses cuDF/cuML if installed, falls back to pandas/sklearn
-- ✅ **NVIDIA DGX**: Uses cuDF/cuML if installed
-- ✅ **Mac**: Uses pandas/sklearn (CPU only)
-
-[Install RAPIDS for GPU acceleration →](docs/guides/install-rapids-jetson.md)
-
-### 3. Load Database
+### 3. Load Database & Run Frontend
 
 ```bash
-# Create schema and ingest data
 npm run db:reset
-
-# View database
-npm run db:studio  # Opens http://localhost:4983
-```
-
-### 4. Run Frontend
-
-```bash
-cd frontend
-bun install  # or npm install
-bun run dev  # or npm run dev
+cd frontend && npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
@@ -377,14 +388,45 @@ Open [http://localhost:3000](http://localhost:3000)
 
 | Layer | Technology |
 |-------|------------|
-| GPU Processing | cuDF/RAPIDS on DGX |
-| LLM Extraction | vLLM + 8B model |
-| Database | Neon Postgres (serverless) |
-| API | MCP (Model Context Protocol) |
-| Frontend | Next.js 16, React 19, Tailwind |
-| Maps | Mapbox GL |
-| Charts | Recharts |
+| Hardware | NVIDIA Jetson AGX Orin (64GB) |
+| GPU Processing | CUDA 11.4, RAPIDS cuDF/cuML |
+| LLM | Ollama + Llama 3.2:3b (local) |
+| Database | SQLite (local, 500MB) |
+| Backend | Next.js 15, Drizzle ORM |
+| Frontend | React 19, Leaflet, Recharts |
+| Services | systemd (auto-restart on boot) |
 
+### What Changed Since DGX Hackathon
+
+| Component | Hackathon (DGX) | Current (Jetson) |
+|-----------|-----------------|------------------|
+| Hardware | DGX Spark | Jetson AGX Orin 64GB |
+| Database | Neon Postgres (cloud) | SQLite (local) |
+| LLM | vLLM + 8B model | Ollama + Llama 3.2:3b |
+| Clustering | cuML k-means | cuML k-means (same) |
+| Categorization | LLM-only | Rule-based + LLM hybrid |
+| Deployment | Manual | systemd services |
+| Cost | Cloud DB fees | Zero ongoing cost |
+
+
+## Roadmap
+
+### Phase 2
+- Time-series animation of permit growth
+- Predictive modeling: "Where will construction spike next?"
+- Export reports as PDF/CSV
+
+### Phase 3
+- Multi-city comparison (Houston, Dallas, San Antonio)
+- Real-time permit feed integration
+- Mobile-responsive dashboard
+
+### Phase 4
+- vLLM integration (when CUDA 12 supported on Jetson)
+- Fine-tuned permit classification model
+- API for third-party integrations
+
+---
 
 ## Future: Context Bundles
 
