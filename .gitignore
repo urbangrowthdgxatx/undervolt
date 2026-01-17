@@ -40,3 +40,13 @@ frontend/bun.lockb
 data/undervolt.db
 data/undervolt.db-shm
 data/undervolt.db-wal
+data/permits.db
+frontend/permits.db
+*.db
+
+# Logs and progress files
+*.log
+data/*_progress.json
+
+# Temp notes
+2026-*.txt
