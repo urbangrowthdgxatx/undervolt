@@ -20,8 +20,8 @@ from collections import defaultdict
 import time
 import sys
 
-# Use Ollama's OpenAI-compatible endpoint (same as frontend)
-OLLAMA_URL = "http://localhost:11434/v1/chat/completions"
+# Use Ollama's native API (faster)
+OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL = "llama3.2:3b"
 DB_PATH = "/home/red/Documents/github/undervolt/data/undervolt.db"
 
@@ -40,7 +40,7 @@ Return a JSON object with these fields:
 Return ONLY the JSON, no explanation."""
 
 
-def query_ollama(prompt: str, timeout: int = 30) -> dict:
+def query_ollama(prompt, timeout=30):
     """Query Ollama and parse JSON response"""
     try:
         response = requests.post(
@@ -49,6 +49,7 @@ def query_ollama(prompt: str, timeout: int = 30) -> dict:
                 "model": MODEL,
                 "prompt": prompt,
                 "stream": False,
+                "keep_alive": "30m",  # Keep model loaded
                 "options": {
                     "temperature": 0.1,  # Low temp for consistent categorization
                     "num_predict": 150,
@@ -78,7 +79,7 @@ def query_ollama(prompt: str, timeout: int = 30) -> dict:
         return None
 
 
-def categorize_batch(descriptions: list[tuple[int, str]], batch_size: int = 10) -> dict:
+def categorize_batch(descriptions, batch_size: int = 10) -> dict:
     """Categorize a batch of permit descriptions"""
     results = {}
 
@@ -155,7 +156,8 @@ def analyze_sample(sample_size: int = 100):
         for value, count in sorted(counts.items(), key=lambda x: -x[1]):
             pct = (count / len(categories)) * 100
             bar = "█" * int(pct / 5)
-            print(f"  {value:20s} {count:4d} ({pct:5.1f}%) {bar}")
+            val_str = str(value) if value is not None else "unknown"
+            print(f"  {val_str:20s} {count:4d} ({pct:5.1f}%) {bar}")
 
     # Save results
     output_path = "/home/red/Documents/github/undervolt/data/llm_categories.json"
@@ -221,10 +223,14 @@ def update_database_with_categories(categories: dict):
 
 if __name__ == "__main__":
     sample_size = int(sys.argv[1]) if len(sys.argv) > 1 else 100
+    auto_update = len(sys.argv) > 2 and sys.argv[2] == '--update'
 
     categories, distributions = analyze_sample(sample_size)
 
-    # Ask to update DB
-    print("\nUpdate database with these categories? (y/n): ", end="")
-    if input().strip().lower() == 'y':
+    # Update DB if --update flag passed, otherwise ask
+    if auto_update:
         update_database_with_categories(categories)
+    elif sys.stdin.isatty():
+        print("\nUpdate database with these categories? (y/n): ", end="")
+        if input().strip().lower() == 'y':
+            update_database_with_categories(categories)
