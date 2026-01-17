@@ -1,26 +1,34 @@
 # Deployment Options for Jan 27 Demo
 
-## Option 1: Remote Access to Jetson (Recommended)
+## Option 1: Tailscale to Jetson (Recommended)
 
-**Pros:** Real hardware demo, authentic performance metrics
-**Cons:** Requires stable internet, Jetson must stay powered on
+**Pros:** Real hardware demo, authentic GPU performance, zero cost, encrypted
+**Cons:** Requires Jetson to stay powered on and connected
 
-### Setup
+### Tailscale Details
+
+| Device | Tailscale IP | Status |
+|--------|--------------|--------|
+| Jetson (red-desktop-1) | `100.87.236.76` | Primary |
+
+### Setup (Already Done)
 
 ```bash
-# On Jetson - ensure services are running
+# Tailscale is already running on Jetson
+tailscale status
+
+# Ensure services are running
 sudo systemctl enable ollama undervolt-frontend
 sudo systemctl start ollama undervolt-frontend
-
-# Get Jetson's public IP or set up port forwarding
-# If behind NAT, use ngrok or similar:
-ngrok http 3000
 ```
 
 ### From Demo Location
 
-- Access via ngrok URL or direct IP
-- SSH tunnel for backup: `ssh -L 3000:localhost:3000 red@jetson-ip`
+1. Connect to Tailscale on your laptop/phone
+2. Access dashboard: `http://100.87.236.76:3000`
+3. SSH if needed: `ssh red@100.87.236.76`
+
+No port forwarding, no tunnels, no dynamic URLs.
 
 ---
 
@@ -128,23 +136,22 @@ curl http://localhost:3000/api/stats > static-stats.json
 
 ## Recommended Strategy
 
-### Primary: Remote Jetson Access
+### Primary: Tailscale to Jetson
 
-1. Set up ngrok tunnel before leaving
-2. Test connection from phone hotspot
-3. Have backup mobile hotspot ready
+1. Jetson stays at home, powered on
+2. Connect to Tailscale from demo location
+3. Access `http://100.87.236.76:3000` directly
 
 ### Backup: Cloud VM
 
-1. Spin up DigitalOcean droplet now ($24/mo)
-2. Deploy and test this week
-3. Keep running until after demo
+1. Only if Tailscale/Jetson fails
+2. Pre-deploy to DigitalOcean if paranoid
+3. Most likely won't need this
 
 ### Emergency: Pre-recorded Video
 
-1. Record 5-min demo walkthrough
-2. Export key stats as static JSON
-3. Have slides ready with screenshots
+1. Record 5-min demo walkthrough as last resort
+2. Keep on phone/laptop offline
 
 ---
 
@@ -152,43 +159,42 @@ curl http://localhost:3000/api/stats > static-stats.json
 
 ### 3 Days Before
 
-- [ ] Test Jetson remote access from different network
-- [ ] Set up cloud VM backup
+- [ ] Test Tailscale access from phone (different network)
+- [ ] Run `./scripts/pre-demo-check.sh` - fix any issues
 - [ ] Record demo video as emergency backup
-- [ ] Test all demo scenarios
+- [ ] Test all demo scenarios end-to-end
 
 ### Day Before
 
-- [ ] Verify Jetson is accessible
-- [ ] Check cloud backup is running
-- [ ] Charge laptop, test hotspot
+- [ ] Run `./scripts/pre-demo-check.sh` again
+- [ ] Verify Jetson stays online overnight (disable sleep)
+- [ ] Charge laptop, ensure Tailscale app installed
 - [ ] Download offline copy of presentation
 
 ### Day Of
 
-- [ ] SSH into Jetson, verify services running
-- [ ] Test dashboard loads
-- [ ] Have cloud URL ready as backup
-- [ ] Have video ready as last resort
+- [ ] Run `./scripts/pre-demo-check.sh` before leaving
+- [ ] Test from phone on mobile data (not home WiFi)
+- [ ] Have pre-recorded video on phone as backup
 
 ---
 
 ## Quick Commands Reference
 
 ```bash
-# Check Jetson remotely
-ssh red@jetson-ip "systemctl status ollama undervolt-frontend"
+# Check Jetson remotely via Tailscale
+ssh red@100.87.236.76 "systemctl status ollama undervolt-frontend"
 
 # Restart services
-ssh red@jetson-ip "sudo systemctl restart ollama undervolt-frontend"
+ssh red@100.87.236.76 "sudo systemctl restart ollama undervolt-frontend"
 
-# Check dashboard
-curl -s http://jetson-ip:3000/api/stats | head -c 200
+# Check dashboard is responding
+curl -s http://100.87.236.76:3000/api/stats | head -c 200
 
-# Ngrok tunnel (run on Jetson)
-ngrok http 3000
+# Run pre-demo check script
+./scripts/pre-demo-check.sh
 
-# Cloud deploy (one-liner)
+# Cloud deploy (one-liner) - only if needed
 ssh root@cloud-ip "cd /app/undervolt && git pull && cd frontend && npm run build && pm2 restart all"
 ```
 
@@ -198,9 +204,9 @@ ssh root@cloud-ip "cd /app/undervolt && git pull && cd frontend && npm run build
 
 | Option | Setup Time | Monthly Cost | Reliability |
 |--------|------------|--------------|-------------|
-| Remote Jetson | 30 min | $0 | Medium (internet dependent) |
+| Tailscale + Jetson | Done | $0 | High (encrypted, no NAT issues) |
 | Cloud VM | 2 hours | $24-48 | High |
 | Vercel + Turso | 1 hour | $0 (free tier) | Very High |
 | Pre-recorded | 1 hour | $0 | 100% |
 
-**Recommendation:** Set up Cloud VM as backup this week. It's worth $24 for peace of mind.
+**Recommendation:** Use Tailscale (already set up). Record a backup video the day before just in case.
