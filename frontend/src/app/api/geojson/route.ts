@@ -42,7 +42,7 @@ export async function GET() {
       return acc;
     }, {} as Record<number, { name: string; count: number }>);
 
-    // Get permits with valid coordinates
+    // Get permits with valid coordinates (only select columns that exist in DB)
     const data = await db
       .select({
         id: permits.id,
