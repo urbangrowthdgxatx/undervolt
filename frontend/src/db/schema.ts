@@ -25,6 +25,13 @@ export const permits = sqliteTable('permits', {
   // Dates
   issueDate: text('issue_date'),
   createdAt: text('created_at').notNull().default('CURRENT_TIMESTAMP'),
+
+  // LLM-generated categories
+  projectType: text('project_type'), // new_construction, renovation, repair, etc.
+  buildingType: text('building_type'), // residential_single, commercial, etc.
+  scale: text('scale'), // minor, moderate, major
+  trade: text('trade'), // electrical, plumbing, hvac, etc.
+  isGreen: integer('is_green', { mode: 'boolean' }).default(false),
 }, (table) => ({
   zipIdx: index('zip_idx').on(table.zipCode),
   clusterIdx: index('cluster_idx').on(table.clusterId),

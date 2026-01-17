@@ -52,7 +52,7 @@ async function loadStats() {
       return acc;
     }, {} as Record<number, Array<{ keyword: string; frequency: number }>>);
 
-    // Build cluster distribution with real counts
+    // Build cluster distribution with real counts (exclude zero-count clusters)
     const clusterDistribution = clustersData.map((cluster) => {
       const realCount = countMap[cluster.id] || 0;
       return {
@@ -62,7 +62,9 @@ async function loadStats() {
         percentage: totalPermits > 0 ? Math.round((realCount / totalPermits) * 1000) / 10 : 0,
         keywords: keywordsByCluster[cluster.id] || [],
       };
-    }).sort((a, b) => b.count - a.count);
+    })
+    .filter((cluster) => cluster.count > 0)
+    .sort((a, b) => b.count - a.count);
 
     // Get energy stats directly from permits table
     const energyTotals = await db
@@ -125,11 +127,72 @@ async function loadStats() {
         hvac: Number(z.hvac),
       }));
 
+    // Get LLM category distributions
+    const projectTypeData = await db
+      .select({
+        value: permits.projectType,
+        count: sql<number>`count(*)`,
+      })
+      .from(permits)
+      .where(sql`${permits.projectType} IS NOT NULL`)
+      .groupBy(permits.projectType);
+
+    const buildingTypeData = await db
+      .select({
+        value: permits.buildingType,
+        count: sql<number>`count(*)`,
+      })
+      .from(permits)
+      .where(sql`${permits.buildingType} IS NOT NULL`)
+      .groupBy(permits.buildingType);
+
+    const scaleData = await db
+      .select({
+        value: permits.scale,
+        count: sql<number>`count(*)`,
+      })
+      .from(permits)
+      .where(sql`${permits.scale} IS NOT NULL`)
+      .groupBy(permits.scale);
+
+    const tradeData = await db
+      .select({
+        value: permits.trade,
+        count: sql<number>`count(*)`,
+      })
+      .from(permits)
+      .where(sql`${permits.trade} IS NOT NULL`)
+      .groupBy(permits.trade);
+
+    const llmCategories = {
+      projectType: projectTypeData
+        .filter(d => d.value)
+        .sort((a, b) => Number(b.count) - Number(a.count))
+        .slice(0, 10)
+        .map(d => ({ value: d.value, count: Number(d.count) })),
+      buildingType: buildingTypeData
+        .filter(d => d.value)
+        .sort((a, b) => Number(b.count) - Number(a.count))
+        .slice(0, 10)
+        .map(d => ({ value: d.value, count: Number(d.count) })),
+      scale: scaleData
+        .filter(d => d.value)
+        .sort((a, b) => Number(b.count) - Number(a.count))
+        .map(d => ({ value: d.value, count: Number(d.count) })),
+      trade: tradeData
+        .filter(d => d.value)
+        .sort((a, b) => Number(b.count) - Number(a.count))
+        .slice(0, 10)
+        .map(d => ({ value: d.value, count: Number(d.count) })),
+      totalCategorized: projectTypeData.reduce((sum, d) => sum + Number(d.count), 0),
+    };
+
     const stats = {
       totalPermits,
       clusterDistribution,
       topZips,
       energyStats,
+      llmCategories,
       lastUpdated: new Date().toISOString(),
     };
 

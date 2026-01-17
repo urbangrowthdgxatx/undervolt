@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Map, BarChart3, Layers, Search, Zap, Building2, LayoutGrid } from "lucide-react";
+import { Layers, Search } from "lucide-react";
 import dynamic from 'next/dynamic';
-import { ViewMode, viewConfigs, getViewConfig, clusterMapping } from '@/config/dashboard';
+import { clusterMapping } from '@/config/dashboard';
 
 // Dynamically import Leaflet map (better performance on Jetson - no WebGL required)
 const LeafletMap = dynamic(() => import('@/components/LeafletMap').then(mod => ({ default: mod.LeafletMap })), {
@@ -44,6 +44,13 @@ interface Stats {
       total_capacity_kw: number;
     };
   };
+  llmCategories?: {
+    projectType: Array<{ value: string; count: number }>;
+    buildingType: Array<{ value: string; count: number }>;
+    scale: Array<{ value: string; count: number }>;
+    trade: Array<{ value: string; count: number }>;
+    totalCategorized: number;
+  };
 }
 
 interface GeoJSONFeature {
@@ -68,9 +75,11 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedCluster, setSelectedCluster] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<ViewMode>('energy');
-
-  const currentConfig = getViewConfig(viewMode);
+  const [showEnergyOnly, setShowEnergyOnly] = useState(false);
+  const [selectedEnergyType, setSelectedEnergyType] = useState<string | null>(null);
+  const [selectedProjectType, setSelectedProjectType] = useState<string | null>(null);
+  const [selectedBuildingType, setSelectedBuildingType] = useState<string | null>(null);
+  const [selectedTrade, setSelectedTrade] = useState<string | null>(null);
 
   // Filter clusters based on search query
   const filteredClusters = stats?.clusterDistribution.filter((cluster) => {
@@ -93,11 +102,15 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadStats();
-    loadIndividualPermits().then((permits) => {
+  }, []);
+
+  // Reload permits when filter changes
+  useEffect(() => {
+    loadIndividualPermits(showEnergyOnly, selectedEnergyType, selectedProjectType, selectedBuildingType, selectedTrade).then((permits) => {
       // Load cluster boundaries after permits are loaded
       loadClusterData(permits);
     });
-  }, []);
+  }, [showEnergyOnly, selectedEnergyType, selectedProjectType, selectedBuildingType, selectedTrade]);
 
   const loadStats = async () => {
     try {
@@ -165,7 +178,7 @@ export default function Dashboard() {
       const permitsByCluster = new globalThis.Map<number, any[]>();
 
       permits.forEach(permit => {
-        const clusterId = permit.district;
+        const clusterId = permit.cluster;
         if (!permitsByCluster.has(clusterId)) {
           permitsByCluster.set(clusterId, []);
         }
@@ -220,7 +233,7 @@ export default function Dashboard() {
           signal: clusterToSignal[group.clusterId] || 'all',
           description: group.clusterName,
           zip: '',
-          district: group.clusterId,
+          cluster: group.clusterId,
           value: `${group.totalPermits.toLocaleString()} permits`,
           count: group.totalPermits,
           // No boundary - will render as circles with count labels
@@ -235,9 +248,24 @@ export default function Dashboard() {
   };
 
   // Load individual permits (for zoomed-in view and cluster boundaries)
-  const loadIndividualPermits = async () => {
+  const loadIndividualPermits = async (
+    energyOnly: boolean = false,
+    energyType: string | null = null,
+    projectType: string | null = null,
+    buildingType: string | null = null,
+    trade: string | null = null
+  ) => {
     try {
-      const res = await fetch('/api/permits-detailed?limit=10000');
+      let url = `/api/permits-detailed?limit=10000`;
+      if (energyType) {
+        url += `&energyType=${energyType}`;
+      } else if (energyOnly) {
+        url += '&energyOnly=true';
+      }
+      if (projectType) url += `&projectType=${projectType}`;
+      if (buildingType) url += `&buildingType=${buildingType}`;
+      if (trade) url += `&trade=${trade}`;
+      const res = await fetch(url);
       const data = await res.json();
 
       // Map cluster IDs to signal types (matching actual ML clusters)
@@ -258,13 +286,13 @@ export default function Dashboard() {
       // Transform individual permits
       const transformed = data.permits
         .map((permit: any, index: number) => ({
-          id: permit.permit_id || `permit-${index}`,
+          id: permit.permitNumber || permit.permit_id || `permit-${index}`,
           lat: parseFloat(permit.latitude),
           lng: parseFloat(permit.longitude),
-          signal: clusterToSignal[permit.f_cluster || permit.cluster_id] || 'all',
-          description: permit.permit_type_desc || permit.work_class || 'Permit',
-          zip: permit.zip_code || '',
-          district: parseInt(permit.f_cluster || permit.cluster_id || '0'),
+          signal: clusterToSignal[permit.clusterId ?? permit.f_cluster ?? permit.cluster_id] || 'all',
+          description: permit.workDescription || permit.permit_type_desc || permit.work_class || 'Permit',
+          zip: permit.zipCode || permit.zip_code || '',
+          cluster: parseInt(permit.clusterId ?? permit.f_cluster ?? permit.cluster_id ?? '0'),
           value: permit.total_job_valuation ? `$${parseFloat(permit.total_job_valuation).toLocaleString()}` : undefined,
           year: permit.year_issued,
         }))
@@ -309,161 +337,238 @@ export default function Dashboard() {
 
   return (
     <div className="h-screen flex flex-col bg-black pt-16">
-      {/* Search Bar with View Mode Switcher */}
-      <div className="border-b border-white/10 bg-black/40 backdrop-blur-sm px-6 py-3">
-        <div className="max-w-6xl mx-auto flex items-center gap-4">
-          {/* View Mode Switcher */}
-          <div className="flex items-center bg-white/5 rounded-lg p-1 border border-white/10">
-            <button
-              onClick={() => setViewMode('energy')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                viewMode === 'energy'
-                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                  : 'text-white/50 hover:text-white/80 hover:bg-white/5'
-              }`}
-            >
-              <Zap size={14} />
-              Energy
-            </button>
-            <button
-              onClick={() => setViewMode('construction')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                viewMode === 'construction'
-                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                  : 'text-white/50 hover:text-white/80 hover:bg-white/5'
-              }`}
-            >
-              <Building2 size={14} />
-              Construction
-            </button>
-            <button
-              onClick={() => setViewMode('all')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                viewMode === 'all'
-                  ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                  : 'text-white/50 hover:text-white/80 hover:bg-white/5'
-              }`}
-            >
-              <LayoutGrid size={14} />
-              All
-            </button>
-          </div>
-
-          {/* Search */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={16} />
+      {/* Search Bar and Filters */}
+      <div className="bg-black/60 backdrop-blur-sm px-6 py-3">
+        <div className="max-w-2xl mx-auto flex items-center gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={18} />
             <input
               type="text"
-              placeholder="Search by ZIP code, cluster, or keyword..."
+              placeholder="Search clusters, ZIP codes, or keywords..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-white/30 outline-none"
+              className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/40 focus:border-white/40 focus:bg-white/15 outline-none transition-all"
             />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
+              >
+                ✕
+              </button>
+            )}
           </div>
+          {/* Energy Only Toggle */}
+          <button
+            onClick={() => setShowEnergyOnly(!showEnergyOnly)}
+            className={`px-4 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+              showEnergyOnly
+                ? 'bg-green-500/20 border border-green-500/40 text-green-400'
+                : 'bg-white/10 border border-white/20 text-white/60 hover:text-white hover:bg-white/15'
+            }`}
+          >
+            {showEnergyOnly ? '⚡ Energy' : 'All Permits'}
+          </button>
         </div>
       </div>
 
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - Stats */}
-        <div className="w-72 border-r border-white/10 bg-black overflow-y-auto">
-          <div className="p-6 space-y-6">
-            {/* Key Insights - Compelling data story */}
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-white/70 mb-3 flex items-center gap-2">
-                <BarChart3 size={14} />
-                {currentConfig.title}
-              </h3>
-
-              {/* Solar Capacity Insight - Clickable (Energy view) */}
-              {viewMode === 'energy' && stats.energyStats.solarStats && (
-                <button
-                  onClick={() => {
-                    // Find cluster with most solar (cluster 2 - Electrical & Roofing)
-                    const solarCluster = stats.clusterDistribution.find(c => c.id === 2);
-                    if (solarCluster) setSelectedCluster(solarCluster.id);
-                  }}
-                  className="w-full text-left group bg-gradient-to-br from-amber-500/10 to-amber-600/5 backdrop-blur-sm rounded-lg p-3 border border-amber-500/20 hover:border-amber-500/40 hover:bg-amber-500/15 transition-all duration-200 shadow-sm cursor-pointer"
-                >
-                  <div className="flex items-start gap-2">
-                    <div className="text-2xl group-hover:scale-110 transition-transform">☀️</div>
-                    <div className="flex-1">
-                      <p className="text-xs text-amber-400/90 font-medium group-hover:text-amber-300">Solar Powerhouse</p>
-                      <p className="text-[11px] text-white/60 mt-1 leading-relaxed group-hover:text-white/70">
-                        {stats.energyStats.solarStats.total_capacity_kw.toLocaleString()} kW installed capacity across {stats.energyStats.solar.toLocaleString()} permits
-                      </p>
-                      <p className="text-[9px] text-amber-400/50 mt-1 group-hover:text-amber-400/70">Click to view solar permits</p>
-                    </div>
-                  </div>
-                </button>
-              )}
-
-              {/* Battery Growth Insight - Clickable (Energy view) */}
-              {viewMode === 'energy' && <button
-                onClick={() => {
-                  // Scroll to show battery-heavy areas on map (could enhance with ZIP filter)
-                  const batteryCluster = stats.clusterDistribution.find(c => c.id === 4);
-                  if (batteryCluster) setSelectedCluster(batteryCluster.id);
-                }}
-                className="w-full text-left group bg-gradient-to-br from-blue-500/10 to-blue-600/5 backdrop-blur-sm rounded-lg p-3 border border-blue-500/20 hover:border-blue-500/40 hover:bg-blue-500/15 transition-all duration-200 shadow-sm cursor-pointer"
-              >
-                <div className="flex items-start gap-2">
-                  <div className="text-2xl group-hover:scale-110 transition-transform">🔋</div>
-                  <div className="flex-1">
-                    <p className="text-xs text-blue-400/90 font-medium group-hover:text-blue-300">Battery Surge</p>
-                    <p className="text-[11px] text-white/60 mt-1 leading-relaxed group-hover:text-white/70">
-                      {stats.energyStats.battery.toLocaleString()} battery storage permits — energy independence rising
-                    </p>
-                    <p className="text-[9px] text-blue-400/50 mt-1 group-hover:text-blue-400/70">Click to explore battery installations</p>
-                  </div>
-                </div>
-              </button>}
-
-              {/* Top ZIP Insight - Clickable to show dominant cluster type */}
-              {stats.topZips && stats.topZips.length > 0 && (
-                <button
-                  onClick={() => {
-                    // Find the cluster with most permits (since 78758 has 801 battery, likely HVAC cluster 4)
-                    const topZip = stats.topZips[0];
-                    // Determine dominant type and select corresponding cluster
-                    if ((topZip.battery || 0) > (topZip.solar || 0) && (topZip.battery || 0) > (topZip.ev_charger || 0)) {
-                      const hvacCluster = stats.clusterDistribution.find(c => c.id === 4);
-                      if (hvacCluster) setSelectedCluster(hvacCluster.id);
-                    } else if ((topZip.solar || 0) > (topZip.battery || 0)) {
-                      const solarCluster = stats.clusterDistribution.find(c => c.id === 2);
-                      if (solarCluster) setSelectedCluster(solarCluster.id);
-                    } else {
-                      // Default to first cluster if unclear
-                      setSelectedCluster(stats.clusterDistribution[0]?.id || null);
-                    }
-                  }}
-                  className="w-full text-left group bg-gradient-to-br from-purple-500/10 to-purple-600/5 backdrop-blur-sm rounded-lg p-3 border border-purple-500/20 hover:border-purple-500/40 hover:bg-purple-500/15 transition-all duration-200 shadow-sm cursor-pointer"
-                >
-                  <div className="flex items-start gap-2">
-                    <div className="text-2xl group-hover:scale-110 transition-transform">📍</div>
-                    <div className="flex-1">
-                      <p className="text-xs text-purple-400/90 font-medium group-hover:text-purple-300">Energy Leader</p>
-                      <p className="text-[11px] text-white/60 mt-1 leading-relaxed group-hover:text-white/70">
-                        ZIP {stats.topZips[0].zip} leads with {stats.topZips[0].count.toLocaleString()} energy permits
-                      </p>
-                      <div className="flex gap-2 mt-1.5 text-[9px]">
-                        <span className="text-amber-400/70 group-hover:text-amber-400/90">{stats.topZips[0].solar} solar</span>
-                        <span className="text-white/30">·</span>
-                        <span className="text-blue-400/70 group-hover:text-blue-400/90">{stats.topZips[0].battery} battery</span>
-                        <span className="text-white/30">·</span>
-                        <span className="text-indigo-400/70 group-hover:text-indigo-400/90">{stats.topZips[0].ev_charger} EV</span>
-                      </div>
-                      <p className="text-[9px] text-purple-400/50 mt-1 group-hover:text-purple-400/70">Click to view dominant cluster</p>
-                    </div>
-                  </div>
-                </button>
-              )}
+        <div className="w-80 border-r border-white/10 bg-black/50 overflow-y-auto">
+          <div className="p-5 space-y-5">
+            {/* Header */}
+            <div className="pb-4 border-b border-white/10">
+              <h1 className="text-xl font-semibold text-white">Austin Permits</h1>
+              <p className="text-xs text-white/50 mt-1">Energy infrastructure & construction activity</p>
+              <div className="mt-3 flex items-baseline gap-2">
+                <span className="text-2xl font-bold text-white">{stats.totalPermits.toLocaleString()}</span>
+                <span className="text-xs text-white/40">total permits</span>
+              </div>
             </div>
+
+            {/* Quick Stats */}
+            <div>
+              <h3 className="text-[10px] font-medium text-white/40 uppercase tracking-wider mb-2">
+                Energy Permits
+                {selectedEnergyType && (
+                  <button
+                    onClick={() => setSelectedEnergyType(null)}
+                    className="ml-2 text-white/60 hover:text-white"
+                  >
+                    ✕ Clear
+                  </button>
+                )}
+              </h3>
+              <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => setSelectedEnergyType(selectedEnergyType === 'solar' ? null : 'solar')}
+                className={`rounded-lg p-3 text-center transition-all ${
+                  selectedEnergyType === 'solar'
+                    ? 'bg-amber-500/30 border-2 border-amber-500 ring-2 ring-amber-500/30'
+                    : 'bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 hover:border-amber-500/40'
+                }`}
+              >
+                <p className="text-lg font-semibold text-amber-400">{stats.energyStats.solar.toLocaleString()}</p>
+                <p className="text-[10px] text-white/50">Solar</p>
+              </button>
+              <button
+                onClick={() => setSelectedEnergyType(selectedEnergyType === 'battery' ? null : 'battery')}
+                className={`rounded-lg p-3 text-center transition-all ${
+                  selectedEnergyType === 'battery'
+                    ? 'bg-blue-500/30 border-2 border-blue-500 ring-2 ring-blue-500/30'
+                    : 'bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 hover:border-blue-500/40'
+                }`}
+              >
+                <p className="text-lg font-semibold text-blue-400">{stats.energyStats.battery.toLocaleString()}</p>
+                <p className="text-[10px] text-white/50">Battery</p>
+              </button>
+              <button
+                onClick={() => setSelectedEnergyType(selectedEnergyType === 'ev_charger' ? null : 'ev_charger')}
+                className={`rounded-lg p-3 text-center transition-all ${
+                  selectedEnergyType === 'ev_charger'
+                    ? 'bg-indigo-500/30 border-2 border-indigo-500 ring-2 ring-indigo-500/30'
+                    : 'bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 hover:border-indigo-500/40'
+                }`}
+              >
+                <p className="text-lg font-semibold text-indigo-400">{stats.energyStats.evCharger.toLocaleString()}</p>
+                <p className="text-[10px] text-white/50">EV</p>
+              </button>
+              </div>
+              <div className="grid grid-cols-3 gap-2 mt-2">
+              <button
+                onClick={() => setSelectedEnergyType(selectedEnergyType === 'hvac' ? null : 'hvac')}
+                className={`rounded-lg p-3 text-center transition-all ${
+                  selectedEnergyType === 'hvac'
+                    ? 'bg-white/20 border-2 border-white/60 ring-2 ring-white/20'
+                    : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
+                }`}
+              >
+                <p className="text-lg font-semibold text-white/80">{stats.energyStats.hvac.toLocaleString()}</p>
+                <p className="text-[10px] text-white/40">HVAC</p>
+              </button>
+              <button
+                onClick={() => setSelectedEnergyType(selectedEnergyType === 'panel_upgrade' ? null : 'panel_upgrade')}
+                className={`rounded-lg p-3 text-center transition-all ${
+                  selectedEnergyType === 'panel_upgrade'
+                    ? 'bg-white/20 border-2 border-white/60 ring-2 ring-white/20'
+                    : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
+                }`}
+              >
+                <p className="text-lg font-semibold text-white/80">{stats.energyStats.panelUpgrade.toLocaleString()}</p>
+                <p className="text-[10px] text-white/40">Panel</p>
+              </button>
+              <button
+                onClick={() => setSelectedEnergyType(selectedEnergyType === 'generator' ? null : 'generator')}
+                className={`rounded-lg p-3 text-center transition-all ${
+                  selectedEnergyType === 'generator'
+                    ? 'bg-white/20 border-2 border-white/60 ring-2 ring-white/20'
+                    : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
+                }`}
+              >
+                <p className="text-lg font-semibold text-white/80">{stats.energyStats.generator.toLocaleString()}</p>
+                <p className="text-[10px] text-white/40">Generator</p>
+              </button>
+              </div>
+            </div>
+
+            {/* LLM Categories Section */}
+            {stats.llmCategories && stats.llmCategories.totalCategorized > 0 && (
+              <>
+                <div className="border-t border-white/10" />
+                <div>
+                  <h3 className="text-[10px] font-medium text-white/40 uppercase tracking-wider mb-2 flex items-center justify-between">
+                    <span>LLM Analysis</span>
+                    <span className="text-white/30">{stats.llmCategories.totalCategorized.toLocaleString()} analyzed</span>
+                  </h3>
+
+                  {/* Project Type */}
+                  <div className="mb-3">
+                    <p className="text-[9px] text-white/30 mb-1">Project Type</p>
+                    <div className="flex flex-wrap gap-1">
+                      {stats.llmCategories.projectType.slice(0, 4).map((pt) => (
+                        <button
+                          key={pt.value}
+                          onClick={() => setSelectedProjectType(selectedProjectType === pt.value ? null : pt.value)}
+                          className={`px-2 py-1 rounded text-[10px] transition-all ${
+                            selectedProjectType === pt.value
+                              ? 'bg-cyan-500/30 border border-cyan-500 text-cyan-300'
+                              : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white/80'
+                          }`}
+                        >
+                          {pt.value.replace(/_/g, ' ')}
+                          <span className="ml-1 text-white/30">{pt.count}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Building Type */}
+                  <div className="mb-3">
+                    <p className="text-[9px] text-white/30 mb-1">Building Type</p>
+                    <div className="flex flex-wrap gap-1">
+                      {stats.llmCategories.buildingType.slice(0, 4).map((bt) => (
+                        <button
+                          key={bt.value}
+                          onClick={() => setSelectedBuildingType(selectedBuildingType === bt.value ? null : bt.value)}
+                          className={`px-2 py-1 rounded text-[10px] transition-all ${
+                            selectedBuildingType === bt.value
+                              ? 'bg-purple-500/30 border border-purple-500 text-purple-300'
+                              : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white/80'
+                          }`}
+                        >
+                          {bt.value.replace(/_/g, ' ')}
+                          <span className="ml-1 text-white/30">{bt.count}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Trade */}
+                  <div>
+                    <p className="text-[9px] text-white/30 mb-1">Trade</p>
+                    <div className="flex flex-wrap gap-1">
+                      {stats.llmCategories.trade.slice(0, 6).map((t) => (
+                        <button
+                          key={t.value}
+                          onClick={() => setSelectedTrade(selectedTrade === t.value ? null : t.value)}
+                          className={`px-2 py-1 rounded text-[10px] transition-all ${
+                            selectedTrade === t.value
+                              ? 'bg-orange-500/30 border border-orange-500 text-orange-300'
+                              : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white/80'
+                          }`}
+                        >
+                          {t.value}
+                          <span className="ml-1 text-white/30">{t.count}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Clear LLM filters */}
+                  {(selectedProjectType || selectedBuildingType || selectedTrade) && (
+                    <button
+                      onClick={() => {
+                        setSelectedProjectType(null);
+                        setSelectedBuildingType(null);
+                        setSelectedTrade(null);
+                      }}
+                      className="mt-2 text-[10px] text-white/40 hover:text-white/60"
+                    >
+                      Clear LLM filters
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* Divider */}
+            <div className="border-t border-white/10" />
 
             {/* Cluster List */}
             <div>
-              <h3 className="text-sm font-medium text-white/70 mb-3 flex items-center gap-2">
-                <Layers size={14} />
-                Permit Clusters
+              <h3 className="text-[10px] font-medium text-white/40 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <Layers size={12} />
+                Clusters
                 {searchQuery && (
                   <span className="text-[10px] text-white/40">({filteredClusters.length})</span>
                 )}
@@ -544,7 +649,7 @@ export default function Dashboard() {
           <LeafletMap
             clusterData={clusterData}
             individualPermits={individualPermits}
-            highlightDistrict={selectedCluster || undefined}
+            highlightCluster={selectedCluster ?? undefined}
             showLegend={true}
             onClusterClick={(clusterId) => {
               setSelectedCluster(clusterId === selectedCluster ? null : clusterId);
@@ -606,48 +711,11 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Stats Overlay - Enhanced with compelling insights */}
-          <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-md border border-white/15 rounded-xl p-4 shadow-xl max-w-md">
-            <div className="space-y-3">
-              {/* Main headline stat */}
-              <div className="border-b border-white/10 pb-3">
-                <p className="text-[11px] text-white/50 uppercase tracking-wide mb-1">{currentConfig.statsTitle}</p>
-                <p className="text-2xl font-light text-white">{stats.totalPermits.toLocaleString()}</p>
-                <p className="text-[10px] text-white/40 mt-1">{currentConfig.description}</p>
-              </div>
-
-              {/* Grid of insights */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="group hover:bg-amber-500/10 hover:border hover:border-amber-500/30 p-2 rounded-lg transition-all duration-200 cursor-default">
-                  <p className="text-[9px] text-white/40 uppercase tracking-wide mb-0.5 group-hover:text-amber-400/80 transition-colors">Solar</p>
-                  <p className="text-lg font-light text-amber-400 group-hover:text-amber-300 transition-colors">{stats.energyStats.solar.toLocaleString()}</p>
-                  {stats.energyStats.solarStats && (
-                    <p className="text-[8px] text-white/40 mt-0.5">{(stats.energyStats.solarStats.total_capacity_kw / 1000).toFixed(1)}MW</p>
-                  )}
-                </div>
-                <div className="group hover:bg-blue-500/10 hover:border hover:border-blue-500/30 p-2 rounded-lg transition-all duration-200 cursor-default">
-                  <p className="text-[9px] text-white/40 uppercase tracking-wide mb-0.5 group-hover:text-blue-400/80 transition-colors">Battery</p>
-                  <p className="text-lg font-light text-blue-400 group-hover:text-blue-300 transition-colors">{stats.energyStats.battery.toLocaleString()}</p>
-                  <p className="text-[8px] text-white/40 mt-0.5">storage</p>
-                </div>
-                <div className="group hover:bg-indigo-500/10 hover:border hover:border-indigo-500/30 p-2 rounded-lg transition-all duration-200 cursor-default">
-                  <p className="text-[9px] text-white/40 uppercase tracking-wide mb-0.5 group-hover:text-indigo-400/80 transition-colors">EV</p>
-                  <p className="text-lg font-light text-indigo-400 group-hover:text-indigo-300 transition-colors">{stats.energyStats.evCharger.toLocaleString()}</p>
-                  <p className="text-[8px] text-white/40 mt-0.5">chargers</p>
-                </div>
-              </div>
-
-              {/* Quick insight */}
-              {stats.topZips && stats.topZips.length > 0 && (
-                <div className="text-[10px] text-white/50 border-t border-white/10 pt-2">
-                  <span className="text-white/70">Top ZIP:</span> {stats.topZips[0].zip}
-                  <span className="text-white/40 mx-1">·</span>
-                  <span className="text-amber-400/80">{stats.topZips[0].solar} solar</span>
-                  <span className="text-white/40 mx-1">·</span>
-                  <span className="text-blue-400/80">{stats.topZips[0].battery} battery</span>
-                </div>
-              )}
-            </div>
+          {/* Total Permits Badge */}
+          <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 shadow-xl">
+            <p className="text-sm text-white/70">
+              <span className="font-semibold text-white">{stats.totalPermits.toLocaleString()}</span> permits
+            </p>
           </div>
         </div>
       </div>

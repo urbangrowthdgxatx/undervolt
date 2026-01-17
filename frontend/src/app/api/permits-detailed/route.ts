@@ -1,25 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db, permits } from '@/db';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const cluster = searchParams.get('cluster');
+  const energyOnly = searchParams.get('energyOnly') === 'true';
+  const energyType = searchParams.get('energyType');
+  const projectType = searchParams.get('projectType');
+  const buildingType = searchParams.get('buildingType');
+  const trade = searchParams.get('trade');
   const limit = parseInt(searchParams.get('limit') || '1000');
 
   try {
-    console.log(`[Permits API] Query: cluster=${cluster}, limit=${limit}`);
+    console.log(`[Permits API] Query: cluster=${cluster}, energyOnly=${energyOnly}, energyType=${energyType}, projectType=${projectType}, buildingType=${buildingType}, trade=${trade}, limit=${limit}`);
     const startTime = Date.now();
 
-    // Build query
-    let query = db.select().from(permits);
+    // Build conditions array
+    const conditions = [];
 
-    // Filter by cluster if specified
     if (cluster) {
-      query = query.where(eq(permits.clusterId, parseInt(cluster))) as any;
+      conditions.push(eq(permits.clusterId, parseInt(cluster)));
     }
 
-    // Apply limit
+    if (energyType) {
+      conditions.push(eq(permits.energyType, energyType));
+    } else if (energyOnly) {
+      conditions.push(eq(permits.isEnergyPermit, true));
+    }
+
+    // LLM category filters
+    if (projectType) {
+      conditions.push(eq(permits.projectType, projectType));
+    }
+    if (buildingType) {
+      conditions.push(eq(permits.buildingType, buildingType));
+    }
+    if (trade) {
+      conditions.push(eq(permits.trade, trade));
+    }
+
+    // Build query - select all columns from permits table
+    let query = db.select().from(permits);
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)) as any;
+    }
+
     query = query.limit(limit) as any;
 
     // Execute query
