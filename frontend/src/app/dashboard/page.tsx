@@ -80,6 +80,7 @@ export default function Dashboard() {
   const [selectedProjectType, setSelectedProjectType] = useState<string | null>(null);
   const [selectedBuildingType, setSelectedBuildingType] = useState<string | null>(null);
   const [selectedTrade, setSelectedTrade] = useState<string | null>(null);
+  const [showMobilePanel, setShowMobilePanel] = useState(false);
 
   // Filter clusters based on search query
   const filteredClusters = stats?.clusterDistribution.filter((cluster) => {
@@ -336,23 +337,23 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-black pt-16">
+    <div className="h-screen flex flex-col bg-black pt-14 md:pt-16">
       {/* Search Bar and Filters */}
-      <div className="bg-black/60 backdrop-blur-sm px-6 py-3">
-        <div className="max-w-2xl mx-auto flex items-center gap-4">
+      <div className="bg-black/60 backdrop-blur-sm px-3 md:px-6 py-2 md:py-3">
+        <div className="max-w-2xl mx-auto flex items-center gap-2 md:gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={18} />
+            <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-white/40" size={16} />
             <input
               type="text"
-              placeholder="Search clusters, ZIP codes, or keywords..."
+              placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/40 focus:border-white/40 focus:bg-white/15 outline-none transition-all"
+              className="w-full pl-9 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 bg-white/10 border border-white/20 rounded-full text-sm md:text-base text-white placeholder-white/40 focus:border-white/40 focus:bg-white/15 outline-none transition-all"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
+                className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
               >
                 ✕
               </button>
@@ -361,20 +362,21 @@ export default function Dashboard() {
           {/* Energy Only Toggle */}
           <button
             onClick={() => setShowEnergyOnly(!showEnergyOnly)}
-            className={`px-4 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+            className={`px-3 md:px-4 py-2 md:py-3 rounded-full text-xs md:text-sm font-medium whitespace-nowrap transition-all ${
               showEnergyOnly
                 ? 'bg-green-500/20 border border-green-500/40 text-green-400'
                 : 'bg-white/10 border border-white/20 text-white/60 hover:text-white hover:bg-white/15'
             }`}
           >
-            {showEnergyOnly ? '⚡ Energy' : 'All Permits'}
+            {showEnergyOnly ? '⚡' : 'All'}
+            <span className="hidden md:inline"> {showEnergyOnly ? 'Energy' : 'Permits'}</span>
           </button>
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Sidebar - Stats */}
-        <div className="w-80 border-r border-white/10 bg-black/50 overflow-y-auto">
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Left Sidebar - Stats (hidden on mobile) */}
+        <div className="hidden md:block w-80 border-r border-white/10 bg-black/50 overflow-y-auto">
           <div className="p-5 space-y-5">
             {/* Header */}
             <div className="pb-4 border-b border-white/10">
@@ -674,7 +676,7 @@ export default function Dashboard() {
 
           {/* Floating Selected Cluster Info */}
           {selectedCluster !== null && (
-            <div className="absolute top-4 left-4 bg-black/90 backdrop-blur-md border border-white/30 rounded-xl p-4 max-w-sm shadow-2xl animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="absolute top-2 left-2 right-2 md:right-auto md:top-4 md:left-4 bg-black/90 backdrop-blur-md border border-white/30 rounded-xl p-3 md:p-4 md:max-w-sm shadow-2xl animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <div
@@ -711,13 +713,144 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Total Permits Badge */}
-          <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 shadow-xl">
-            <p className="text-sm text-white/70">
+          {/* Total Permits Badge - adjusted for mobile */}
+          <div className="absolute bottom-20 md:bottom-4 right-4 bg-black/70 backdrop-blur-md border border-white/20 rounded-full px-3 md:px-4 py-1.5 md:py-2 shadow-xl">
+            <p className="text-xs md:text-sm text-white/70">
               <span className="font-semibold text-white">{stats.totalPermits.toLocaleString()}</span> permits
             </p>
           </div>
+
+          {/* Mobile Stats Toggle Button */}
+          <button
+            onClick={() => setShowMobilePanel(!showMobilePanel)}
+            className="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-md border border-white/30 rounded-full px-4 py-2 shadow-xl flex items-center gap-2"
+          >
+            <Layers size={16} className="text-white/60" />
+            <span className="text-sm text-white">Stats</span>
+            <span className="text-xs text-white/40">{showMobilePanel ? '▼' : '▲'}</span>
+          </button>
         </div>
+
+        {/* Mobile Bottom Panel */}
+        {showMobilePanel && (
+          <div className="md:hidden absolute bottom-16 left-0 right-0 bg-black/95 backdrop-blur-md border-t border-white/20 max-h-[60vh] overflow-y-auto z-50">
+            <div className="p-4 space-y-4">
+              {/* Header with close button */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-white">Austin Permits</h2>
+                  <p className="text-2xl font-bold text-white">{stats.totalPermits.toLocaleString()}</p>
+                </div>
+                <button
+                  onClick={() => setShowMobilePanel(false)}
+                  className="p-2 text-white/40 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Energy Stats Grid */}
+              <div>
+                <h3 className="text-[10px] font-medium text-white/40 uppercase tracking-wider mb-2">Energy Permits</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    onClick={() => { setSelectedEnergyType(selectedEnergyType === 'solar' ? null : 'solar'); setShowMobilePanel(false); }}
+                    className={`rounded-lg p-2 text-center transition-all ${
+                      selectedEnergyType === 'solar' ? 'bg-amber-500/30 border-2 border-amber-500' : 'bg-amber-500/10 border border-amber-500/20'
+                    }`}
+                  >
+                    <p className="text-base font-semibold text-amber-400">{stats.energyStats.solar.toLocaleString()}</p>
+                    <p className="text-[10px] text-white/50">Solar</p>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedEnergyType(selectedEnergyType === 'battery' ? null : 'battery'); setShowMobilePanel(false); }}
+                    className={`rounded-lg p-2 text-center transition-all ${
+                      selectedEnergyType === 'battery' ? 'bg-blue-500/30 border-2 border-blue-500' : 'bg-blue-500/10 border border-blue-500/20'
+                    }`}
+                  >
+                    <p className="text-base font-semibold text-blue-400">{stats.energyStats.battery.toLocaleString()}</p>
+                    <p className="text-[10px] text-white/50">Battery</p>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedEnergyType(selectedEnergyType === 'ev_charger' ? null : 'ev_charger'); setShowMobilePanel(false); }}
+                    className={`rounded-lg p-2 text-center transition-all ${
+                      selectedEnergyType === 'ev_charger' ? 'bg-indigo-500/30 border-2 border-indigo-500' : 'bg-indigo-500/10 border border-indigo-500/20'
+                    }`}
+                  >
+                    <p className="text-base font-semibold text-indigo-400">{stats.energyStats.evCharger.toLocaleString()}</p>
+                    <p className="text-[10px] text-white/50">EV</p>
+                  </button>
+                </div>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  <button
+                    onClick={() => { setSelectedEnergyType(selectedEnergyType === 'hvac' ? null : 'hvac'); setShowMobilePanel(false); }}
+                    className={`rounded-lg p-2 text-center transition-all ${
+                      selectedEnergyType === 'hvac' ? 'bg-white/20 border-2 border-white/60' : 'bg-white/5 border border-white/10'
+                    }`}
+                  >
+                    <p className="text-base font-semibold text-white/80">{stats.energyStats.hvac.toLocaleString()}</p>
+                    <p className="text-[10px] text-white/40">HVAC</p>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedEnergyType(selectedEnergyType === 'panel_upgrade' ? null : 'panel_upgrade'); setShowMobilePanel(false); }}
+                    className={`rounded-lg p-2 text-center transition-all ${
+                      selectedEnergyType === 'panel_upgrade' ? 'bg-white/20 border-2 border-white/60' : 'bg-white/5 border border-white/10'
+                    }`}
+                  >
+                    <p className="text-base font-semibold text-white/80">{stats.energyStats.panelUpgrade.toLocaleString()}</p>
+                    <p className="text-[10px] text-white/40">Panel</p>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedEnergyType(selectedEnergyType === 'generator' ? null : 'generator'); setShowMobilePanel(false); }}
+                    className={`rounded-lg p-2 text-center transition-all ${
+                      selectedEnergyType === 'generator' ? 'bg-white/20 border-2 border-white/60' : 'bg-white/5 border border-white/10'
+                    }`}
+                  >
+                    <p className="text-base font-semibold text-white/80">{stats.energyStats.generator.toLocaleString()}</p>
+                    <p className="text-[10px] text-white/40">Generator</p>
+                  </button>
+                </div>
+              </div>
+
+              {/* Clusters */}
+              <div>
+                <h3 className="text-[10px] font-medium text-white/40 uppercase tracking-wider mb-2">Clusters</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {filteredClusters.slice(0, 6).map((cluster) => {
+                    const clusterColors: Record<number, string> = {
+                      0: '#10b981', 1: '#ec4899', 2: '#f59e0b',
+                      4: '#3b82f6', 6: '#a855f7', 7: '#6366f1',
+                    };
+                    const color = clusterColors[cluster.id] || '#6b7280';
+                    return (
+                      <button
+                        key={cluster.id}
+                        onClick={() => { setSelectedCluster(cluster.id === selectedCluster ? null : cluster.id); setShowMobilePanel(false); }}
+                        className={`flex items-center gap-2 p-2 rounded-lg text-left transition-all ${
+                          selectedCluster === cluster.id ? 'bg-white/15 border border-white/30' : 'bg-white/5 border border-white/10'
+                        }`}
+                      >
+                        <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+                        <span className="text-xs text-white/80 truncate flex-1">{cluster.name}</span>
+                        <span className="text-[10px] text-white/40">{cluster.percentage.toFixed(0)}%</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Clear filters */}
+              {(selectedEnergyType || selectedCluster) && (
+                <button
+                  onClick={() => { setSelectedEnergyType(null); setSelectedCluster(null); }}
+                  className="w-full py-2 text-sm text-white/60 border border-white/20 rounded-lg"
+                >
+                  Clear filters
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
