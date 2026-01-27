@@ -19,10 +19,12 @@ async function loadStats() {
   const startTime = Date.now();
 
   try {
-    const [clustersRes, keywordsRes, energyZipsRes] = await Promise.all([
+    const [clustersRes, keywordsRes, energyZipsRes, earliestRes, latestRes] = await Promise.all([
       supabase.from('clusters').select('*').order('id'),
       supabase.from('cluster_keywords').select('*').order('cluster_id').order('rank'),
       supabase.from('energy_stats_by_zip').select('*').order('total_energy_permits', { ascending: false }),
+      supabase.from('permits').select('issue_date').order('issue_date', { ascending: true }).not('issue_date', 'is', null).limit(1),
+      supabase.from('permits').select('issue_date').order('issue_date', { ascending: false }).not('issue_date', 'is', null).limit(1),
     ]);
 
     if (clustersRes.error) throw clustersRes.error;
@@ -30,6 +32,8 @@ async function loadStats() {
     const clusters = clustersRes.data || [];
     const keywords = keywordsRes.data || [];
     const energyZips = energyZipsRes.data || [];
+    const earliest = earliestRes.data?.[0]?.issue_date || null;
+    const latest = latestRes.data?.[0]?.issue_date || null;
 
     const totalPermits = clusters.reduce((sum: number, c: any) => sum + (c.count || 0), 0);
 
@@ -54,6 +58,7 @@ async function loadStats() {
 
     const stats = {
       totalPermits,
+      dateRange: earliest && latest ? { earliest, latest } : null,
       clusterDistribution: clusters.map((c: any) => ({
         id: c.id,
         name: c.name,
@@ -98,6 +103,7 @@ async function loadStats() {
     console.error("Error loading stats:", error);
     return {
       totalPermits: 0,
+      dateRange: null,
       clusterDistribution: [],
       topZips: [],
       energyStats: {
