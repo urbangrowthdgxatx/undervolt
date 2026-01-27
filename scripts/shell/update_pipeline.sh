@@ -19,9 +19,13 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# Telegram notifications
+# Load .env if present
+ENV_FILE="$(cd "$(dirname "$0")/../.." && pwd)/.env"
+[ -f "$ENV_FILE" ] && set -a && source "$ENV_FILE" && set +a
+
+# Telegram notifications (set via environment or .env file)
 TG_BOT_TOKEN="${TG_BOT_TOKEN:-}"
-TG_CHAT_ID=${TG_CHAT_ID:-}
+TG_CHAT_ID="${TG_CHAT_ID:-}"
 
 tg_send() {
     curl -s -X POST "https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage" \
