@@ -1,178 +1,120 @@
-# Demo Ready! 🎉
+# Demo Ready!
 
 Your analytics-powered Austin construction explorer is **live and working**!
 
-## 🚀 Access Your App
+## Access Your App
 
 - **Local**: http://localhost:3000
 - **Network**: http://192.168.4.124:3000 (access from other devices on your network)
+- **Tailscale**: http://100.87.236.76:3000 (remote access)
 
-## ✅ What's Working
+## What's Working
+
+### Database (Supabase Postgres)
+- **2,303,817 permits** loaded in Supabase cloud Postgres
+- **All 5 API routes** migrated to `@supabase/supabase-js`
+- **Single RPC call** (`get_dashboard_stats`) for dashboard stats
+- **50K row API limit** configured for GeoJSON endpoint
+- **Row Level Security** enabled on all tables
 
 ### Analytics Engine (No LLM Required)
-- ✅ **Model indicator**: Shows "🤖 Analytics Engine (no LLM)" in status
-- ✅ **8 unique response types** for different queries
-- ✅ **Concise, focused messages** (reduced verbosity)
-- ✅ **Full StoryBlock format** with charts, evidence, and insights
-- ✅ **No API keys needed** - runs entirely on pre-computed data
+- Model indicator shows status in UI
+- 8 unique response types for different queries
+- Concise, focused messages
+- Full StoryBlock format with charts, evidence, and insights
+- No API keys needed for analytics -- runs on pre-computed data
 
 ### Data Coverage
-- ✅ **2.3 million permits** analyzed
-- ✅ **8 ML clusters** with auto-generated names
-- ✅ **18,050 energy permits** tracked
-- ✅ **Growth trends** (2020-2025) - Demolition +547% CAGR
-- ✅ **49 ZIP codes** mapped
-- ✅ **Battery surprise**: 10,377 systems (4x more than solar)
+- **2,303,817 permits** analyzed (all construction types)
+- **115,523 energy permits** tracked
+- **8 ML clusters** with auto-generated names
+- **840 ZIP codes** covered
+- **86% categorized** with LLM categories (project_type, building_type, trade, scale)
+- **Growth trends** (2009-2025) -- Demolition +547% CAGR
 
-## 🎯 Try These Queries
+## Try These Queries
 
 ### Growth & Trends
 - "What's growing fastest?"
 - "Show me Austin trends"
-- "What's booming?"
-
-→ Returns: **🔥 The Demolition Boom** (+547% CAGR)
 
 ### Energy Infrastructure
 - "Show me energy data"
 - "Tell me about solar"
 - "Battery installations"
 
-→ Returns: **⚡ The Battery Surprise** (10,377 systems)
-
 ### Geographic
 - "Tell me about ZIP 78758"
-- "ZIP 78744"
-
-→ Returns: **📍 ZIP-specific analysis** (battery hub, solar leader, etc.)
+- "ZIP 78704"
 
 ### Changes Over Time
 - "How has construction changed since 2020?"
-- "What changed after 2021?"
-
-→ Returns: **📈 The 2020 Transformation**
-
-### Neighborhoods/Pools
-- "Which neighborhoods have the most pools?"
-- "Show me luxury areas"
-
-→ Returns: **💎 Luxury Energy Investment**
 
 ### Overview
 - "Tell me about Austin"
 - "What are the main insights?"
 
-→ Returns: **🚀 Austin is Exploding**
-
-## 🎨 UI Features
-
-### Left Panel (Chat)
-- Clean, concise responses
-- Real-time status updates
-- Model indicator for debugging
-
-### Right Panel (Story)
-- Story blocks with headlines
-- Data points and evidence
-- Interactive charts
-- Confidence levels
-
-### Fixed Issues
-- ✅ Removed verbose analytics text
-- ✅ Disabled OpenAI suggestion API (was causing errors)
-- ✅ Simplified message formatting
-- ✅ Added static fallback suggestions
-
-## 🔧 Technical Details
+## Technical Details
 
 ### Current Setup
 - **Frontend**: Next.js 16 on port 3000
-- **Node**: v20.19.6 (via nvm)
-- **Backend**: Analytics-only endpoint (`/api/chat-analytics`)
-- **No LLM**: Works without OpenAI/Ollama
+- **Node**: v20.20.0 (via nvm)
+- **Database**: Supabase Postgres (cloud)
+- **Client**: @supabase/supabase-js v2
+- **LLM**: Ollama + Llama 3.2:3b (local, optional)
 
-### Data Files
-All analytics data is pre-computed in:
+### API Endpoints (All Supabase-backed)
+
+| Endpoint | Method | Notes |
+|----------|--------|-------|
+| `/api/stats` | `supabase.rpc('get_dashboard_stats')` | ~200ms, then cached |
+| `/api/permits` | `supabase.from('permits').select()` | Paginated, filterable |
+| `/api/geojson` | `supabase.from('permits').select()` | 50K points, cached |
+| `/api/permits-detailed` | `supabase.from('permits').select()` | Multi-filter |
+| `/api/trends` | `supabase.from('trends').select()` | Monthly data |
+
+### Environment Variables
 ```
-frontend/public/data/
-├── cluster_names.json      # 8 clusters with descriptions
-├── energy_infrastructure.json  # 18K energy permits
-├── trends.json             # 72 months of growth data
-└── permits.geojson         # 49 ZIP codes mapped
+NEXT_PUBLIC_SUPABASE_URL=https://arpoymzcflsqcaqixhie.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<configured in .env.local>
+NEXT_PUBLIC_MAPBOX_TOKEN=<configured in .env.local>
 ```
 
-### Analytics Functions
-- `generateGrowthResponse()` - Growth trends
-- `generateEnergyResponse()` - Energy infrastructure
-- `generateClusterResponse()` - ML clusters
-- `generateZipResponse()` - ZIP-specific data
-- `generateNewConstructionResponse()` - New construction
-- `generatePoolsResponse()` - Luxury indicators
-- `generateChangeResponse()` - Changes over time
-- `generateOverviewResponse()` - General overview
+## Key Insights (Talking Points)
 
-## 📊 Key Insights (Your Talking Points)
+1. **2.3M permits** -- Full Austin construction history, not just energy
+2. **Demolition Boom**: +547% CAGR -- Austin is tearing down old to build new
+3. **Battery Gap**: Only 1 battery for every 22 solar installations
+4. **Post-Freeze Effect**: Generator permits +246%, battery +214% after 2021
+5. **Resilience Gap**: District 10 has 12x more generators than District 4
+6. **Growth Corridors**: 78758, 78704, 78759 lead in total permits
+7. **86% Categorized**: LLM + rules classify project type, building, trade, scale
 
-1. **Demolition Boom**: +547% CAGR - Austin is tearing down old to build new
-2. **Battery Surprise**: 10,377 battery systems vs 2,436 solar (4:1 ratio!)
-3. **ZIP 78758**: Battery hub with 801 systems
-4. **ZIP 78744**: Solar leader with 572 installations
-5. **8 Clusters**: From "New Residential Construction" to "Foundation Repairs"
-6. **18% Energy Focus**: 18,050 of 100K permits are energy-related
-
-## 🐛 Known Issues
+## Known Issues
 
 ### Resolved
-- ✅ Node version (upgraded to v20)
-- ✅ Response format (now uses StoryBlock schema)
-- ✅ Unique responses (8 different response types)
-- ✅ Model debugging (shows "Analytics Engine" in status)
-- ✅ Verbose messages (simplified and concise)
-- ✅ OpenAI errors (disabled suggestion API)
+- Node version (using v20 via nvm)
+- SQLite dependency removed (migrated to Supabase)
+- All 5 DB routes rewritten for Supabase
+- API row limit set to 50K for GeoJSON
+- Function search_path security advisory fixed
 
-### To Fix Later (Optional)
-- ⏳ WebGL warning (from map component, non-critical)
-- ⏳ Synthesis buttons (require OpenAI API key)
-- ⏳ Install local LLM (Ollama) for even smarter responses
+### Not Critical for Demo
+- WebGL warning (from map component, cosmetic)
+- drizzle-orm still in package.json (unused, cleanup later)
 
-## 🚀 Next Steps (Optional)
-
-### Option 1: Keep Analytics-Only Mode
-You're good to demo right now! No changes needed.
-
-### Option 2: Add Local LLM
-If you want even smarter responses:
-```bash
-# Install Ollama
-curl -fsSL https://ollama.com/install.sh | sh
-
-# Pull model
-ollama pull llama3.2:3b
-
-# Frontend already configured to use it
-# (see frontend/.env.local)
-```
-
-Then switch endpoint in `frontend/src/app/page.tsx`:
-```typescript
-// Change from:
-const res = await fetch("/api/chat-analytics", ...
-
-// To:
-const res = await fetch("/api/chat", ...
-```
-
-## 📝 Demo Script
+## Demo Script
 
 1. **Show the UI**: "This analyzes 2.3 million Austin construction permits"
-2. **Ask**: "What's growing fastest?"
-3. **Point out**: Status shows "Analytics Engine (no LLM)"
-4. **Highlight**: Story block with chart appears - Demolition +547%
+2. **Point out**: Dashboard stats load from Supabase in <1 second
+3. **Ask**: "What's growing fastest?"
+4. **Highlight**: Story block with chart -- Demolition +547%
 5. **Ask**: "Show me energy data"
-6. **Surprise**: Battery surprise - 4x more batteries than solar!
-7. **Ask**: "Tell me about ZIP 78758"
-8. **Reveal**: It's a battery hub with 801 systems
+6. **Surprise**: Battery gap -- only 1 for every 22 solar installations
+7. **Ask**: "Tell me about ZIP 78704"
+8. **Map**: Shows 93K+ permits in South Congress area
+9. **Technical**: "Data served from Supabase Postgres, LLM runs locally on Jetson"
 
-## 🎉 You're Ready!
+## You're Ready!
 
 Open http://localhost:3000 and start exploring Austin's construction data!

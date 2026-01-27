@@ -1,21 +1,22 @@
 # Undervolt: Austin Construction Permit Analytics
 
 ## One-Liner
-**GPU-accelerated analytics dashboard for 2.3M Austin construction permits, running entirely on NVIDIA Jetson AGX Orin.**
+**GPU-accelerated analytics dashboard for 2.3M Austin construction permits, served from Supabase Postgres and running on NVIDIA Jetson AGX Orin.**
 
 ---
 
 ## What It Does
 
-Undervolt transforms raw City of Austin permit data into actionable insights about urban development trends, energy transition, and construction patterns - all processed locally on edge hardware.
+Undervolt transforms raw City of Austin permit data into actionable insights about urban development trends, energy transition, and construction patterns. Data is processed on edge hardware (Jetson) and served from Supabase cloud Postgres.
 
 ### Key Stats
-- **2,303,817** construction permits analyzed
+- **2,303,817** construction permits loaded in Supabase
 - **85.9%** automatically categorized using rule-based NLP
 - **8 GPU-accelerated clusters** identified via RAPIDS/cuML
 - **25,982** solar installations tracked
 - **71,331** HVAC permits mapped
-- **15 years** of permit history (2009-2024)
+- **840** ZIP codes covered
+- **15+ years** of permit history (2009-2025)
 
 ---
 
@@ -25,6 +26,7 @@ Undervolt transforms raw City of Austin permit data into actionable insights abo
 - Leaflet-based map with clustered permit markers
 - Filter by zip code, permit type, energy category
 - Real-time filtering with instant updates
+- 50K points loaded via Supabase PostgREST
 
 ### 2. GPU-Accelerated Clustering
 - RAPIDS cuML k-means on Jetson (16x faster than CPU)
@@ -57,8 +59,9 @@ Undervolt transforms raw City of Austin permit data into actionable insights abo
 | Hardware | NVIDIA Jetson AGX Orin (64GB) |
 | GPU Compute | CUDA 11.4, RAPIDS cuDF/cuML |
 | LLM | Ollama + Llama 3.2:3b |
-| Backend | Next.js 15, Drizzle ORM |
-| Database | SQLite (500MB, 2.3M records) |
+| Backend | Next.js 16 |
+| Database | Supabase Postgres (cloud, 2.3M records) |
+| API Layer | Supabase PostgREST + RPC functions |
 | Frontend | React 19, Leaflet, Recharts |
 | Services | systemd (auto-restart on boot) |
 
@@ -70,19 +73,20 @@ Undervolt transforms raw City of Austin permit data into actionable insights abo
 "Austin issues 150K+ permits/year. City planners, developers, and researchers need to understand patterns - but the raw data is just permit numbers and descriptions."
 
 ### 2. The Solution (1 min)
-"Undervolt processes 2.3M permits on a Jetson, using GPU acceleration for clustering and local LLM for categorization. No cloud, no API costs, runs at the edge."
+"Undervolt processes 2.3M permits on a Jetson, using GPU acceleration for clustering and local LLM for categorization. Data is served from Supabase Postgres -- a single RPC call returns the full dashboard stats."
 
 ### 3. Live Demo (2.5 min)
 - Show map with all permits
-- Filter to solar installations → show adoption hotspots
-- Filter to new construction → show growth areas
-- Click cluster → explain what GPU clustering found
+- Filter to solar installations -> show adoption hotspots
+- Filter to new construction -> show growth areas
+- Click cluster -> explain what GPU clustering found
 - Show LLM categories in sidebar
 
 ### 4. Technical Deep Dive (1 min)
 - "RAPIDS cuML gives us 16x speedup on clustering"
 - "Ollama runs Llama 3.2 locally at 1.3s/query"
-- "Everything runs on this $2K edge device"
+- "Supabase serves 2.3M permits via PostgREST with <500ms response times"
+- "A single Postgres RPC replaces 5+ separate queries for the dashboard"
 
 ### 5. Impact (30 sec)
 "City planners can now see which neighborhoods are going solar, where new construction is concentrated, and track the energy transition in real-time."
@@ -94,14 +98,15 @@ Undervolt transforms raw City of Austin permit data into actionable insights abo
 ### For Technical Audience
 - "Full NVIDIA stack: Jetson hardware, CUDA, RAPIDS, local LLM"
 - "16x speedup using GPU-accelerated clustering vs scikit-learn"
-- "2.3M records processed in minutes, not hours"
-- "Edge deployment - no cloud dependency, works offline"
+- "2.3M records served from Supabase Postgres via PostgREST"
+- "Migrated from local SQLite to cloud Postgres with zero downtime"
+- "Edge compute + cloud data: Jetson for inference, Supabase for serving"
 
 ### For Business Audience
 - "Track Austin's energy transition in real-time"
 - "Identify growth corridors before they're obvious"
-- "Zero ongoing cloud costs - one-time hardware investment"
-- "Privacy-preserving: all data stays local"
+- "Minimal cloud costs -- Supabase free tier handles 2.3M records"
+- "Privacy-preserving: LLM inference stays local on the Jetson"
 
 ### For Urban Planning
 - "See solar adoption by neighborhood"
@@ -139,8 +144,8 @@ sudo systemctl start undervolt-frontend
 # Access dashboard
 open http://localhost:3000/dashboard
 
-# Run categorization
-python3 scripts/python/fast_categorize.py
+# Environment requires:
+# NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local
 ```
 
 ---
@@ -153,14 +158,19 @@ python3 scripts/python/fast_categorize.py
 | GPU Speedup | 16x | NVIDIA value prop |
 | Categorization | 86% | Data quality |
 | Solar Permits | 26K | Energy transition |
-| Edge Cost | ~$2K | No cloud fees |
+| ZIP Codes | 840 | Geographic coverage |
+| API Response | <500ms | Real-time interactivity |
+| Database | Supabase | Cloud-managed, zero ops |
 
 ---
 
 ## Q&A Prep
 
-**Q: Why not use cloud?**
-A: Edge deployment means zero ongoing costs, works offline, and keeps sensitive location data local.
+**Q: Why Supabase instead of local SQLite?**
+A: The SQLite file was 700MB and tied to the Jetson. Supabase gives us cloud-hosted Postgres with PostgREST, row-level security, and the ability to serve data to any client without the Jetson being online. A single RPC function replaces 5+ separate queries.
+
+**Q: Why not use cloud for everything?**
+A: LLM inference and GPU clustering run on the Jetson -- that's the compute-heavy part. The database is the read-heavy part, which Supabase handles well. Edge compute + cloud data.
 
 **Q: How accurate is the categorization?**
 A: 86% coverage with rule-based patterns. The remaining 14% are ambiguous short descriptions.
@@ -177,4 +187,5 @@ A: Currently batch processing. Real-time feed integration is on the roadmap.
 
 Project: Undervolt - Austin Urban Growth Analytics
 Hardware: NVIDIA Jetson AGX Orin (R35.4.1, JetPack 5.1.2)
+Database: Supabase Postgres (arpoymzcflsqcaqixhie)
 Demo URL: http://[jetson-ip]:3000/dashboard

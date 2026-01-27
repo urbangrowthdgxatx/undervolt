@@ -2,7 +2,7 @@
 
 ## The Pivot
 
-We started building a traditional dashboard — charts, graphs, filters. The classic "here's your data, go explore" approach.
+We started building a traditional dashboard -- charts, graphs, filters. The classic "here's your data, go explore" approach.
 
 Then we realized: **dashboards tell the same story to everyone.**
 
@@ -65,9 +65,9 @@ Conversation-first assumes:
 
 ## Demo Flow
 
-1. **Open with context**: "Austin has 2.2 million construction permits. Buried in them is the story of the city's energy transition."
+1. **Open with context**: "Austin has 2.3 million construction permits. Buried in them is the story of the city's energy transition."
 
-2. **Show the data scale**: 2.2M permits, 6 energy signals extracted via GPU
+2. **Show the data scale**: 2.3M permits, 115K energy signals extracted via GPU, all served from Supabase Postgres
 
 3. **Ask a question**: "Show me where solar is growing"
    - Map updates, LLM explains the pattern
@@ -86,7 +86,7 @@ Conversation-first assumes:
 
 - **"Dashboards tell one story. Conversations tell yours."**
 - **"The LLM is a pattern manager, not a query engine."**
-- **"2.2M permits. One question at a time."**
+- **"2.3M permits. One question at a time."**
 - **"Your Austin story is unique to you."**
 
 ---
@@ -96,10 +96,12 @@ Conversation-first assumes:
 We're not just wrapping SQL in ChatGPT.
 
 The pipeline:
-1. **GPU extraction** (cuDF/RAPIDS) — pattern match 2.2M rows in seconds
-2. **Feature signals** — solar, EV, battery, generator, panel upgrade, ADU
-3. **LLM reasoning** — connects signals to meaning based on user questions
-4. **Spatial context** — map visualization that updates with the narrative
+1. **GPU extraction** (cuDF/RAPIDS) -- pattern match 2.3M rows in seconds
+2. **LLM categorization** -- 86% of permits classified by type, building, trade, scale
+3. **Cloud database** -- Supabase Postgres serves 2.3M permits via PostgREST
+4. **Single RPC call** -- one Postgres function returns full dashboard stats
+5. **Local LLM reasoning** -- Ollama on Jetson connects signals to meaning
+6. **Spatial context** -- map visualization that updates with the narrative
 
 The LLM adds *interpretation*, not just retrieval.
 
@@ -107,4 +109,4 @@ The LLM adds *interpretation*, not just retrieval.
 
 ## One-Liner
 
-> "Undervolt turns 2.2 million permits into your personal Austin energy story."
+> "Undervolt turns 2.3 million permits into your personal Austin energy story."

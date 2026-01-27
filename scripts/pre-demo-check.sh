@@ -54,20 +54,28 @@ check "Frontend (port $FRONTEND_PORT)" "ss -tln | grep -q :$FRONTEND_PORT"
 check "Ollama (port $OLLAMA_PORT)" "ss -tln | grep -q :$OLLAMA_PORT"
 
 echo ""
-echo "=== API Health ==="
-check "Frontend /api/stats responds" "curl -sf http://localhost:$FRONTEND_PORT/api/stats | grep -q total"
-check "Ollama API responds" "curl -sf http://localhost:$OLLAMA_PORT/api/tags | grep -q models"
+echo "=== Supabase Connectivity ==="
+STATS_RESPONSE=$(curl -sf http://localhost:$FRONTEND_PORT/api/stats 2>/dev/null)
+if echo "$STATS_RESPONSE" | grep -q "totalPermits"; then
+    TOTAL=$(echo "$STATS_RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin).get('totalPermits',0))" 2>/dev/null)
+    check "Stats API returns data" "true"
+    warn "Total permits from Supabase" "$TOTAL"
+else
+    check "Stats API returns data" "false"
+fi
+
+# Check permits endpoint
+check "Permits API responds" "curl -sf 'http://localhost:$FRONTEND_PORT/api/permits?limit=1' | grep -q data"
+
+# Check GeoJSON endpoint
+check "GeoJSON API responds" "curl -sf http://localhost:$FRONTEND_PORT/api/geojson | grep -q FeatureCollection"
+
+# Check trends endpoint
+check "Trends API responds" "curl -sf http://localhost:$FRONTEND_PORT/api/trends | grep -q monthly"
 
 echo ""
-echo "=== Database ==="
-DB_PATH="/home/red/Documents/github/undervolt/data/undervolt.db"
-if [ -f "$DB_PATH" ]; then
-    DB_SIZE=$(du -h "$DB_PATH" | cut -f1)
-    check "Database exists" "true"
-    warn "Database size" "$DB_SIZE"
-else
-    check "Database exists" "false"
-fi
+echo "=== Ollama ==="
+check "Ollama API responds" "curl -sf http://localhost:$OLLAMA_PORT/api/tags | grep -q models"
 
 echo ""
 echo "=== Tailscale Network ==="

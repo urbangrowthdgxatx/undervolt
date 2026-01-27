@@ -1,6 +1,5 @@
-import { NextResponse } from 'next/server';
-import { db, permits, clusters } from '@/db';
-import { isNotNull, and, sql } from 'drizzle-orm';
+import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 // Cache in memory for performance
 const globalForGeoJSON = global as unknown as { geoJSONCache: any | null };
@@ -11,96 +10,93 @@ if (!globalForGeoJSON.geoJSONCache) {
 export async function GET() {
   // Check memory cache
   if (globalForGeoJSON.geoJSONCache) {
-    console.log('[GeoJSON] Returning cached data');
+    console.log("[GeoJSON] Returning cached data");
     return NextResponse.json(globalForGeoJSON.geoJSONCache);
   }
 
   try {
-    console.log('[GeoJSON] Loading from database...');
+    console.log("[GeoJSON] Loading from Supabase...");
     const startTime = Date.now();
 
-    // Get actual cluster counts from permits
-    const clusterCounts = await db
-      .select({
-        clusterId: permits.clusterId,
-        count: sql<number>`count(*)`,
-      })
-      .from(permits)
-      .groupBy(permits.clusterId);
+    // Load cluster names
+    const { data: clustersData } = await supabase
+      .from("clusters")
+      .select("id, name");
 
-    const countMap = clusterCounts.reduce((acc, c) => {
-      if (c.clusterId !== null) {
-        acc[c.clusterId] = Number(c.count);
-      }
-      return acc;
-    }, {} as Record<number, number>);
+    const clusterMap = (clustersData || []).reduce(
+      (acc: Record<number, { name: string }>, c) => {
+        acc[c.id] = { name: c.name };
+        return acc;
+      },
+      {}
+    );
 
-    // Load cluster names for enrichment
-    const clustersData = await db.select().from(clusters);
-    const clusterMap = clustersData.reduce((acc, c) => {
-      acc[c.id] = { name: c.name, count: countMap[c.id] || 0 };
-      return acc;
-    }, {} as Record<number, { name: string; count: number }>);
-
-    // Get permits with valid coordinates (only select columns that exist in DB)
-    const data = await db
-      .select({
-        id: permits.id,
-        permitNumber: permits.permitNumber,
-        latitude: permits.latitude,
-        longitude: permits.longitude,
-        zipCode: permits.zipCode,
-        clusterId: permits.clusterId,
-        energyType: permits.energyType,
-        solarCapacityKw: permits.solarCapacityKw,
-        issueDate: permits.issueDate,
-      })
-      .from(permits)
-      .where(
-        and(
-          isNotNull(permits.latitude),
-          isNotNull(permits.longitude)
-        )
+    // Get permits with valid coordinates
+    // NOTE: Supabase default row limit is 1000. Must increase in Dashboard > API Settings for this to return 50K.
+    const { data, error } = await supabase
+      .from("permits")
+      .select(
+        "id, permit_number, latitude, longitude, zip_code, cluster_id, energy_type, solar_capacity_kw, issue_date"
       )
-      .limit(50000); // Limit for performance
+      .not("latitude", "is", null)
+      .not("longitude", "is", null)
+      .limit(50000);
 
-    // Convert to GeoJSON with cluster names
+    if (error) {
+      console.error("[GeoJSON] Supabase error:", error);
+      throw error;
+    }
+
+    // Compute cluster counts from returned data
+    const clusterCounts: Record<number, number> = {};
+    for (const p of data || []) {
+      if (p.cluster_id != null) {
+        clusterCounts[p.cluster_id] = (clusterCounts[p.cluster_id] || 0) + 1;
+      }
+    }
+
+    // Convert to GeoJSON
     const geojson = {
-      type: 'FeatureCollection',
-      features: data.map((p) => {
-        const cluster = clusterMap[p.clusterId || 0];
-        return {
-          type: 'Feature',
-          geometry: {
-            type: 'Point',
-            coordinates: [p.longitude, p.latitude],
-          },
-          properties: {
-            id: p.id,
-            permit_number: p.permitNumber,
-            zip_code: p.zipCode,
-            cluster_id: p.clusterId,
-            cluster_name: cluster?.name || `Cluster ${p.clusterId}`,
-            total_permits: cluster?.count || 0,
-            energy_type: p.energyType,
-            solar_capacity_kw: p.solarCapacityKw,
-            issue_date: p.issueDate,
-          },
-        };
-      }),
+      type: "FeatureCollection",
+      features: (data || []).map((p) => ({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [p.longitude, p.latitude],
+        },
+        properties: {
+          id: p.id,
+          permit_number: p.permit_number,
+          zip_code: p.zip_code,
+          cluster_id: p.cluster_id,
+          cluster_name:
+            clusterMap[p.cluster_id || 0]?.name ||
+            `Cluster ${p.cluster_id}`,
+          total_permits: clusterCounts[p.cluster_id || 0] || 0,
+          energy_type: p.energy_type,
+          solar_capacity_kw: p.solar_capacity_kw,
+          issue_date: p.issue_date,
+        },
+      })),
     };
 
     // Cache result
     globalForGeoJSON.geoJSONCache = geojson;
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
-    console.log(`[GeoJSON] Generated ${geojson.features.length} features in ${elapsed}s`);
+    console.log(
+      `[GeoJSON] Generated ${geojson.features.length} features in ${elapsed}s`
+    );
 
     return NextResponse.json(geojson);
   } catch (error) {
-    console.error('Error generating GeoJSON:', error);
+    console.error("Error generating GeoJSON:", error);
     return NextResponse.json(
-      { type: 'FeatureCollection', features: [], error: 'Failed to load GeoJSON data' },
+      {
+        type: "FeatureCollection",
+        features: [],
+        error: "Failed to load GeoJSON data",
+      },
       { status: 500 }
     );
   }
@@ -109,5 +105,5 @@ export async function GET() {
 // Clear cache
 export async function POST() {
   globalForGeoJSON.geoJSONCache = null;
-  return NextResponse.json({ message: 'Cache cleared' });
+  return NextResponse.json({ message: "Cache cleared" });
 }

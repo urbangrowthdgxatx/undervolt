@@ -1,66 +1,84 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db, permits, clusters } from '@/db';
-import { eq, sql, and } from 'drizzle-orm';
+import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const cluster = searchParams.get('cluster');
-  const zip = searchParams.get('zip');
-  const energyType = searchParams.get('energyType');
-  const limit = parseInt(searchParams.get('limit') || '100');
-  const offset = parseInt(searchParams.get('offset') || '0');
+  const cluster = searchParams.get("cluster");
+  const zip = searchParams.get("zip");
+  const energyType = searchParams.get("energyType");
+  const limit = parseInt(searchParams.get("limit") || "100");
+  const offset = parseInt(searchParams.get("offset") || "0");
 
   try {
-    console.log(`[Permits API] Query: cluster=${cluster}, zip=${zip}, energyType=${energyType}, limit=${limit}, offset=${offset}`);
+    console.log(
+      `[Permits API] Query: cluster=${cluster}, zip=${zip}, energyType=${energyType}, limit=${limit}, offset=${offset}`
+    );
     const startTime = Date.now();
 
-    // Build dynamic where conditions
-    const conditions = [];
+    // Build query with filters
+    let query = supabase.from("permits").select("*", { count: "exact" });
 
     if (cluster) {
-      conditions.push(eq(permits.clusterId, parseInt(cluster)));
+      query = query.eq("cluster_id", parseInt(cluster));
     }
-
     if (zip) {
-      conditions.push(eq(permits.zipCode, zip));
+      query = query.eq("zip_code", zip);
     }
-
     if (energyType) {
-      conditions.push(eq(permits.energyType, energyType));
+      query = query.eq("energy_type", energyType);
     }
 
-    // Get total count with filters
-    const countQuery = conditions.length > 0
-      ? db.select({ count: sql<number>`count(*)` }).from(permits).where(and(...conditions))
-      : db.select({ count: sql<number>`count(*)` }).from(permits);
+    query = query.range(offset, offset + limit - 1);
 
-    const countResult = await countQuery;
-    const total = Number(countResult[0]?.count) || 0;
+    const { data, count, error } = await query;
 
-    // Get paginated results
-    let dataQuery = db.select().from(permits);
-
-    if (conditions.length > 0) {
-      dataQuery = dataQuery.where(and(...conditions)) as any;
+    if (error) {
+      console.error("[Permits API] Supabase error:", error);
+      throw error;
     }
-
-    const data = await dataQuery.limit(limit).offset(offset);
 
     // Get cluster names for enrichment
-    const clustersData = await db.select().from(clusters);
-    const clusterNames = clustersData.reduce((acc, c) => {
-      acc[c.id] = { name: c.name, percentage: c.percentage };
-      return acc;
-    }, {} as Record<number, { name: string; percentage: number }>);
+    const { data: clustersData } = await supabase
+      .from("clusters")
+      .select("id, name, percentage");
 
-    // Enrich with cluster names
-    const enriched = data.map((p) => ({
-      ...p,
-      cluster_name: clusterNames[p.clusterId || 0]?.name || `Cluster ${p.clusterId}`,
+    const clusterNames = (clustersData || []).reduce(
+      (acc: Record<number, { name: string; percentage: number }>, c) => {
+        acc[c.id] = { name: c.name, percentage: c.percentage };
+        return acc;
+      },
+      {}
+    );
+
+    // Map snake_case to camelCase and enrich with cluster names
+    const enriched = (data || []).map((p) => ({
+      id: p.id,
+      permitNumber: p.permit_number,
+      address: p.address,
+      zipCode: p.zip_code,
+      latitude: p.latitude,
+      longitude: p.longitude,
+      clusterId: p.cluster_id,
+      workDescription: p.work_description,
+      isEnergyPermit: p.is_energy_permit,
+      energyType: p.energy_type,
+      solarCapacityKw: p.solar_capacity_kw,
+      issueDate: p.issue_date,
+      createdAt: p.created_at,
+      projectType: p.project_type,
+      buildingType: p.building_type,
+      scale: p.scale,
+      trade: p.trade,
+      isGreen: p.is_green,
+      cluster_name:
+        clusterNames[p.cluster_id || 0]?.name || `Cluster ${p.cluster_id}`,
     }));
 
+    const total = count || 0;
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
-    console.log(`[Permits API] Returned ${data.length}/${total} permits in ${elapsed}s`);
+    console.log(
+      `[Permits API] Returned ${(data || []).length}/${total} permits in ${elapsed}s`
+    );
 
     return NextResponse.json({
       data: enriched,
@@ -70,13 +88,16 @@ export async function GET(request: NextRequest) {
       cluster_names: clusterNames,
     });
   } catch (error) {
-    console.error('Error loading permits:', error);
-    return NextResponse.json({
-      data: [],
-      total: 0,
-      offset,
-      limit,
-      error: 'Failed to load permits',
-    }, { status: 500 });
+    console.error("Error loading permits:", error);
+    return NextResponse.json(
+      {
+        data: [],
+        total: 0,
+        offset,
+        limit,
+        error: "Failed to load permits",
+      },
+      { status: 500 }
+    );
   }
 }

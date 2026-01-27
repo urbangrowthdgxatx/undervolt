@@ -1,208 +1,144 @@
-# Database Status - ✅ Production Ready
+# Database Status - Production Ready
 
-**Last Updated**: 2024-12-31 09:47 UTC
+**Last Updated**: 2025-01-27 02:30 UTC
 
 ## Summary
 
-✅ **Database fully loaded with 18,050 energy permits**
-✅ **All APIs connected to database**
-✅ **360x performance improvement on queries**
-✅ **Ready for production use**
+- **Database fully loaded with 2,303,817 permits in Supabase Postgres**
+- **All 5 API routes migrated to Supabase client**
+- **Single RPC function for dashboard stats**
+- **Ready for Jan 27 demo**
 
 ## Database Details
 
-**Location**: `/home/red/Documents/github/undervolt/data/undervolt.db`
-**Size**: 5.4MB
-**Format**: SQLite 3 with WAL mode
+**Platform**: Supabase (cloud-hosted Postgres)
+**Project**: `arpoymzcflsqcaqixhie`
+**URL**: `https://arpoymzcflsqcaqixhie.supabase.co`
+**API Row Limit**: 50,000 (configured in Dashboard > API Settings)
+**RLS**: Enabled on all tables
 
 ## Table Statistics
 
 | Table | Rows | Description |
 |-------|------|-------------|
-| **permits** | **18,050** | Individual energy permits with cluster assignments |
+| **permits** | **2,303,817** | All construction permits with LLM categories |
 | **clusters** | 8 | ML-generated permit categories (KMeans clustering) |
 | **cluster_keywords** | 36 | Top keywords per cluster (~4-5 per cluster) |
-| **energy_stats_by_zip** | 100 | Aggregated energy stats for top 100 ZIP codes |
-| **trends** | 0 | Ready for time-series data (not yet populated) |
+| **energy_stats_by_zip** | 840 | Aggregated energy stats for all ZIP codes |
+| **trends** | 570 | Time-series data (monthly/yearly) |
 | **cache_metadata** | 3 | Tracks last update time for each dataset |
+
+## Migration Details
+
+| Step | Status | Details |
+|------|--------|---------|
+| Add LLM columns | Done | project_type, building_type, scale, trade, is_green |
+| Bulk load permits | Done | 2,303,817 rows in 541s (4,255 rows/sec) |
+| Re-aggregate energy stats | Done | 840 ZIP codes, 115,523 energy permits |
+| Run ANALYZE | Done | All tables optimized |
+| Create RPC function | Done | `get_dashboard_stats()` with fixed search_path |
+| Install @supabase/supabase-js | Done | Replaced better-sqlite3 |
+| Create supabase.ts client | Done | Singleton with env vars |
+| Rewrite stats route | Done | Uses `supabase.rpc('get_dashboard_stats')` |
+| Rewrite permits route | Done | Paginated with count, camelCase mapping |
+| Rewrite geojson route | Done | 50K point limit, cluster enrichment |
+| Rewrite permits-detailed route | Done | Multi-filter with LLM category support |
+| Rewrite trends route | Done | Monthly data from trends table |
+| Delete old DB files | Done | Removed src/db/index.ts, src/db/schema.ts |
+| Security advisory | Done | Fixed function search_path |
+| Set API row limit to 50K | Done | Dashboard > API Settings |
 
 ## Data Quality
 
-### Source Data
-- **Raw Austin permits**: 2,458,644 total (all construction types)
-- **After energy filtering**: 18,050 permits (0.7% of total)
-- **ML processing**: KMeans clustering (8 clusters, GPU-accelerated)
-- **Ingestion time**: 1.7 seconds
-
 ### Permit Distribution by Energy Type
 
-Based on the `permits.energy_type` column:
-- **Solar**: ~4,200 permits
-- **Battery**: ~7,500 permits
-- **EV Charger**: ~1,800 permits
-- **Panel Upgrade**: ~2,300 permits
-- **HVAC**: ~1,600 permits
-- **Generator**: ~650 permits
+| Type | Count |
+|------|-------|
+| Solar | 25,982 |
+| HVAC | 71,331 |
+| Generator | 7,248 |
+| Panel Upgrade | 6,159 |
+| EV Charger | 3,642 |
+| Battery | 1,161 |
+| **Total Energy** | **115,523** |
+
+### LLM Categorization Coverage
+
+| Category | Categorized | Top Value |
+|----------|-------------|-----------|
+| Project Type | 1,977,916 (86%) | new_construction (887K) |
+| Building Type | 1,414,948 | residential_single (952K) |
+| Scale | 2,303,638 | minor (2.1M) |
+| Trade | 2,303,268 | general (1.4M) |
 
 ### Data Completeness
 
 | Field | Completeness | Notes |
 |-------|--------------|-------|
-| `permitNumber` | 100% | Generated unique IDs (CSV doesn't have original numbers) |
-| `workDescription` | 100% | From CSV `description` column |
-| `zipCode` | 100% | From CSV `zip_code` column |
-| `clusterId` | 100% | From ML pipeline clustering |
-| `energyType` | 100% | From CSV `type` column |
-| `issueDate` | ~99% | From CSV `issued_date` column |
-| `solarCapacityKw` | ~23% | Only for solar permits with capacity data |
-| `address` | 0% | Not in current CSV (TODO: add from raw permits) |
-| `latitude/longitude` | 0% | Not in current CSV (TODO: geocode addresses) |
+| permit_number | 100% | Unique constraint |
+| work_description | ~99% | Some short/empty |
+| zip_code | 100% | Required field |
+| cluster_id | ~99% | ML-assigned |
+| latitude/longitude | ~63% | Geocoded permits |
+| issue_date | ~99% | From source data |
+| project_type | 86% | LLM-categorized |
 
-## Performance Metrics
+## Performance
 
-### API Response Times (Production)
+### API Response Times
 
-| Endpoint | Query Type | Response Time | Improvement |
-|----------|------------|---------------|-------------|
-| `/api/stats` | Complex aggregations | ~0.1s (cached) | - |
-| `/api/permits-detailed` | Filtered by cluster | ~0.02s | **360x faster** |
-| `/api/permits-detailed` | Unfiltered (all permits) | ~0.05s | **144x faster** |
+| Endpoint | Response Time | Method |
+|----------|--------------|--------|
+| `/api/stats` | ~200ms (then cached) | RPC function |
+| `/api/permits?zip=78704&limit=5` | ~100ms | PostgREST filter |
+| `/api/geojson` | ~500ms (then cached) | 50K row select |
+| `/api/trends` | ~50ms (then cached) | Small table query |
+| `/api/permits-detailed` | ~100ms | Multi-filter query |
 
-**Before** (file-based CSV parsing): 7.2s
-**After** (indexed database): 0.02s
+### Compared to Previous SQLite
 
-### Index Performance
-
-All critical columns have B-tree indexes:
-- `zip_code` - For ZIP filtering
-- `cluster_id` - For cluster filtering
-- `energy_type` - For energy type filtering
-- `issue_date` - For time-series queries
-
-## Known Limitations & Future Work
-
-### 1. Missing Geographic Data
-**Issue**: CSV doesn't include `address`, `latitude`, `longitude`
-**Impact**: Map visualization uses cluster centroids instead of individual permit locations
-**Solution**:
-- Join with raw Austin permits CSV to get addresses
-- Geocode addresses to get coordinates
-- Update permits table with lat/lng
-
-### 2. Missing Permit Numbers
-**Issue**: CSV doesn't include original permit numbers
-**Impact**: Generated IDs like `ENERGY_0_1735639847000` instead of real permit numbers
-**Solution**: Join with raw permits to get real permit numbers (format: `2024-123456-TR`)
-
-### 3. Energy-Only Focus
-**Issue**: Database only contains 18K energy permits (0.7% of total 2.4M)
-**Impact**: Limited to energy infrastructure analysis
-**Solution**: See [TODO_EXPAND_BEYOND_ENERGY.md](TODO_EXPAND_BEYOND_ENERGY.md) for expansion plan
-
-### 4. Empty Trends Table
-**Issue**: Time-series table is defined but not populated
-**Impact**: Can't query growth trends over time
-**Solution**: Aggregate permits by year/month and populate trends table
+| Metric | SQLite (before) | Supabase (after) |
+|--------|-----------------|------------------|
+| DB Location | Local file (700MB) | Cloud Postgres |
+| Permits | 2,303,817 | 2,303,817 |
+| Stats query | 5+ separate queries | 1 RPC call |
+| GeoJSON | Local query | PostgREST + cache |
+| Requires Jetson DB | Yes | No |
 
 ## API Status
 
-### ✅ Database-Backed APIs (Fast)
+### Database-Backed APIs
 
 | Endpoint | Status | Source |
 |----------|--------|--------|
-| `GET /api/stats` | ✅ Live | Database queries with memory cache |
-| `GET /api/permits-detailed` | ✅ Live | Indexed database queries |
+| `GET /api/stats` | Live | Supabase RPC |
+| `GET /api/permits` | Live | Supabase PostgREST |
+| `GET /api/geojson` | Live | Supabase PostgREST |
+| `GET /api/permits-detailed` | Live | Supabase PostgREST |
+| `GET /api/trends` | Live | Supabase PostgREST |
 
-### 🚧 File-Based APIs (To Migrate)
-
-| Endpoint | Status | Source | Migration Priority |
-|----------|--------|--------|---------------------|
-| `GET /api/geojson` | 🚧 File-based | `cluster_geojson.json` | Medium (can use clusters table) |
-| `GET /api/permits` | 🚧 File-based | CSV files | Low (redundant with permits-detailed) |
-| `GET /api/trends` | 🚧 File-based | JSON files | High (need to populate trends table) |
-
-### ✅ LLM/Chat APIs (Production)
+### LLM/Chat APIs (Unchanged)
 
 | Endpoint | Status | Backend |
 |----------|--------|---------|
-| `/api/chat-llm` | ✅ Live | Local Ollama (GPU-accelerated) |
-| `/api/suggest` | ✅ Live | Local Ollama |
-| `/api/chat-analytics` | ✅ Live | Hybrid (DB + LLM) |
-| `/api/story/*` | ✅ Live | Narrative generation |
+| `/api/chat-llm` | Live | Local Ollama (GPU-accelerated) |
+| `/api/suggest` | Live | Local Ollama |
+| `/api/chat-analytics` | Live | Hybrid (analytics + LLM) |
+| `/api/story/*` | Live | Narrative generation |
 
-## Maintenance Commands
+## Verification (Jan 27)
 
-### View Database in Browser
 ```bash
-npm run db:studio  # Opens GUI at http://localhost:4983
+# All passing:
+curl localhost:3000/api/stats        # 2,303,817 permits, 8 clusters
+curl localhost:3000/api/permits?zip=78704&limit=5  # 93,586 total, 5 returned
+curl localhost:3000/api/geojson      # 50,000 features
+curl localhost:3000/api/trends       # 60 months of data
+curl localhost:3000/api/permits-detailed?energyType=solar&limit=3  # 3 solar permits
 ```
-
-### Re-ingest After Data Updates
-```bash
-# After running ML pipeline (python run.py)
-npm run db:ingest  # Takes ~1.7s
-```
-
-### Reset Database (Nuclear Option)
-```bash
-npm run db:reset  # Delete + recreate + re-ingest
-```
-
-### Checkpoint WAL
-```bash
-npx tsx scripts/checkpoint-db.ts
-```
-
-## Data Freshness
-
-Last updated: **2024-12-31 09:47 UTC**
-
-Data sources:
-- `output/energy_permits.csv` - Generated by ML pipeline
-- `frontend/public/data/cluster_summary.json` - Cluster metadata
-- `frontend/public/data/energy_infrastructure.json` - ZIP aggregations
-
-To refresh:
-1. Download latest Austin permits CSV
-2. Run ML pipeline: `python run.py` (~15s on Jetson)
-3. Re-ingest: `npm run db:ingest` (~1.7s)
-
-## Production Readiness Checklist
-
-- [x] Database schema defined with proper types
-- [x] All critical indexes created
-- [x] 18,050 permits loaded successfully
-- [x] Cluster data (8 clusters) loaded
-- [x] Energy stats (100 ZIPs) loaded
-- [x] APIs migrated to database
-- [x] Performance validated (360x faster)
-- [x] WAL mode enabled for concurrency
-- [x] Frontend displaying data correctly
-- [ ] Add geographic data (address, lat/lng)
-- [ ] Add real permit numbers
-- [ ] Populate trends table
-- [ ] Expand to all 2.4M permits (optional)
-
-## Next Steps
-
-**Immediate** (High Priority):
-1. ✅ Database loaded - COMPLETE
-2. Test frontend map with full dataset
-3. Verify all dashboard insights are accurate
-
-**Short-term** (This Week):
-1. Add missing geographic data (addresses, coordinates)
-2. Populate trends table for time-series analysis
-3. Migrate remaining file-based APIs
-
-**Long-term** (Future Enhancement):
-1. Expand beyond energy permits (see TODO_EXPAND_BEYOND_ENERGY.md)
-2. Add full-text search on work descriptions
-3. Implement geospatial radius queries
-4. Scale to full 2.4M permit dataset
 
 ---
 
-**Status**: ✅ PRODUCTION READY
+**Status**: PRODUCTION READY
 
-The database is fully operational with 18,050 energy permits. All core APIs are connected and performing 360x faster than the previous file-based approach. Ready for production use!
+All 2,303,817 permits loaded in Supabase. All 5 API routes migrated and verified. Dashboard stats served via single RPC call. Ready for Jan 27 demo.

@@ -19,10 +19,10 @@
 ### The Hidden Story
 
 ```
-"Install 8.5kW solar array"     → Solar adoption
-"New 200A panel upgrade"        → Grid stress signal
-"Generator installation"        → Grid trust broken
-"Battery storage system"        → Resilience investment
+"Install 8.5kW solar array"     -> Solar adoption
+"New 200A panel upgrade"        -> Grid stress signal
+"Generator installation"        -> Grid trust broken
+"Battery storage system"        -> Resilience investment
 ```
 
 **These signals exist. They're just buried.**
@@ -33,7 +33,7 @@
 
 ## GPU-Accelerated Urban Intelligence
 
-**Undervolt transforms raw permit data into actionable insights—running entirely on edge hardware.**
+**Undervolt transforms raw permit data into actionable insights -- processed on edge hardware, served from the cloud.**
 
 ### What We Built
 
@@ -42,22 +42,31 @@
 | **GPU Clustering** | Groups 2.3M permits into 8 semantic clusters |
 | **Smart Categorization** | Classifies 86% of permits by type, building, trade |
 | **Local LLM** | Llama 3.2 running on-device for semantic analysis |
+| **Cloud Database** | Supabase Postgres serving 2.3M permits via PostgREST |
 | **Interactive Dashboard** | Filter, explore, and discover patterns |
 
 ### The Stack
 
 ```
-┌─────────────────────────────────────────┐
-│  NVIDIA Jetson AGX Orin (64GB)          │
-├─────────────────────────────────────────┤
-│  CUDA 11.4 + RAPIDS cuDF/cuML           │
-│  Ollama + Llama 3.2:3b                  │
-│  SQLite + Drizzle ORM                   │
-│  Next.js + React + Leaflet              │
-└─────────────────────────────────────────┘
++-------------------------------------------+
+|  NVIDIA Jetson AGX Orin (64GB)            |
++-------------------------------------------+
+|  CUDA 11.4 + RAPIDS cuDF/cuML            |
+|  Ollama + Llama 3.2:3b                   |
+|  Next.js 16 + React 19                   |
++-------------------------------------------+
+         |
+         v  (API routes via PostgREST)
++-------------------------------------------+
+|  Supabase (Cloud Postgres)                |
++-------------------------------------------+
+|  2.3M permits + RPC functions             |
+|  RLS-secured, read-only anon access       |
+|  50K row API limit for GeoJSON            |
++-------------------------------------------+
 ```
 
-**Zero cloud. Zero ongoing cost. Full privacy.**
+**Edge compute + cloud data. Zero ongoing DB ops. Full privacy on LLM.**
 
 ---
 
@@ -70,16 +79,16 @@
 | Metric | Value |
 |--------|-------|
 | Total Permits | 2,303,817 |
-| Date Range | 2009-2024 |
-| Zip Codes | 150+ |
+| Date Range | 2009-2025 |
+| Zip Codes | 840+ |
 | Categorized | 86% |
 
 ### LLM Categorization Results
 
 | Category | Top Values |
 |----------|-----------|
-| **Project Type** | new_construction (849K), renovation (435K), repair (384K) |
-| **Building Type** | residential_single (946K), commercial (251K), multi-family (143K) |
+| **Project Type** | new_construction (887K), renovation (438K), repair (390K) |
+| **Building Type** | residential_single (952K), commercial (253K), multi-family (155K) |
 | **Trade** | general (1.4M), landscaping (349K), electrical (184K), hvac (145K) |
 
 ### Energy Infrastructure
@@ -137,19 +146,19 @@ Solar saves money when the grid is up. But when it fails, solar without storage 
 ## Dashboard Walkthrough
 
 ### 1. Overview (30 sec)
-- Show map with 2.3M permit markers
+- Show map with 50K permit markers (served from Supabase)
 - Highlight cluster distribution chart
 - Point out energy stats in sidebar
 
 ### 2. Filter by Energy Type (1 min)
-- Click "Solar" → See adoption hotspots
+- Click "Solar" -> See adoption hotspots
 - 78704 and 78744 lead in solar
-- Click "Generator" → See post-freeze surge
+- Click "Generator" -> See post-freeze surge
 
 ### 3. LLM Categories (1 min)
-- Filter by "new_construction" → Growth areas
-- Filter by "renovation" → Gentrification signals
-- Filter by "commercial" → Business corridors
+- Filter by "new_construction" -> Growth areas
+- Filter by "renovation" -> Gentrification signals
+- Filter by "commercial" -> Business corridors
 
 ### 4. Zip Code Deep Dive (30 sec)
 - Select 78704 (South Congress)
@@ -157,9 +166,10 @@ Solar saves money when the grid is up. But when it fails, solar without storage 
 - Highlight solar vs generator ratio
 
 ### 5. Technical Demo (1 min)
-- Show Ollama running locally
+- Show Ollama running locally on Jetson
 - Run categorization on sample permit
 - Explain GPU clustering (16x speedup)
+- Show Supabase RPC returning stats in <1s
 
 ---
 
@@ -195,9 +205,11 @@ Solar saves money when the grid is up. But when it fails, solar without storage 
 ## Technical Differentiators
 
 - **16x speedup** with GPU clustering vs CPU
-- **Zero cloud cost** - runs on $2K edge device
+- **2.3M permits** served from Supabase Postgres in milliseconds
+- **Single RPC call** returns full dashboard stats
 - **86% categorization** with hybrid rule+LLM approach
-- **Local LLM** - no data leaves the device
+- **Local LLM** - no data leaves the device for inference
+- **Edge + Cloud hybrid** - Jetson computes, Supabase serves
 
 ---
 
@@ -208,5 +220,7 @@ Solar saves money when the grid is up. But when it fails, solar without storage 
 **GitHub:** github.com/urbangrowthdgxatx/undervolt
 
 **Hardware:** NVIDIA Jetson AGX Orin 64GB
+
+**Database:** Supabase Postgres (2.3M permits)
 
 **Demo:** http://[jetson-ip]:3000/dashboard

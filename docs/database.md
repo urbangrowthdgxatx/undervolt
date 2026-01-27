@@ -2,242 +2,178 @@
 
 ## Overview
 
-The Undervolt project now uses a **SQLite database** with **Drizzle ORM** for all data storage and retrieval. This replaces the previous file-based approach for better performance, query capabilities, and maintainability.
+The Undervolt project uses **Supabase Postgres** with the **@supabase/supabase-js** client for all data storage and retrieval. This replaces the previous SQLite + Drizzle ORM approach, providing cloud-hosted Postgres with PostgREST API access and row-level security.
 
-## Database Location
+## Migration History
 
+| Date | Change |
+|------|--------|
+| Dec 2024 | Initial SQLite + Drizzle ORM (18K energy permits) |
+| Jan 2025 | Expanded to 2.3M permits in SQLite (700MB) |
+| Jan 27, 2025 | **Migrated to Supabase Postgres** (2,303,817 permits) |
+
+## Connection
+
+```typescript
+// frontend/src/lib/supabase.ts
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 ```
-/home/red/Documents/github/undervolt/data/undervolt.db
-```
 
-**Size**: 76KB (contains 18,050 permits + metadata)
+**Project:** `arpoymzcflsqcaqixhie`
+**URL:** `https://arpoymzcflsqcaqixhie.supabase.co`
+**API Row Limit:** 50,000 (configured in Dashboard > API Settings)
 
 ## Schema
 
 ### Tables
 
-#### 1. `permits` - Individual Construction Permits
-Stores all construction permit records with energy classification.
+#### 1. `permits` - Individual Construction Permits (2,303,817 rows)
+Stores all construction permit records with energy classification and LLM categories.
 
-**Key Fields**:
+**Key Fields:**
 - `permit_number` (unique) - Official permit identifier
 - `zip_code` - ZIP code location
 - `latitude`, `longitude` - Geocoded coordinates
-- `cluster_id` - ML-assigned cluster (0-7)
+- `cluster_id` - ML-assigned cluster (0-7), FK to clusters
 - `energy_type` - solar, battery, ev_charger, panel_upgrade, generator, hvac
 - `solar_capacity_kw` - Solar installation capacity
 - `issue_date` - When permit was issued
+- `project_type` - LLM-categorized: new_construction, renovation, repair, etc.
+- `building_type` - LLM-categorized: residential_single, commercial, etc.
+- `scale` - LLM-categorized: minor, moderate, major
+- `trade` - LLM-categorized: electrical, plumbing, hvac, etc.
+- `is_green` - LLM-categorized: green/sustainable permit
 
-**Indexes**: ZIP code, cluster ID, energy type, issue date
+**Indexes:** zip_code, cluster_id, energy_type, issue_date, project_type, building_type, trade, scale, is_green
 
-#### 2. `clusters` - ML-Generated Permit Clusters
+#### 2. `clusters` - ML-Generated Permit Clusters (8 rows)
 Stores the 8 ML-identified permit categories.
 
-**Key Fields**:
-- `id` (0-7) - Cluster identifier
-- `name` - Human-readable name (e.g., "New Residential Construction")
-- `count` - Number of permits in cluster
-- `percentage` - % of total permits
-- `color` - Hex color for visualization
-- `centroid_lat`, `centroid_lng` - Map center point
+**Fields:** id, name, description, count, percentage, color, centroid_lat, centroid_lng
 
-#### 3. `cluster_keywords` - Top Keywords per Cluster
-Top keywords extracted from permit descriptions for each cluster.
+#### 3. `cluster_keywords` - Top Keywords per Cluster (36 rows)
+**Fields:** cluster_id (FK), keyword, frequency, rank
 
-**Fields**:
-- `cluster_id` - Reference to cluster
-- `keyword` - Extracted keyword
-- `frequency` - Prevalence score
-- `rank` - Keyword ranking (1-5)
-
-#### 4. `energy_stats_by_zip` - Energy Statistics by ZIP Code
+#### 4. `energy_stats_by_zip` - Energy Statistics by ZIP Code (840 rows)
 Aggregated energy permit statistics per ZIP code.
 
-**Key Fields**:
-- `zip_code` (unique)
-- `total_energy_permits`
-- `solar`, `battery`, `ev_charger`, `generator`, `panel_upgrade`, `hvac` - Counts by type
-- `total_solar_capacity_kw`, `avg_solar_capacity_kw` - Solar capacity metrics
+**Fields:** zip_code (unique), total_energy_permits, solar, battery, ev_charger, generator, panel_upgrade, hvac, total_solar_capacity_kw, avg_solar_capacity_kw
 
-#### 5. `trends` - Time-Series Permit Trends
-Yearly/monthly/quarterly aggregations for trend analysis.
+#### 5. `trends` - Time-Series Permit Trends (570 rows)
+**Fields:** period, period_type (year/month/quarter), total_permits, energy_permits, solar, battery, ev_charger, growth_rate
 
-**Fields**:
-- `period` - "2020", "2020-01", "2020-Q1"
-- `period_type` - year, month, quarter
-- `total_permits`, `energy_permits`
-- `growth_rate` - % change from previous period
+#### 6. `cache_metadata` - Data Freshness Tracking (3 rows)
+**Fields:** key (unique), last_updated, record_count, source_file
 
-#### 6. `cache_metadata` - Data Freshness Tracking
-Tracks when each data source was last updated.
+### RPC Functions
 
-## Data Ingestion
+#### `get_dashboard_stats()`
+Consolidates all dashboard statistics into a single Postgres function call. Returns a JSON object with:
+- `totalPermits` - Total permit count
+- `clusterDistribution` - All 8 clusters with counts, percentages, and keywords
+- `energyStats` - Breakdown by energy type + solar capacity stats
+- `topZips` - Top 15 ZIP codes with energy type breakdowns
+- `llmCategories` - Distribution of project_type, building_type, scale, trade
+- `lastUpdated` - Timestamp
 
-### Script
-```bash
-npx tsx scripts/ingest-data.ts
-```
-
-### Process
-1. **Clusters** - Reads `frontend/public/data/cluster_summary.json`
-   - Inserts 8 clusters + keywords
-2. **Energy Stats** - Reads `frontend/public/data/energy_infrastructure.json`
-   - Inserts 100 ZIP code aggregations
-3. **Permits** - Reads `output/energy_permits.csv`
-   - Batch inserts 18,050 energy permits (1,000 per batch)
-
-**Performance**: ~1.3 seconds for full ingestion
-
-### Source Files
-- `/home/red/Documents/github/undervolt/output/energy_permits.csv` (3.2MB)
-- `/home/red/Documents/github/undervolt/frontend/public/data/cluster_summary.json`
-- `/home/red/Documents/github/undervolt/frontend/public/data/energy_infrastructure.json`
+**Performance:** Single RPC call replaces 5+ separate queries. Executes in ~200ms.
 
 ## API Integration
 
-### Migrated APIs (Database-Backed)
+### All 5 Database-Backed API Routes
 
-#### `/api/stats`
-**Before**: Read JSON files from `public/data/`
-**After**: Query database for clusters, keywords, ZIP stats
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `GET /api/stats` | `supabase.rpc('get_dashboard_stats')` | Full dashboard stats via RPC |
+| `GET /api/permits` | `supabase.from('permits').select()` | Paginated permits with filters |
+| `GET /api/geojson` | `supabase.from('permits').select().not('latitude','is',null)` | GeoJSON FeatureCollection (50K limit) |
+| `GET /api/permits-detailed` | `supabase.from('permits').select()` | Multi-filter permit search |
+| `GET /api/trends` | `supabase.from('trends').select()` | Monthly trend data |
 
-**Query**:
-```typescript
-// Load clusters with keywords
-const clustersData = await db.select().from(clusters);
-const keywordsData = await db.select().from(clusterKeywords);
+### Column Name Mapping
+Supabase returns snake_case columns. API routes map to camelCase for frontend consumers:
+- `permit_number` -> `permitNumber`
+- `zip_code` -> `zipCode`
+- `cluster_id` -> `clusterId`
+- `energy_type` -> `energyType`
+- `is_energy_permit` -> `isEnergyPermit`
+- `solar_capacity_kw` -> `solarCapacityKw`
+- `issue_date` -> `issueDate`
+- `project_type` -> `projectType`
+- `building_type` -> `buildingType`
+- `is_green` -> `isGreen`
 
-// Top ZIPs
-const topZips = await db.select()
-  .from(energyStatsByZip)
-  .orderBy(desc(energyStatsByZip.totalEnergyPermits))
-  .limit(15);
+## Security
 
-// Energy totals
-const totals = await db.select({
-  totalSolar: sql`SUM(${energyStatsByZip.solar})`,
-  totalBattery: sql`SUM(${energyStatsByZip.battery})`,
-  // ...
-}).from(energyStatsByZip);
+- **Row Level Security (RLS):** Enabled on all tables
+- **Anon key:** Read-only access via PostgREST
+- **No service role key** in frontend code
+- **RPC function:** `search_path = public` set to prevent mutable path attacks
+
+## Performance
+
+| Query | Response Time | Notes |
+|-------|--------------|-------|
+| Dashboard stats (RPC) | ~200ms | Single call, replaces 5+ queries |
+| Permits with filters | ~100ms | Indexed lookups |
+| GeoJSON (50K points) | ~500ms | Limited by row count |
+| Trends (monthly) | ~50ms | Small table, indexed |
+
+## Data Loading
+
+### Initial Load (Jan 27, 2025)
+- **Source:** SQLite database on Jetson (700MB, 2,303,817 rows)
+- **Method:** Python script using psycopg2 + execute_values
+- **Batch size:** 2,000 rows
+- **Rate:** 4,255 rows/sec
+- **Total time:** 541 seconds (~9 minutes)
+- **Idempotent:** ON CONFLICT (permit_number) DO UPDATE SET (LLM columns)
+
+### Re-aggregation
+After bulk load, `energy_stats_by_zip` was re-aggregated from permits:
+```sql
+TRUNCATE energy_stats_by_zip;
+INSERT INTO energy_stats_by_zip (...)
+SELECT zip_code, count(*), sum(CASE ...) ...
+FROM permits WHERE is_energy_permit = true
+GROUP BY zip_code;
 ```
-
-**Performance**: ~0.1s (database) vs ~0.0s (cached JSON files)
-
-#### `/api/permits-detailed`
-**Before**: Read 3.2MB CSV file with PapaParse, filter in memory
-**After**: Indexed database query with WHERE clause
-
-**Query**:
-```typescript
-let query = db.select().from(permits);
-
-if (cluster) {
-  query = query.where(eq(permits.clusterId, parseInt(cluster)));
-}
-
-query = query.limit(limit);
-const result = await query;
-```
-
-**Performance**: ~0.02s (database with index) vs ~7s (CSV parsing)
-
-## Advantages
-
-### 1. Performance
-- **350x faster** for filtered permit queries (indexed lookups)
-- **No CSV parsing** overhead on every request
-- **Efficient aggregations** with SQL SUM/AVG/COUNT
-
-### 2. Scalability
-- **Indexes** on ZIP, cluster, energy type, date
-- **WAL mode** for better concurrency
-- Can handle millions of permits without memory issues
-
-### 3. Query Flexibility
-- **Complex filters**: ZIP + cluster + date range
-- **Sorting**: By date, capacity, location
-- **Aggregations**: GROUP BY, statistical analysis
-
-### 4. Data Integrity
-- **Foreign keys** ensure cluster references are valid
-- **NOT NULL constraints** on critical fields
-- **Unique constraints** on permit numbers
-
-### 5. Maintainability
-- **TypeScript types** auto-generated from schema
-- **Migrations** tracked in `drizzle/` folder
-- **Single source of truth** for all data
-
-## Query Examples
-
-### Get all solar permits in ZIP 78758
-```typescript
-const solarIn78758 = await db.select()
-  .from(permits)
-  .where(
-    and(
-      eq(permits.zipCode, '78758'),
-      eq(permits.energyType, 'solar')
-    )
-  );
-```
-
-### Top 10 ZIPs by battery installations
-```typescript
-const topBatteryZips = await db.select()
-  .from(energyStatsByZip)
-  .orderBy(desc(energyStatsByZip.battery))
-  .limit(10);
-```
-
-### Permits issued in 2024
-```typescript
-const permits2024 = await db.select()
-  .from(permits)
-  .where(like(permits.issueDate, '2024%'));
-```
-
-## Future Enhancements
-
-- [ ] Add `trends` table population from historical data
-- [ ] Implement GraphQL API for flexible querying
-- [ ] Add full-text search on `work_description`
-- [ ] Create materialized views for common aggregations
-- [ ] Set up automated daily data updates
-- [ ] Add support for non-energy permits (expand to all 2.2M permits)
 
 ## Maintenance
 
-### Re-ingesting Data
-```bash
-# Clear database
-rm data/undervolt.db
-
-# Re-run migration
-npx drizzle-kit push
-
-# Re-ingest all data
-npx tsx scripts/ingest-data.ts
+### Check Counts
+```sql
+SELECT count(*) FROM permits;           -- 2,303,817
+SELECT count(*) FROM permits WHERE is_energy_permit; -- 115,523
+SELECT count(*) FROM clusters;          -- 8
+SELECT count(*) FROM energy_stats_by_zip; -- 840
+SELECT count(*) FROM trends;            -- 570
 ```
 
-### Database Size Management
-- Current: 76KB (18K permits)
-- Estimated at 2.2M permits: ~9MB
-- SQLite supports databases up to 281 TB
-
-### Backup
+### Clear API Caches
 ```bash
-# Backup database
-cp data/undervolt.db data/undervolt.db.backup
+curl -X POST http://localhost:3000/api/stats
+curl -X POST http://localhost:3000/api/geojson
+curl -X POST http://localhost:3000/api/trends
+```
 
-# Restore
-cp data/undervolt.db.backup data/undervolt.db
+### Run ANALYZE (after data changes)
+```sql
+ANALYZE permits;
+ANALYZE clusters;
+ANALYZE energy_stats_by_zip;
+ANALYZE trends;
 ```
 
 ## Tech Stack
 
-- **Database**: SQLite 3
-- **ORM**: Drizzle ORM v0.36+
-- **Driver**: better-sqlite3
-- **Migration Tool**: drizzle-kit
-- **Query Language**: SQL (via Drizzle's type-safe builder)
+- **Database:** Supabase Postgres (cloud-hosted)
+- **Client:** @supabase/supabase-js v2
+- **API:** PostgREST (auto-generated REST from schema)
+- **RPC:** PL/pgSQL functions for complex aggregations
+- **Security:** Row Level Security (RLS) with anon key

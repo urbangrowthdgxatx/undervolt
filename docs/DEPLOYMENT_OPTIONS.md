@@ -1,5 +1,18 @@
 # Deployment Options for Jan 27 Demo
 
+## Architecture Change (Jan 27, 2025)
+
+The database has been migrated from local SQLite to **Supabase Postgres**. This simplifies deployment -- the Jetson no longer needs the 700MB SQLite file. All data is served from Supabase cloud.
+
+| Component | Where It Runs |
+|-----------|---------------|
+| Database (2.3M permits) | Supabase cloud Postgres |
+| Frontend (Next.js) | Jetson AGX Orin |
+| LLM (Ollama) | Jetson AGX Orin |
+| GPU clustering pipeline | Jetson AGX Orin |
+
+---
+
 ## Option 1: Tailscale to Jetson (Recommended)
 
 **Pros:** Real hardware demo, authentic GPU performance, zero cost, encrypted
@@ -34,60 +47,38 @@ No port forwarding, no tunnels, no dynamic URLs.
 
 ## Option 2: Cloud VM Deployment (Best Backup)
 
-**Pros:** Reliable, no hardware dependency
-**Cons:** No GPU (CPU-only), costs ~$20-50/month
+**Pros:** Reliable, no hardware dependency. Database already in cloud (Supabase).
+**Cons:** No GPU for LLM demo, costs ~$20-50/month
 
-### Recommended: DigitalOcean or Vultr
+### Simplified by Supabase Migration
+
+Since the database is now in Supabase, a cloud VM only needs to run the Next.js frontend -- no SQLite file transfer needed.
 
 ```bash
-# Provision Ubuntu 22.04 VM (4GB RAM minimum)
-# $24/month for 4GB RAM, 2 vCPU
-
-# Install dependencies
-sudo apt update && sudo apt install -y nodejs npm python3 python3-pip
+# Provision Ubuntu 22.04 VM (2GB RAM is enough now)
+# ~$12/month
 
 # Clone and setup
 git clone git@github.com:urbangrowthdgxatx/undervolt.git
 cd undervolt/frontend
 npm install
+
+# Copy .env.local (Supabase credentials + Mapbox token)
+scp red@jetson:/home/red/Documents/github/undervolt/frontend/.env.local .
+
+# Build and run
 npm run build
-
-# Copy database from Jetson
-scp red@jetson:/home/red/Documents/github/undervolt/data/undervolt.db ./data/
-
-# Run production server
 npm run start
 ```
 
-### Quick Deploy Script
-
-```bash
-#!/bin/bash
-# deploy-cloud.sh
-
-# Variables
-SERVER_IP="your-server-ip"
-SSH_KEY="~/.ssh/id_rsa"
-
-# Copy database
-scp -i $SSH_KEY data/undervolt.db root@$SERVER_IP:/app/data/
-
-# Deploy
-ssh -i $SSH_KEY root@$SERVER_IP << 'EOF'
-cd /app/undervolt/frontend
-git pull
-npm install
-npm run build
-pm2 restart undervolt || pm2 start npm --name "undervolt" -- start
-EOF
-```
+No database file to copy. Supabase handles all data serving.
 
 ---
 
-## Option 3: Vercel/Railway (Easiest)
+## Option 3: Vercel (Easiest)
 
-**Pros:** Zero ops, auto-deploy from GitHub
-**Cons:** Need to host DB separately, no LLM demo
+**Pros:** Zero ops, auto-deploy from GitHub, free tier
+**Cons:** No LLM demo (Ollama runs on Jetson only)
 
 ### Vercel Setup
 
@@ -97,17 +88,14 @@ vercel login
 vercel --prod
 ```
 
-### Database Options
+### Environment Variables (set in Vercel dashboard)
+```
+NEXT_PUBLIC_SUPABASE_URL=https://arpoymzcflsqcaqixhie.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
+NEXT_PUBLIC_MAPBOX_TOKEN=<mapbox token>
+```
 
-1. **Turso (SQLite in cloud)** - Free tier, easiest migration
-   ```bash
-   turso db create undervolt
-   turso db shell undervolt < data/undervolt.db
-   ```
-
-2. **PlanetScale (MySQL)** - Free tier, requires schema migration
-
-3. **Supabase (Postgres)** - Free tier, requires schema migration
+Database is already in Supabase -- no additional DB hosting needed.
 
 ---
 
@@ -117,39 +105,27 @@ vercel --prod
 **Cons:** Not interactive, less impressive
 
 ### Create Recording
-
 ```bash
 # Record demo with OBS or screen capture
 # Upload to YouTube/Vimeo as backup
-
-# Export static data for charts
-curl http://localhost:3000/api/stats > static-stats.json
 ```
-
-### Static Site with Screenshots
-
-- Export dashboard screenshots
-- Create slide deck with embedded images
-- Show recorded video of live filtering
 
 ---
 
 ## Recommended Strategy
 
 ### Primary: Tailscale to Jetson
-
 1. Jetson stays at home, powered on
 2. Connect to Tailscale from demo location
 3. Access `http://100.87.236.76:3000` directly
 
-### Backup: Cloud VM
-
-1. Only if Tailscale/Jetson fails
-2. Pre-deploy to DigitalOcean if paranoid
-3. Most likely won't need this
+### Backup: Vercel Deploy
+1. Push to GitHub, deploy to Vercel
+2. Set Supabase env vars in Vercel dashboard
+3. Dashboard + data works without Jetson
+4. Only LLM chat features unavailable
 
 ### Emergency: Pre-recorded Video
-
 1. Record 5-min demo walkthrough as last resort
 2. Keep on phone/laptop offline
 
@@ -158,21 +134,18 @@ curl http://localhost:3000/api/stats > static-stats.json
 ## Pre-Demo Checklist
 
 ### 3 Days Before
-
 - [ ] Test Tailscale access from phone (different network)
 - [ ] Run `./scripts/pre-demo-check.sh` - fix any issues
 - [ ] Record demo video as emergency backup
 - [ ] Test all demo scenarios end-to-end
 
 ### Day Before
-
 - [ ] Run `./scripts/pre-demo-check.sh` again
 - [ ] Verify Jetson stays online overnight (disable sleep)
 - [ ] Charge laptop, ensure Tailscale app installed
 - [ ] Download offline copy of presentation
 
 ### Day Of
-
 - [ ] Run `./scripts/pre-demo-check.sh` before leaving
 - [ ] Test from phone on mobile data (not home WiFi)
 - [ ] Have pre-recorded video on phone as backup
@@ -194,19 +167,21 @@ curl -s http://100.87.236.76:3000/api/stats | head -c 200
 # Run pre-demo check script
 ./scripts/pre-demo-check.sh
 
-# Cloud deploy (one-liner) - only if needed
-ssh root@cloud-ip "cd /app/undervolt && git pull && cd frontend && npm run build && pm2 restart all"
+# Clear API caches (if data seems stale)
+curl -X POST http://localhost:3000/api/stats
+curl -X POST http://localhost:3000/api/geojson
+curl -X POST http://localhost:3000/api/trends
 ```
 
 ---
 
 ## Cost Summary
 
-| Option | Setup Time | Monthly Cost | Reliability |
-|--------|------------|--------------|-------------|
-| Tailscale + Jetson | Done | $0 | High (encrypted, no NAT issues) |
-| Cloud VM | 2 hours | $24-48 | High |
-| Vercel + Turso | 1 hour | $0 (free tier) | Very High |
-| Pre-recorded | 1 hour | $0 | 100% |
+| Option | Setup Time | Monthly Cost | Reliability | Notes |
+|--------|------------|--------------|-------------|-------|
+| Tailscale + Jetson | Done | $0 | High | Full demo including LLM |
+| Vercel + Supabase | 30 min | $0 (free tier) | Very High | No LLM, but data works |
+| Cloud VM | 1 hour | $12-24 | High | No GPU/LLM |
+| Pre-recorded | 1 hour | $0 | 100% | Not interactive |
 
-**Recommendation:** Use Tailscale (already set up). Record a backup video the day before just in case.
+**Recommendation:** Use Tailscale (already set up). Deploy to Vercel as backup. Record a video the day before just in case.
