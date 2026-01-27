@@ -104,7 +104,7 @@ CLUSTERING_PARAMS = {
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 DATA_DIR = os.path.join(PROJECT_ROOT, "data")
-DATA_PATH = os.path.join(DATA_DIR, "Issued_Construction_Permits_20251212.csv")
+DATA_PATH = os.path.join(DATA_DIR, "Issued_Construction_Permits.csv")
 
 # Output paths
 OUTPUT_ENRICHED = "permit_data_enriched.csv"

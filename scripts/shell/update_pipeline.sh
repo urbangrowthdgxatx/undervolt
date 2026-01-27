@@ -1,51 +1,38 @@
 #!/bin/bash
 #
-# Automated Daily Pipeline Update
+# Daily Incremental Pipeline Update (Supabase)
 #
-# Downloads latest Austin permits, runs full pipeline, updates database
-# Can be run manually or scheduled with cron
+# Downloads latest Austin permits CSV, inserts new permits into Supabase,
+# assigns clusters to unclustered permits, re-aggregates summary tables.
 #
 # Usage:
-#   bash scripts/shell/update_pipeline.sh           # Full update
-#   bash scripts/shell/update_pipeline.sh --quick   # Skip download, just process
+#   bash scripts/shell/update_pipeline.sh           # Full update (download + process)
+#   bash scripts/shell/update_pipeline.sh --quick   # Skip download, just process new permits
 #
 
-set -e  # Exit on error
+set -e
 
-# Colors for output
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 # Directories
 PROJECT_ROOT="/home/red/Documents/github/undervolt"
 DATA_DIR="$PROJECT_ROOT/data"
-OUTPUT_DIR="$PROJECT_ROOT/output"
 LOG_DIR="$PROJECT_ROOT/logs"
+SCRIPTS_DIR="$PROJECT_ROOT/scripts/python"
 
-# Create log directory
-mkdir -p "$LOG_DIR"
+mkdir -p "$LOG_DIR" "$DATA_DIR"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 LOG_FILE="$LOG_DIR/pipeline_$TIMESTAMP.log"
 
-# Logging function
-log() {
-    echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1" | tee -a "$LOG_FILE"
-}
-
-error() {
-    echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR:${NC} $1" | tee -a "$LOG_FILE"
-}
-
-info() {
-    echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1" | tee -a "$LOG_FILE"
-}
-
-warn() {
-    echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING:${NC} $1" | tee -a "$LOG_FILE"
-}
+log()   { echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1" | tee -a "$LOG_FILE"; }
+error() { echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR:${NC} $1" | tee -a "$LOG_FILE"; }
+info()  { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1" | tee -a "$LOG_FILE"; }
+warn()  { echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING:${NC} $1" | tee -a "$LOG_FILE"; }
 
 banner() {
     echo "" | tee -a "$LOG_FILE"
@@ -64,131 +51,84 @@ fi
 
 cd "$PROJECT_ROOT"
 
-banner "UNDERVOLT AUTOMATED PIPELINE UPDATE"
+banner "UNDERVOLT DAILY INCREMENTAL UPDATE"
+log "Started at $(date)"
 
-# Step 1: Download latest data (unless --quick)
+# --------------------------------------------------------------------------
+# Step 1: Download latest CSV (unless --quick)
+# --------------------------------------------------------------------------
+CSV_FILE="$DATA_DIR/Issued_Construction_Permits.csv"
+
 if [ "$SKIP_DOWNLOAD" = false ]; then
     banner "STEP 1: DOWNLOAD LATEST AUSTIN PERMITS"
 
+    DOWNLOAD_URL="https://data.austintexas.gov/api/views/3syk-w9eu/rows.csv?accessType=DOWNLOAD"
+    TEMP_FILE="$DATA_DIR/.permits_download_tmp.csv"
+
     info "Downloading from Austin Open Data Portal..."
+    info "URL: $DOWNLOAD_URL"
 
-    # Austin Open Data API endpoint
-    API_URL="https://data.austintexas.gov/resource/3syk-w9eu.csv"
-    TEMP_FILE="$DATA_DIR/permits_download_$TIMESTAMP.csv"
-    CURRENT_FILE="$DATA_DIR/Issued_Construction_Permits_$(date +%Y%m%d).csv"
+    if curl -L -o "$TEMP_FILE" --progress-bar "$DOWNLOAD_URL" 2>&1 | tee -a "$LOG_FILE"; then
+        # Verify download is valid (has header + data)
+        LINE_COUNT=$(wc -l < "$TEMP_FILE")
+        if [ "$LINE_COUNT" -lt 100 ]; then
+            error "Download looks too small ($LINE_COUNT lines). Aborting."
+            rm -f "$TEMP_FILE"
+            exit 1
+        fi
 
-    # Download with curl (supports resume, shows progress)
-    if curl -L -o "$TEMP_FILE" "$API_URL?\$limit=9999999" 2>&1 | tee -a "$LOG_FILE"; then
-        log "✅ Download complete"
-
-        # Count records
-        RECORD_COUNT=$(wc -l < "$TEMP_FILE")
-        RECORD_COUNT=$((RECORD_COUNT - 1))  # Subtract header
-        info "Downloaded: $RECORD_COUNT permits"
-
-        # Move to dated filename
-        mv "$TEMP_FILE" "$CURRENT_FILE"
-        log "Saved to: $CURRENT_FILE"
-
-        # Update symlink to latest
-        ln -sf "$(basename $CURRENT_FILE)" "$DATA_DIR/Issued_Construction_Permits_latest.csv"
-
-        # Archive old files (keep last 7 days)
-        info "Cleaning up old downloads (keeping last 7 days)..."
-        find "$DATA_DIR" -name "Issued_Construction_Permits_*.csv" -type f -mtime +7 -delete
+        # Replace the current file
+        mv "$TEMP_FILE" "$CSV_FILE"
+        FILE_SIZE=$(du -h "$CSV_FILE" | cut -f1)
+        log "Download complete: $FILE_SIZE, $((LINE_COUNT - 1)) records"
     else
         error "Download failed!"
+        rm -f "$TEMP_FILE"
         exit 1
     fi
 else
-    info "Using existing data file (--quick mode)"
-fi
-
-# Step 2: Check for existing processed data
-banner "STEP 2: CHECK INCREMENTAL UPDATE"
-
-LATEST_DATA=$(ls -t "$DATA_DIR"/Issued_Construction_Permits_*.csv 2>/dev/null | head -1)
-if [ -z "$LATEST_DATA" ]; then
-    error "No data file found!"
-    exit 1
-fi
-
-info "Latest data: $LATEST_DATA"
-
-# Check if we've already processed this file
-ENRICHED_FILE="$OUTPUT_DIR/permit_data_enriched.csv"
-if [ -f "$ENRICHED_FILE" ]; then
-    ENRICHED_MTIME=$(stat -c %Y "$ENRICHED_FILE" 2>/dev/null || stat -f %m "$ENRICHED_FILE")
-    DATA_MTIME=$(stat -c %Y "$LATEST_DATA" 2>/dev/null || stat -f %m "$LATEST_DATA")
-
-    if [ "$ENRICHED_MTIME" -gt "$DATA_MTIME" ]; then
-        warn "Enriched data is newer than raw data - no update needed"
-        info "To force update, run: rm $ENRICHED_FILE"
-
-        # Still update database from existing processed data
-        banner "STEP 5: UPDATE DATABASE (from existing data)"
-        cd "$PROJECT_ROOT"
-        npm run db:reset 2>&1 | tee -a "$LOG_FILE"
-        log "✅ Database updated"
-        exit 0
+    if [ ! -f "$CSV_FILE" ]; then
+        error "No CSV file found at $CSV_FILE. Run without --quick first."
+        exit 1
     fi
+    info "Using existing CSV: $CSV_FILE"
 fi
 
-# Step 3: Run full ML pipeline
-banner "STEP 3: RUN ML PIPELINE (2.4M permits)"
+# --------------------------------------------------------------------------
+# Step 2: Incremental insert — only new permits go into Supabase
+# --------------------------------------------------------------------------
+banner "STEP 2: INSERT NEW PERMITS INTO SUPABASE"
 
-info "Starting GPU-accelerated pipeline..."
-python3 run_pipeline.py 2>&1 | tee -a "$LOG_FILE"
-
-if [ $? -eq 0 ]; then
-    log "✅ Pipeline complete"
+info "Running incremental update..."
+if python3 "$SCRIPTS_DIR/incremental_update.py" 2>&1 | tee -a "$LOG_FILE"; then
+    log "Incremental insert complete"
 else
-    error "Pipeline failed!"
+    error "Incremental insert failed!"
     exit 1
 fi
 
-# Step 4: Generate cluster names (if needed)
-banner "STEP 4: GENERATE CLUSTER NAMES"
+# --------------------------------------------------------------------------
+# Step 3: Cluster unclustered permits via nearest centroid
+# --------------------------------------------------------------------------
+banner "STEP 3: CLUSTER NEW PERMITS"
 
-# Check if name_clusters.py exists and run it
-if [ -f "scripts/python/name_clusters.py" ]; then
-    info "Generating cluster names..."
-    # Note: We'll update this script to process full dataset
-    python3 scripts/python/name_clusters.py 2>&1 | tee -a "$LOG_FILE"
+info "Assigning clusters to unclustered permits..."
+if python3 "$SCRIPTS_DIR/cluster_new_permits.py" 2>&1 | tee -a "$LOG_FILE"; then
+    log "Clustering complete"
 else
-    warn "Cluster naming script not found, skipping..."
-fi
-
-# Step 5: Update database
-banner "STEP 5: UPDATE DATABASE"
-
-cd "$PROJECT_ROOT"
-info "Resetting and re-ingesting database..."
-npm run db:reset 2>&1 | tee -a "$LOG_FILE"
-
-if [ $? -eq 0 ]; then
-    log "✅ Database updated"
-else
-    error "Database update failed!"
+    error "Clustering failed!"
     exit 1
 fi
 
-# Step 6: Summary
+# --------------------------------------------------------------------------
+# Summary
+# --------------------------------------------------------------------------
 banner "UPDATE COMPLETE"
 
-# Get stats
-DB_COUNT=$(npx tsx -e "import Database from 'better-sqlite3'; const db = new Database('./data/undervolt.db', { readonly: true }); console.log(db.prepare('SELECT COUNT(*) as c FROM permits').get().c); db.close();")
-
-log "Pipeline Summary:"
-log "  - Raw permits: $(wc -l < $LATEST_DATA | awk '{print $1-1}' | numfmt --grouping 2>/dev/null || wc -l < $LATEST_DATA | awk '{print $1-1}')"
-log "  - Enriched permits: $(wc -l < $OUTPUT_DIR/permit_data_enriched.csv | awk '{print $1-1}' | numfmt --grouping 2>/dev/null || wc -l < $OUTPUT_DIR/permit_data_enriched.csv | awk '{print $1-1}')"
-log "  - Energy permits: $(wc -l < $OUTPUT_DIR/energy_permits.csv | awk '{print $1-1}' | numfmt --grouping 2>/dev/null || wc -l < $OUTPUT_DIR/energy_permits.csv | awk '{print $1-1}')"
-log "  - Database records: $DB_COUNT"
-log ""
+log "Pipeline finished at $(date)"
 log "Log saved to: $LOG_FILE"
-log ""
-log "Next steps:"
-log "  - Start frontend: cd frontend && bun run dev"
-log "  - View dashboard: http://localhost:3000/dashboard"
+
+# Clean up old logs (keep last 30 days)
+find "$LOG_DIR" -name "pipeline_*.log" -type f -mtime +30 -delete 2>/dev/null || true
 
 exit 0
