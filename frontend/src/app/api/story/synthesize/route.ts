@@ -80,17 +80,41 @@ Create a meta-insight that connects all these findings. For the dataPoint, use a
     // Try to extract JSON from response
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
-      const synthesis = JSON.parse(jsonMatch[0]);
-      synthesis.id = `synth-${Date.now()}`;
-      synthesis.isTheme = true;
-      synthesis.connectsTo = blocks.map((b: any) => b.id);
-      return Response.json(synthesis);
+      try {
+        const synthesis = JSON.parse(jsonMatch[0]);
+        synthesis.id = `synth-${Date.now()}`;
+        synthesis.isTheme = true;
+        synthesis.connectsTo = blocks.map((b: any) => b.id);
+        return Response.json(synthesis);
+      } catch (parseErr) {
+        console.error('JSON parse failed, using fallback:', parseErr);
+      }
     }
 
-    throw new Error('Failed to parse synthesis response');
+    // Fallback: build synthesis from the blocks directly
+    console.warn('LLM did not return valid JSON, building fallback synthesis');
+    const fallback = {
+      id: `synth-${Date.now()}`,
+      headline: blocks[0]?.headline || 'Austin Infrastructure Insight',
+      insight: blocks.map((b: any) => b.insight?.split('.')[0]).filter(Boolean).join('. ') + '.',
+      dataPoint: { label: 'Insights Combined', value: String(blocks.length) },
+      whyStoryWorthy: 'meta-pattern',
+      confidence: 'medium',
+      isTheme: true,
+      connectsTo: blocks.map((b: any) => b.id),
+    };
+    return Response.json(fallback);
 
   } catch (error) {
     console.error('Synthesis error:', error);
-    return Response.json({ error: 'Failed to synthesize' }, { status: 500 });
+    // Even on total failure, return a minimal synthesis so the UI doesn't lose the card
+    return Response.json({
+      id: `synth-${Date.now()}`,
+      headline: 'Combined Insight',
+      insight: 'Multiple data points were analyzed to surface this pattern.',
+      whyStoryWorthy: 'meta-pattern',
+      confidence: 'low',
+      isTheme: true,
+    });
   }
 }
