@@ -19,6 +19,16 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# Telegram notifications
+TG_BOT_TOKEN="${TG_BOT_TOKEN:-}"
+TG_CHAT_ID=${TG_CHAT_ID:-}
+
+tg_send() {
+    curl -s -X POST "https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage" \
+        -H "Content-Type: application/json" \
+        -d "{\"chat_id\": ${TG_CHAT_ID}, \"text\": \"$1\", \"parse_mode\": \"Markdown\"}" > /dev/null 2>&1 || true
+}
+
 # Directories
 PROJECT_ROOT="/home/red/Documents/github/undervolt"
 DATA_DIR="$PROJECT_ROOT/data"
@@ -53,6 +63,8 @@ cd "$PROJECT_ROOT"
 
 banner "UNDERVOLT DAILY INCREMENTAL UPDATE"
 log "Started at $(date)"
+tg_send "⚡ *Undervolt Pipeline Started*
+$(date '+%b %d, %I:%M %p')"
 
 # --------------------------------------------------------------------------
 # Step 1: Download latest CSV (unless --quick)
@@ -81,8 +93,11 @@ if [ "$SKIP_DOWNLOAD" = false ]; then
         mv "$TEMP_FILE" "$CSV_FILE"
         FILE_SIZE=$(du -h "$CSV_FILE" | cut -f1)
         log "Download complete: $FILE_SIZE, $((LINE_COUNT - 1)) records"
+        tg_send "📥 *Download complete*
+${FILE_SIZE}, $((LINE_COUNT - 1)) records"
     else
         error "Download failed!"
+        tg_send "❌ *Pipeline FAILED* — CSV download error"
         rm -f "$TEMP_FILE"
         exit 1
     fi
@@ -104,6 +119,7 @@ if python3 "$SCRIPTS_DIR/incremental_update.py" 2>&1 | tee -a "$LOG_FILE"; then
     log "Incremental insert complete"
 else
     error "Incremental insert failed!"
+    tg_send "❌ *Pipeline FAILED* — incremental insert error"
     exit 1
 fi
 
@@ -117,6 +133,7 @@ if python3 "$SCRIPTS_DIR/cluster_new_permits.py" 2>&1 | tee -a "$LOG_FILE"; then
     log "Clustering complete"
 else
     error "Clustering failed!"
+    tg_send "❌ *Pipeline FAILED* — clustering error"
     exit 1
 fi
 
@@ -127,6 +144,12 @@ banner "UPDATE COMPLETE"
 
 log "Pipeline finished at $(date)"
 log "Log saved to: $LOG_FILE"
+
+# Send completion summary via Telegram
+SUMMARY=$(grep -c "new permits" "$LOG_FILE" 2>/dev/null && grep "new permits\|Done in\|Total permits\|nothing to do\|No new permits" "$LOG_FILE" | tail -3 | tr '\n' ' ' || echo "completed")
+tg_send "✅ *Undervolt Pipeline Complete*
+$(date '+%b %d, %I:%M %p')
+${SUMMARY}"
 
 # Clean up old logs (keep last 30 days)
 find "$LOG_DIR" -name "pipeline_*.log" -type f -mtime +30 -delete 2>/dev/null || true
