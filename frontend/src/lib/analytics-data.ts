@@ -195,9 +195,9 @@ export async function getEnergyData(): Promise<EnergyStats> {
     total_energy_permits: Object.values(energyStats).reduce((sum: number, val: any) =>
       sum + (typeof val === 'number' ? val : 0), 0
     ),
-    energy_percentage: ((Object.values(energyStats).reduce((sum: number, val: any) =>
+    energy_percentage: parseFloat(((Object.values(energyStats).reduce((sum: number, val: any) =>
       sum + (typeof val === 'number' ? val : 0), 0) / (stats.totalPermits || 1)) * 100
-    ).toFixed(2),
+    ).toFixed(2)),
     solar_stats: energyStats.solarStats || {
       total_permits: energyStats.solar || 0,
       with_capacity_data: 0,

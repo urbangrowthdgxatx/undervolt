@@ -5,13 +5,13 @@ export const maxDuration = 60;
 // Cache analytics data in memory (recompute only on module reload)
 let analyticsCache: { clusters: any[], energy: any, growing: any[] } | null = null;
 
-function getAnalyticsData() {
+async function getAnalyticsData() {
   if (!analyticsCache) {
     console.log('[LLM] Loading analytics data into cache...');
     analyticsCache = {
-      clusters: getClusters(),
-      energy: getEnergyData(),
-      growing: getFastestGrowingClusters(5)
+      clusters: await getClusters(),
+      energy: await getEnergyData(),
+      growing: await getFastestGrowingClusters(5)
     };
   }
   return analyticsCache;
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
         // Load analytics context (cached after first call)
         sendEvent(controller, 'status', { step: 'loading-analytics', message: '🦙 Llama 3.2 3B (local)' });
 
-        const { clusters, energy, growing } = getAnalyticsData();
+        const { clusters, energy, growing } = await getAnalyticsData();
 
         // Minimal prompt for speed (no verbose context)
         const systemPrompt = `Austin permits analyst. 2 sentences max. Bold stats with **. Data: Demolition +547%, Batteries 10K, New Construction 41%, Solar 2.4K.`;
