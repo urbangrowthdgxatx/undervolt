@@ -68,7 +68,7 @@ export async function POST(req: Request) {
         let responseText = '';
 
         // Get analytics data
-        const analyticsData = searchAnalytics(message);
+        const analyticsData = await searchAnalytics(message);
 
         if (intent === 'energy') {
           // Energy queries: Fast fuzzy + LLM summary
@@ -110,7 +110,7 @@ export async function POST(req: Request) {
           // General questions: Full LLM chat with all context
           sendEvent(controller, 'status', { step: 'processing', message: 'Thinking...' });
           
-          const insights = getKeyInsights();
+          const insights = await getKeyInsights();
           const fullResponse = await callOllama(
             `You are an Austin construction expert. User asks: "${message}"\n\nContext:\n${insights}\n\nRespond naturally and helpfully.`
           );
@@ -120,12 +120,22 @@ export async function POST(req: Request) {
 
         sendEvent(controller, 'status', { step: 'complete', message: 'Done' });
 
-        // Build response object
+        // Build response object matching ChatResponse schema
+        // Extract first sentence for headline
+        const firstSentence = responseText.split(/[.!?]/)[0].trim();
+        const headline = firstSentence.length > 50
+          ? firstSentence.substring(0, 47) + '...'
+          : firstSentence || 'Austin Insight';
+
         const responseObject = {
-          text: responseText,
-          blocks: [{ type: 'text', content: responseText }],
-          insights: analyticsData,
-          intent: intent,
+          message: responseText,
+          storyBlock: {
+            id: `${intent}-${Date.now()}`,
+            headline,
+            insight: responseText,
+            whyStoryWorthy: 'turning-point',
+            confidence: 'medium',
+          },
         };
 
         // Send final response

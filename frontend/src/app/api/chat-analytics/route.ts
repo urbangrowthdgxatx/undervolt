@@ -26,13 +26,13 @@ export async function POST(req: Request) {
     async start(controller) {
       try {
         // Step 1: Load analytics
-        sendEvent(controller, 'status', { step: 'loading-analytics', message: '🤖 Analytics Engine (no LLM)' });
+        sendEvent(controller, 'status', { step: 'loading-analytics', message: '🤖 Analytics Engine (Supabase)' });
 
-        const analyticsContext = searchAnalytics(message);
+        const analyticsContext = await searchAnalytics(message);
         const lowerQuery = message.toLowerCase();
 
         // Step 2: Generate response based on query
-        sendEvent(controller, 'status', { step: 'analyzing', message: 'Processing pre-computed data...' });
+        sendEvent(controller, 'status', { step: 'analyzing', message: 'Processing Supabase data...' });
 
         let response: any;
 
@@ -42,35 +42,35 @@ export async function POST(req: Request) {
         if (/\b\d{5}\b/.test(lowerQuery)) {
           const zipMatch = lowerQuery.match(/\b(\d{5})\b/);
           const zip = zipMatch ? zipMatch[1] : null;
-          response = zip ? generateZipResponse(zip) : generateOverviewResponse(message);
+          response = zip ? await generateZipResponse(zip) : await generateOverviewResponse(message);
         }
         // Pools / luxury (check before neighborhoods to avoid false matches)
         else if (lowerQuery.includes('pool') || lowerQuery.includes('luxury') || lowerQuery.includes('wealthy') || lowerQuery.includes('rich')) {
-          response = generatePoolsResponse(message);
+          response = await generatePoolsResponse(message);
         }
         // Changes over time (2020, since, changed)
         else if (lowerQuery.includes('2020') || lowerQuery.includes('2021') || lowerQuery.includes('since') || lowerQuery.includes('changed') || lowerQuery.includes('covid') || lowerQuery.includes('pandemic')) {
-          response = generateChangeResponse(message);
+          response = await generateChangeResponse(message);
         }
         // Growth and trends
         else if (lowerQuery.includes('grow') || lowerQuery.includes('trend') || lowerQuery.includes('fastest') || lowerQuery.includes('boom') || lowerQuery.includes('increas') || lowerQuery.includes('explosion')) {
-          response = generateGrowthResponse(message);
+          response = await generateGrowthResponse(message);
         }
         // Energy-related queries
         else if (lowerQuery.includes('solar') || lowerQuery.includes('battery') || lowerQuery.includes('ev charger') || lowerQuery.includes('generator') || lowerQuery.includes('panel')) {
-          response = generateEnergyResponse(message);
+          response = await generateEnergyResponse(message);
         }
         // Clusters and types
         else if (lowerQuery.includes('cluster') || lowerQuery.includes('type') || lowerQuery.includes('category') || lowerQuery.includes('kind')) {
-          response = generateClusterResponse(message);
+          response = await generateClusterResponse(message);
         }
         // New construction / neighborhoods (more generic, check later)
         else if (lowerQuery.includes('new construction') || lowerQuery.includes('building') || lowerQuery.includes('neighborhood') || lowerQuery.includes('where') || lowerQuery.includes('area')) {
-          response = generateNewConstructionResponse(message);
+          response = await generateNewConstructionResponse(message);
         }
         // Default overview
         else {
-          response = generateOverviewResponse(message);
+          response = await generateOverviewResponse(message);
         }
 
         // Send final response
@@ -95,8 +95,8 @@ export async function POST(req: Request) {
   });
 }
 
-function generateGrowthResponse(query: string) {
-  const growing = getFastestGrowingClusters(5);
+async function generateGrowthResponse(query: string) {
+  const growing = await getFastestGrowingClusters(5);
 
   return {
     message: `**Top Growth Leaders (CAGR since 2020):**
@@ -125,8 +125,8 @@ Demolition leads at +547% - Austin is tearing down the old to build the new.`,
   };
 }
 
-function generateEnergyResponse(query: string) {
-  const energy = getEnergyData();
+async function generateEnergyResponse(query: string) {
+  const energy = await getEnergyData();
   const solarLeaders = energy.by_zip.slice(0, 3).sort((a, b) => b.solar - a.solar);
   const batteryLeaders = energy.by_zip.slice(0, 3).sort((a, b) => b.battery - a.battery);
 
@@ -159,8 +159,8 @@ function generateEnergyResponse(query: string) {
   };
 }
 
-function generateClusterResponse(query: string) {
-  const clusters = getClusters();
+async function generateClusterResponse(query: string) {
+  const clusters = await getClusters();
   const topCluster = clusters[0];
 
   return {
@@ -183,8 +183,8 @@ ${clusters.map(c => `**${c.name}**: ${c.size.toLocaleString()} (${c.percentage.t
   };
 }
 
-function generateZipResponse(zip: string) {
-  const energy = getEnergyData();
+async function generateZipResponse(zip: string) {
+  const energy = await getEnergyData();
   const zipData = energy.by_zip.find(z => z.zip_code === zip);
 
   if (!zipData) {
@@ -236,12 +236,12 @@ ${insights.join('\n')}
   };
 }
 
-function generateNewConstructionResponse(query: string) {
-  const clusters = getClusters();
+async function generateNewConstructionResponse(query: string) {
+  const clusters = await getClusters();
   const newConstruction = clusters.find(c => c.name.toLowerCase().includes('new residential'));
 
   if (!newConstruction) {
-    return generateOverviewResponse(query);
+    return await generateOverviewResponse(query);
   }
 
   return {
@@ -268,8 +268,8 @@ This cluster represents entirely new homes being built across Austin, with explo
   };
 }
 
-function generatePoolsResponse(query: string) {
-  const energy = getEnergyData();
+async function generatePoolsResponse(query: string) {
+  const energy = await getEnergyData();
   // Pools aren't tracked separately, but we can talk about luxury indicators
   const topZips = energy.by_zip.slice(0, 5).sort((a, b) => b.total_energy_permits - a.total_energy_permits);
 
@@ -301,8 +301,8 @@ These areas show higher investment in solar, batteries, and generators - indicat
   };
 }
 
-function generateChangeResponse(query: string) {
-  const growing = getFastestGrowingClusters(5);
+async function generateChangeResponse(query: string) {
+  const growing = await getFastestGrowingClusters(5);
 
   return {
     message: `**Changes Since 2020:**
@@ -332,10 +332,10 @@ Demolition exploded +547% - Austin is tearing down the old and upgrading the exi
   };
 }
 
-function generateOverviewResponse(query: string) {
-  const clusters = getClusters();
-  const energy = getEnergyData();
-  const growing = getFastestGrowingClusters(3);
+async function generateOverviewResponse(query: string) {
+  const clusters = await getClusters();
+  const energy = await getEnergyData();
+  const growing = await getFastestGrowingClusters(3);
 
   return {
     message: `**Austin: 2.3M Permits Analyzed**
