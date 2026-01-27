@@ -3,21 +3,21 @@
 import { Brain, Cpu, Database, GitBranch, Layers, Zap } from "lucide-react";
 
 const CLUSTERS = [
-  { id: 0, name: "New Residential Construction", pct: 21.7, count: 10867, color: "#10b981", keywords: ["new (94.9%)", "residential (20.9%)", "single-family (5.3%)"] },
-  { id: 1, name: "General Construction & Repairs", pct: 24.0, count: 11983, color: "#ec4899", keywords: ["new (24.0%)", "repair (5.9%)", "remodel (3.7%)"] },
-  { id: 2, name: "Electrical & Roofing Work", pct: 23.0, count: 11518, color: "#f59e0b", keywords: ["electrical (12.3%)", "roof (8.7%)", "new (7.1%)"] },
-  { id: 3, name: "Major Residential Remodels", pct: 10.7, count: 5351, color: "#6b7280", keywords: ["remodel (45.2%)", "residential (18.3%)", "new (9.4%)"] },
-  { id: 4, name: "HVAC Installations", pct: 12.2, count: 6115, color: "#3b82f6", keywords: ["hvac (42.1%)", "mechanical (8.3%)", "new (6.2%)"] },
-  { id: 5, name: "Demolition Projects", pct: 1.2, count: 606, color: "#ef4444", keywords: ["demolition (89.4%)", "new (4.1%)", "commercial (3.2%)"] },
-  { id: 6, name: "Window & Multi-Trade Remodels", pct: 5.1, count: 2547, color: "#a855f7", keywords: ["window (62.3%)", "remodel (11.2%)", "new (8.5%)"] },
-  { id: 7, name: "Foundation Repairs", pct: 2.0, count: 1013, color: "#6366f1", keywords: ["foundation (92.1%)", "repair (34.7%)", "residential (8.9%)"] },
+  { id: 0, name: "New Residential Construction", pct: 19.8, count: 462093, color: "#10b981", keywords: ["new (94.9%)", "residential (20.9%)", "single-family (5.3%)"] },
+  { id: 1, name: "General Construction & Repairs", pct: 30.7, count: 719030, color: "#ec4899", keywords: ["new (24.0%)", "repair (5.9%)", "remodel (3.7%)"] },
+  { id: 2, name: "Electrical & Roofing Work", pct: 15.3, count: 358189, color: "#f59e0b", keywords: ["new (25.6%)", "electrical (8.4%)", "roof (8.1%)"] },
+  { id: 3, name: "Major Residential Remodels", pct: 0.9, count: 20994, color: "#6b7280", keywords: ["remodel (47.9%)", "new (17.4%)", "commercial (8.7%)"] },
+  { id: 4, name: "HVAC Installations", pct: 4.1, count: 95631, color: "#3b82f6", keywords: ["new (8.4%)", "hvac (7.0%)", "remodel (5.0%)"] },
+  { id: 5, name: "Demolition Projects", pct: 18.4, count: 431462, color: "#ef4444", keywords: ["demolition (26.7%)", "new (1.8%)"] },
+  { id: 6, name: "Window & Multi-Trade Remodels", pct: 9.2, count: 214517, color: "#a855f7", keywords: ["window (54.7%)", "new (34.9%)", "plumbing (34.6%)"] },
+  { id: 7, name: "Foundation Repairs", pct: 1.6, count: 37085, color: "#6366f1", keywords: ["foundation (95.5%)", "repair (75.9%)", "new (7.1%)"] },
 ];
 
 const PIPELINE_STEPS = [
   {
     icon: Database,
     title: "1. Data Ingestion",
-    subtitle: "2.3M permits from Austin Open Data",
+    subtitle: "2.34M permits from Austin Open Data",
     details: [
       "Source: data.austintexas.gov (Issued Construction Permits)",
       "Coverage: 1980\u20132026, primarily 2015\u20132025",
@@ -77,7 +77,7 @@ const PIPELINE_STEPS = [
       "For each cluster: calculate keyword prevalence (% of permits containing keyword)",
       "Rank top 3 keywords by prevalence within each cluster",
       "Apply rule-based naming: e.g., demolition > 35% \u2192 \u201cDemolition Projects\u201d",
-      "Result: 8 human-readable categories covering all 2.3M permits",
+      "Result: 8 human-readable categories covering all 2.34M permits",
     ],
   },
 ];
@@ -91,7 +91,7 @@ export default function MethodologyPage() {
           <p className="text-purple-400 text-sm uppercase tracking-widest mb-2">Technical Methodology</p>
           <h1 className="text-4xl font-bold mb-4">ML Clustering Pipeline</h1>
           <p className="text-white/50 text-lg">
-            How 2.3M construction permits become 8 named categories using
+            How 2.34M construction permits become 8 named categories using
             GPU-accelerated NLP and unsupervised learning on NVIDIA Jetson AGX Orin.
           </p>
         </div>
@@ -100,7 +100,7 @@ export default function MethodologyPage() {
         <div className="mb-16 p-6 rounded-xl bg-white/5 border border-white/10">
           <h2 className="text-lg font-semibold mb-4 text-white/80">Pipeline Architecture</h2>
           <div className="flex flex-col gap-2">
-            {["Raw CSV (2.3M rows)", "Clean & Filter", "NLP Keywords (80 features)", "PCA (10 components)", "KMeans (k=8)", "Named Clusters"].map((step, i) => (
+            {["Raw CSV (2.34M rows)", "Clean & Filter", "NLP Keywords (80 features)", "PCA (10 components)", "KMeans (k=8)", "Named Clusters"].map((step, i) => (
               <div key={i} className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-xs text-purple-400 font-mono flex-shrink-0">
                   {i + 1}
@@ -170,7 +170,7 @@ export default function MethodologyPage() {
                 <div className="w-24 h-2 bg-white/5 rounded-full overflow-hidden flex-shrink-0">
                   <div
                     className="h-full rounded-full"
-                    style={{ width: `${c.pct * (100 / 24)}%`, backgroundColor: c.color }}
+                    style={{ width: `${c.pct * (100 / 31)}%`, backgroundColor: c.color }}
                   />
                 </div>
               </div>
@@ -222,7 +222,7 @@ for col in TEXT_COLUMNS:             # 5 text columns
         )
 
 # Clustering Pipeline
-X = df[feature_columns]              # 80 features x 2.3M rows
+X = df[feature_columns]              # 80 features x 2.34M rows
 X_scaled = StandardScaler().fit_transform(X)
 X_pca = PCA(n_components=10).fit_transform(X_scaled)
 labels = KMeans(n_clusters=8, max_iter=300).fit_predict(X_pca)
