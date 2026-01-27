@@ -50,3 +50,5 @@ data/*_progress.json
 
 # Temp notes
 2026-*.txt
+.claude/
+claude.md

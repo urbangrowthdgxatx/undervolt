@@ -2,7 +2,7 @@
 
 Welcome to **UnderVolt** -- Your Urban Growth Intelligence Partner
 
-## Problem Statemement
+## Problem Statement
 > **Urban growth is happening faster than cities can understand it.**
 
 Austin is changing. Solar panels, EV chargers, and new construction are spreading rapidly across the city. But inside **2.3 million construction permits**, a more fragile reality is hiding in plain sight.
@@ -86,7 +86,7 @@ Queries that once took minutes now run in **milliseconds**, **locally** and **pr
 +-----------------------------------------------------------------------+
 |                                                                       |
 |   +---------------------------------------------------------------+   |
-|   |                    DGX BOX (GPU EXTRACTION)                   |   |
+|   |                    JETSON AGX ORIN (GPU EXTRACTION)                   |   |
 |   |                                                               |   |
 |   |   +----------+    +----------+    +----------+    +---------+ |   |
 |   |   | Raw Data |--->|   NLP    |--->|   8B     |--->| Struct  | |   |
@@ -271,30 +271,9 @@ get_dashboard_stats() -> JSONB (single call for full dashboard)
 ```
 
 
-## Feature Extraction (YAML-Driven)
+## Feature Extraction
 
-Add new extraction features without code changes:
-
-```yaml
-# config/features/solar.yaml
-feature_group:
-  name: "solar"
-  enabled: true
-
-features:
-  - name: "is_solar"
-    type: "boolean"
-  - name: "solar_kw"
-    type: "number"
-    nullable: true
-
-extraction:
-  keywords: ["solar", "PV", "photovoltaic"]
-  prompt: |
-    Analyze for solar installation.
-    Return: {"is_solar": bool, "solar_kw": number|null}
-```
-
+Features are defined declaratively via YAML configuration files, making it easy to add new extraction targets without code changes. Each feature group specifies keywords for NLP filtering and structured prompts for LLM extraction, producing validated JSON signals that feed directly into the database.
 ## Project Structure
 
 ```
@@ -351,7 +330,7 @@ Open [http://localhost:3000/dashboard](http://localhost:3000/dashboard)
 
 The frontend requires these environment variables in `frontend/.env.local`:
 ```
-NEXT_PUBLIC_SUPABASE_URL=https://arpoymzcflsqcaqixhie.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=<your-supabase-url>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
 NEXT_PUBLIC_MAPBOX_TOKEN=<mapbox token>
 ```
