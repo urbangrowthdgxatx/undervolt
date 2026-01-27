@@ -1,5 +1,25 @@
 export const maxDuration = 60;
 
+async function getQuickStats(): Promise<string> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const res = await fetch(`${baseUrl}/api/stats`, { cache: 'no-store' });
+    if (!res.ok) return '';
+    const stats = await res.json();
+    const e = stats.energyStats || {};
+    return `
+REAL DATA (use these exact numbers):
+- Total permits: ${(stats.totalPermits || 0).toLocaleString()}
+- Solar installations: ${(e.solar || 0).toLocaleString()}
+- Battery systems: ${(e.battery || 0).toLocaleString()}
+- EV chargers: ${(e.evCharger || 0).toLocaleString()}
+- Generators: ${(e.generator || 0).toLocaleString()}
+- HVAC permits: ${(e.hvac || 0).toLocaleString()}`;
+  } catch {
+    return '';
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const { blocks } = await req.json();
@@ -11,6 +31,8 @@ export async function POST(req: Request) {
     const ollamaUrl = process.env.VLLM_BASE_URL?.replace('/v1', '') || 'http://localhost:11434';
     const modelName = process.env.VLLM_MODEL_NAME || 'llama3.2:3b';
 
+    const realStats = await getQuickStats();
+
     // Build summary of blocks
     const blockSummary = blocks.map((b: any, i: number) =>
       `${i+1}. ${b.headline}: ${b.insight}`
@@ -19,13 +41,14 @@ export async function POST(req: Request) {
     const prompt = `Synthesize these Austin permit insights into ONE overarching theme:
 
 ${blockSummary}
+${realStats}
 
-Create a meta-insight that connects all these findings. Respond with ONLY a JSON object with this structure:
+Create a meta-insight that connects all these findings. For the dataPoint, use a REAL number from the data above (not 0). Respond with ONLY a JSON object:
 {
   "id": "synth-<timestamp>",
   "headline": "The Theme Title",
   "insight": "2-3 sentences explaining the synthesis",
-  "dataPoint": {"label": "Key Stat", "value": "Most striking number"},
+  "dataPoint": {"label": "Key Stat", "value": "A real number from the data"},
   "whyStoryWorthy": "meta-pattern",
   "confidence": "high",
   "isTheme": true
