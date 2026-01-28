@@ -1,6 +1,6 @@
 "use client";
 
-import { Brain, Cpu, Database, GitBranch, Layers, Zap } from "lucide-react";
+import { Brain, Cpu, Database, GitBranch, Layers, Zap, Globe, MessageSquare, Map, ArrowDown } from "lucide-react";
 
 const CLUSTERS = [
   { id: 0, name: "New Residential Construction", pct: 19.8, count: 462093, color: "#10b981", keywords: ["new (94.9%)", "residential (20.9%)", "single-family (5.3%)"] },
@@ -22,7 +22,7 @@ const PIPELINE_STEPS = [
       "Source: data.austintexas.gov (Issued Construction Permits)",
       "Coverage: 1980\u20132026, primarily 2015\u20132025",
       "Fields: permit description, work class, type, address, coordinates, valuations",
-      "Backend: cuDF (GPU-accelerated DataFrame) on NVIDIA Jetson AGX Orin",
+      "Loaded via cuDF (GPU-accelerated DataFrame) on NVIDIA Jetson AGX Orin",
     ],
   },
   {
@@ -42,9 +42,9 @@ const PIPELINE_STEPS = [
     subtitle: "16 keywords \u00d7 5 text columns \u2192 80 binary features",
     details: [
       "Text columns: description, work_class, permit_class, permit_type_desc, permit_type",
-      "Keywords: residential, commercial, remodel, repair, new, demolition, foundation, roof, window, permit, hvac, electrical, plumbing, mechanical, multi-family, single-family",
-      "Method: case-insensitive substring match (GPU-accelerated via cuDF str.contains)",
-      "Output: 80 binary feature columns (f_{column}_kw_{keyword})",
+      "16 domain keywords: residential, commercial, remodel, repair, new, demolition, etc.",
+      "GPU-accelerated substring matching via cuDF str.contains",
+      "Output: 80 binary feature columns per permit",
     ],
   },
   {
@@ -55,7 +55,7 @@ const PIPELINE_STEPS = [
       "StandardScaler normalization (zero mean, unit variance)",
       "Principal Component Analysis retaining 10 components",
       "Captures dominant variance patterns in permit language",
-      "Backend: cuML PCA (GPU) or scikit-learn PCA (CPU fallback)",
+      "Backend: cuML PCA (GPU) with scikit-learn CPU fallback",
     ],
   },
   {
@@ -63,21 +63,82 @@ const PIPELINE_STEPS = [
     title: "5. KMeans Clustering",
     subtitle: "k=8 clusters, 300 max iterations",
     details: [
-      "Algorithm: Lloyd\u2019s KMeans (cuML GPU or scikit-learn CPU)",
+      "Lloyd\u2019s KMeans via cuML (GPU) or scikit-learn (CPU fallback)",
       "k=8 chosen to balance granularity vs interpretability",
-      "Random state: 42 (reproducible assignments)",
-      "Input: 10 PCA components per permit",
+      "Rule-based cluster naming from keyword prevalence",
+      "Result: 8 human-readable categories covering all 2.34M permits",
     ],
   },
   {
-    icon: Cpu,
-    title: "6. Cluster Naming",
-    subtitle: "Rule-based labeling from keyword prevalence",
+    icon: Globe,
+    title: "6. Supabase Upload",
+    subtitle: "Structured tables for real-time queries",
     details: [
-      "For each cluster: calculate keyword prevalence (% of permits containing keyword)",
-      "Rank top 3 keywords by prevalence within each cluster",
-      "Apply rule-based naming: e.g., demolition > 35% \u2192 \u201cDemolition Projects\u201d",
-      "Result: 8 human-readable categories covering all 2.34M permits",
+      "Aggregated stats uploaded to Supabase Postgres (cloud)",
+      "Tables: clusters, cluster_keywords, energy_stats_by_zip",
+      "Energy signal extraction: solar, battery, EV charger, generator permits",
+      "PostgREST API with RPC functions for sub-500ms queries",
+    ],
+  },
+  {
+    icon: MessageSquare,
+    title: "7. On-Device LLM",
+    subtitle: "Llama 3.2 3B via Ollama on Jetson",
+    details: [
+      "Intent detection routes questions to relevant data slices",
+      "Supabase query results passed as LLM context",
+      "GPU-accelerated inference (~1.3s response time)",
+      "No cloud API calls \u2014 fully on-device generation",
+    ],
+  },
+  {
+    icon: Map,
+    title: "8. Frontend & Visualization",
+    subtitle: "Next.js 16 + Mapbox GL + SSE streaming",
+    details: [
+      "Interactive map with 50K+ geocoded points, filterable by ZIP and energy type",
+      "Story Builder: choose storylines, explore floating questions, build data narratives",
+      "Server-Sent Events stream LLM responses with tool-call debug panel",
+      "Served directly from Jetson AGX Orin over local network",
+    ],
+  },
+];
+
+// Visual flow stages for the diagram
+const FLOW_STAGES = [
+  {
+    label: "DATA",
+    color: "from-blue-500 to-cyan-500",
+    borderColor: "border-blue-500/30",
+    bgColor: "bg-blue-500/10",
+    textColor: "text-blue-400",
+    items: [
+      { icon: Database, name: "Austin Open Data", detail: "2.34M permits" },
+      { icon: Zap, name: "GPU Cleaning", detail: "cuDF on Jetson" },
+    ],
+  },
+  {
+    label: "ML",
+    color: "from-purple-500 to-pink-500",
+    borderColor: "border-purple-500/30",
+    bgColor: "bg-purple-500/10",
+    textColor: "text-purple-400",
+    items: [
+      { icon: Brain, name: "NLP Features", detail: "80 binary cols" },
+      { icon: Layers, name: "PCA", detail: "80 \u2192 10 dims" },
+      { icon: GitBranch, name: "KMeans", detail: "k=8 clusters" },
+    ],
+  },
+  {
+    label: "SERVE",
+    color: "from-green-500 to-emerald-500",
+    borderColor: "border-green-500/30",
+    bgColor: "bg-green-500/10",
+    textColor: "text-green-400",
+    items: [
+      { icon: Globe, name: "Supabase", detail: "Postgres + API" },
+      { icon: MessageSquare, name: "Llama 3.2", detail: "On-device LLM" },
+      { icon: Map, name: "Next.js", detail: "Map + Stories" },
     ],
   },
 ];
@@ -88,32 +149,74 @@ export default function MethodologyPage() {
       <div className="max-w-4xl mx-auto px-6">
         {/* Header */}
         <div className="mb-12">
-          <p className="text-purple-400 text-sm uppercase tracking-widest mb-2">Technical Methodology</p>
-          <h1 className="text-4xl font-bold mb-4">ML Clustering Pipeline</h1>
+          <p className="text-purple-400 text-sm uppercase tracking-widest mb-2">End-to-End Pipeline</p>
+          <h1 className="text-4xl font-bold mb-4">From Raw Permits to Insights</h1>
           <p className="text-white/50 text-lg">
-            How 2.34M construction permits become 8 named categories using
-            GPU-accelerated NLP and unsupervised learning on NVIDIA Jetson AGX Orin.
+            2.34M construction permits flow through GPU-accelerated NLP, unsupervised clustering,
+            Supabase storage, and on-device LLM &mdash; all running on NVIDIA Jetson AGX Orin.
           </p>
         </div>
 
-        {/* Architecture diagram */}
-        <div className="mb-16 p-6 rounded-xl bg-white/5 border border-white/10">
-          <h2 className="text-lg font-semibold mb-4 text-white/80">Pipeline Architecture</h2>
-          <div className="flex flex-col gap-2">
-            {["Raw CSV (2.34M rows)", "Clean & Filter", "NLP Keywords (80 features)", "PCA (10 components)", "KMeans (k=8)", "Named Clusters"].map((step, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-xs text-purple-400 font-mono flex-shrink-0">
-                  {i + 1}
+        {/* Visual Pipeline Flow */}
+        <div className="mb-16">
+          <div className="space-y-4">
+            {FLOW_STAGES.map((stage, si) => (
+              <div key={si}>
+                {/* Stage */}
+                <div className={`rounded-2xl border ${stage.borderColor} ${stage.bgColor} p-6`}>
+                  {/* Stage label */}
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className={`h-px flex-1 bg-gradient-to-r ${stage.color} opacity-30`} />
+                    <span className={`text-xs font-bold tracking-[0.3em] ${stage.textColor} uppercase`}>{stage.label}</span>
+                    <div className={`h-px flex-1 bg-gradient-to-l ${stage.color} opacity-30`} />
+                  </div>
+
+                  {/* Stage items in a row */}
+                  <div className="grid grid-cols-3 gap-4">
+                    {stage.items.map((item, ii) => {
+                      const Icon = item.icon;
+                      return (
+                        <div
+                          key={ii}
+                          className="bg-black/40 rounded-xl p-4 border border-white/5 flex flex-col items-center text-center gap-2"
+                        >
+                          <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${stage.color} flex items-center justify-center`}>
+                            <Icon className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="text-white font-semibold text-sm">{item.name}</div>
+                          <div className="text-white/40 text-xs">{item.detail}</div>
+                        </div>
+                      );
+                    })}
+                    {/* Fill empty grid cells for 2-item rows */}
+                    {stage.items.length === 2 && (
+                      <div className="hidden md:block" />
+                    )}
+                  </div>
                 </div>
-                <div className="flex-1 h-px bg-gradient-to-r from-purple-500/40 to-transparent" />
-                <span className="text-sm text-white/70 font-mono">{step}</span>
+
+                {/* Arrow between stages */}
+                {si < FLOW_STAGES.length - 1 && (
+                  <div className="flex justify-center py-2">
+                    <ArrowDown className="w-5 h-5 text-white/20" />
+                  </div>
+                )}
               </div>
             ))}
           </div>
+
+          {/* Bottom badge */}
+          <div className="flex justify-center mt-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/40 text-xs">
+              <Cpu className="w-3.5 h-3.5" />
+              <span>All running on NVIDIA Jetson AGX Orin (64GB)</span>
+            </div>
+          </div>
         </div>
 
-        {/* Pipeline steps */}
-        <div className="space-y-8 mb-16">
+        {/* Detailed Pipeline steps */}
+        <h2 className="text-2xl font-bold mb-6">Pipeline Details</h2>
+        <div className="space-y-6 mb-16">
           {PIPELINE_STEPS.map((step, i) => {
             const Icon = step.icon;
             return (
@@ -166,7 +269,6 @@ export default function MethodologyPage() {
                     ))}
                   </div>
                 </div>
-                {/* Bar */}
                 <div className="w-24 h-2 bg-white/5 rounded-full overflow-hidden flex-shrink-0">
                   <div
                     className="h-full rounded-full"
@@ -179,7 +281,7 @@ export default function MethodologyPage() {
         </div>
 
         {/* Hardware */}
-        <div className="p-6 rounded-xl bg-white/5 border border-white/10 mb-16">
+        <div className="p-6 rounded-xl bg-white/5 border border-white/10">
           <h2 className="text-lg font-semibold mb-4">Hardware & Stack</h2>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
@@ -207,28 +309,6 @@ export default function MethodologyPage() {
               <p className="text-white/70">Next.js 16 + Mapbox GL</p>
             </div>
           </div>
-        </div>
-
-        {/* Code snippet */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-bold mb-4">Core Algorithm</h2>
-          <pre className="p-4 rounded-xl bg-[#111] border border-white/10 text-sm overflow-x-auto text-white/70">
-            <code>{`# NLP Feature Extraction (GPU-accelerated)
-for col in TEXT_COLUMNS:             # 5 text columns
-    for kw in NLP_KEYWORDS:          # 16 keywords
-        df[f"f_{col}_kw_{kw}"] = (
-            df[col].str.contains(kw, regex=False)
-            .astype(int)             # 80 binary features
-        )
-
-# Clustering Pipeline
-X = df[feature_columns]              # 80 features x 2.34M rows
-X_scaled = StandardScaler().fit_transform(X)
-X_pca = PCA(n_components=10).fit_transform(X_scaled)
-labels = KMeans(n_clusters=8, max_iter=300).fit_predict(X_pca)
-
-# Result: each permit assigned to cluster 0-7`}</code>
-          </pre>
         </div>
       </div>
     </div>

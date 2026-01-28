@@ -671,38 +671,24 @@ export default function ExplorationPage() {
         onClear={() => setToolCalls([])}
       />
 
-      {/* Floating header */}
-      <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
-        <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-4 pointer-events-auto">
-            {activeStoryline && (
-              <button
-                onClick={handleBackToStorylines}
-                className="flex items-center gap-2 text-white/40 hover:text-white transition-colors"
-              >
-                <ArrowLeft size={16} />
-                <span className="text-sm">Stories</span>
-              </button>
-            )}
-            <h1 className="text-lg font-light tracking-widest text-white/40 hover:text-white/70 transition-colors cursor-default">
-              UNDERVOLT
-            </h1>
-          </div>
-          {/* Replay intro button - only on storyline selection */}
-          {!activeStoryline && (
+      {/* Context bar below nav */}
+      {activeStoryline && (
+        <div className="fixed top-[57px] left-0 right-0 z-40 bg-black/60 backdrop-blur-sm border-b border-white/5">
+          <div className="max-w-6xl mx-auto px-6 py-2 flex items-center justify-between">
             <button
-              onClick={handleReplayIntro}
-              className="pointer-events-auto flex items-center gap-2 text-white/30 hover:text-white/60 text-sm transition-colors"
+              onClick={handleBackToStorylines}
+              className="flex items-center gap-2 text-white/40 hover:text-white transition-colors"
             >
-              <PlayCircle size={14} />
-              <span>Replay Intro</span>
+              <ArrowLeft size={14} />
+              <span className="text-sm">All Stories</span>
             </button>
-          )}
+            <span className="text-sm text-white/30">{activeStoryline.title}</span>
+          </div>
         </div>
-      </header>
+      )}
 
       {/* Main content */}
-      <main className="pt-24 pb-12">
+      <main className="pt-16 pb-12">
         {!activeStoryline ? (
           /* Homepage - storyline selection */
           <section className="max-w-5xl mx-auto px-6 py-16">
