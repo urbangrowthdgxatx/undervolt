@@ -48,6 +48,7 @@ interface LeafletMapProps {
   showLegend?: boolean;
   clusterMeta?: ClusterMeta[];  // Cluster metadata for legend
   onClusterClick?: (clusterId: number) => void;  // Callback when cluster is clicked
+  loading?: boolean;  // Show loading overlay
 }
 
 // Map recenter component - only centers once on mount
@@ -90,6 +91,7 @@ export function LeafletMap({
   showLegend = true,
   clusterMeta = [],
   onClusterClick,
+  loading = false,
 }: LeafletMapProps) {
   const [selectedPermit, setSelectedPermit] = useState<PermitLocation | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -356,6 +358,15 @@ export function LeafletMap({
 
   return (
     <div className={`relative rounded-xl overflow-hidden ${className}`}>
+      {/* Loading overlay */}
+      {loading && (
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-10 h-10 border-3 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-3" />
+            <p className="text-white/60 text-sm">Loading map data...</p>
+          </div>
+        </div>
+      )}
       <MapContainer
         center={center}
         zoom={10}
