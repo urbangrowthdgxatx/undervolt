@@ -169,7 +169,7 @@ function Overview() {
 
       <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
         <p className="text-white/40 text-sm">
-          Source: Austin Open Data Portal • Processed with NVIDIA RAPIDS
+          Source: Austin Open Data Portal • Processed with NVIDIA RAPIDS • Updated nightly at 2AM CT
         </p>
       </div>
     </div>
