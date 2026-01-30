@@ -167,7 +167,7 @@ function Overview() {
         <div className="h-[350px]">
           <LeafletMap
             filter="all"
-            showLegend={true}
+            showLegend={true} simpleMode
             individualPermits={SAMPLE_MAP_DATA}
           />
         </div>
@@ -292,7 +292,7 @@ function EnergyStorage() {
             <p className="text-sm text-amber-400 font-medium">Solar & Battery Locations</p>
           </div>
           <div className="h-[280px]">
-            <LeafletMap filter={["solar", "battery"]} showLegend={false} individualPermits={SOLAR_BATTERY_DATA} />
+            <LeafletMap filter={["solar", "battery"]} showLegend={false} simpleMode individualPermits={SOLAR_BATTERY_DATA} />
           </div>
         </div>
         <ZipHeatmap
@@ -408,7 +408,7 @@ function GeneratorSurge() {
             <p className="text-sm text-red-400 font-medium">Generator Locations</p>
           </div>
           <div className="h-[280px]">
-            <LeafletMap filter="generator" showLegend={false} individualPermits={GENERATOR_DATA} />
+            <LeafletMap filter="generator" showLegend={false} simpleMode individualPermits={GENERATOR_DATA} />
           </div>
         </div>
         <ZipHeatmap
@@ -535,7 +535,7 @@ function InfrastructureDivide() {
             <p className="text-sm text-blue-400 font-medium">The Divide Visualized</p>
           </div>
           <div className="h-[280px]">
-            <LeafletMap filter="generator" showLegend={false} individualPermits={GENERATOR_DATA} />
+            <LeafletMap filter="generator" showLegend={false} simpleMode individualPermits={GENERATOR_DATA} />
           </div>
         </div>
         <ZipHeatmap

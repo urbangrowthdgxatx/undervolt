@@ -49,6 +49,7 @@ interface LeafletMapProps {
   clusterMeta?: ClusterMeta[];  // Cluster metadata for legend
   onClusterClick?: (clusterId: number) => void;  // Callback when cluster is clicked
   loading?: boolean;  // Show loading overlay
+  simpleMode?: boolean;  // Show all markers regardless of zoom level
 }
 
 // Map recenter component - only centers once on mount
@@ -92,6 +93,7 @@ export function LeafletMap({
   clusterMeta = [],
   onClusterClick,
   loading = false,
+  simpleMode = false,
 }: LeafletMapProps) {
   const [selectedPermit, setSelectedPermit] = useState<PermitLocation | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -102,9 +104,10 @@ export function LeafletMap({
   const CLUSTER_ZOOM = 13;      // Zoom 10-13: Show ML cluster polygons
   const INDIVIDUAL_ZOOM = 16;   // 16+: Show individual permit markers
 
-  const showClusters = zoom <= CLUSTER_ZOOM;
-  const showGridGroups = zoom > CLUSTER_ZOOM && zoom < INDIVIDUAL_ZOOM;
-  const showIndividuals = zoom >= INDIVIDUAL_ZOOM;
+  // In simpleMode, always show individual markers
+  const showClusters = simpleMode ? false : zoom <= CLUSTER_ZOOM;
+  const showGridGroups = simpleMode ? false : (zoom > CLUSTER_ZOOM && zoom < INDIVIDUAL_ZOOM);
+  const showIndividuals = simpleMode ? true : zoom >= INDIVIDUAL_ZOOM;
 
   // Handle cluster click - call parent callback and show popup
   const handleClusterClick = (permit: PermitLocation) => {
