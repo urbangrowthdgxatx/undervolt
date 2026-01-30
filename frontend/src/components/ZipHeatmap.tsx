@@ -107,9 +107,9 @@ export function ZipHeatmap({ data, title, colorScale = "amber", maxValue }: ZipH
   const cols = 5;
 
   return (
-    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
+    <div>
       {title && (
-        <p className="text-sm text-white/60 mb-4 font-medium">{title}</p>
+        <p className="text-sm text-white/60 mb-3 font-medium">{title}</p>
       )}
 
       {/* Grid */}
