@@ -6,57 +6,86 @@
 
 **1st Place Urban Growth** | NVIDIA DGX Spark Hackathon 2026
 
-Welcome to **Undervolt** -- Your Urban Growth Intelligence Partner
+## What is Undervolt?
 
-## Problem Statement
-> **Urban growth is happening faster than cities can understand it.**
+A **GPU-accelerated pipeline** that extracts structured insights from millions of unstructured text records with location data.
 
-Austin is changing. Solar panels, EV chargers, and new construction are spreading rapidly across the city. But inside **2.3 million construction permits**, a more fragile reality is hiding in plain sight.
+**Input:** Any messy dataset — permits, 311 requests, inspections, code violations, incident reports
+**Output:** Categorized signals, interactive maps, natural-language queries
 
-**There are more generator permits than batteries.**
-**For every 7 solar installations, there is only 1 battery.**
+Train on DGX. Deploy on Jetson. Run anywhere.
 
-Cities are producing clean energy, but they can't store it. **Grid trust is uneven. Resilience is unequal.** And these signals don't show up in dashboards until it's too late.
+---
 
-**Undervolt** turns massive, messy permit data into **real-time Urban Growth Intelligence**, powered end-to-end on **NVIDIA DGX Spark**.
+## Example: Austin Urban Growth
 
-We extract hidden infrastructure signals from unstructured permit text using **GPU-accelerated analytics** and **on-device LLMs**, then transform them into **interactive maps, trends, and natural-language insights**.
+We built Undervolt at the NVIDIA DGX Spark Hackathon using **2.3 million Austin construction permits**.
 
-**This isn't about hindsight.**
-**It's about seeing urban stress and opportunity, as it forms.**
+**What we found:**
+- **26,050 solar** installations vs only **1,172 batteries** (22:1 ratio)
+- **7,293 generators** — grid trust is broken after the 2021 freeze
+- Wealthy neighborhoods have 12x more backup power than lower-income areas
 
-## Who Needs this?
+These signals were buried in unstructured permit text. The pipeline extracted them in seconds.
 
-| Audience | What they want |
-|----------|---------------|
-| **City planners** | Where to invest in grid infrastructure |
-| **Datacenter scouts** | Is this area grid-ready? |
-| **Solar/battery companies** | Where to sell (gaps in coverage) |
-| **Utilities** | Load forecasting by neighborhood |
-| **Developers** | Infrastructure-ready zones |
+---
 
+## The Problem (Any City, Any Dataset)
 
-## What Undervolt Does
+Organizations sit on **millions of records** with valuable signals locked inside:
 
-Cities usually learn where growth happened **after** it happens.
+| Dataset | Hidden Signals |
+|---------|----------------|
+| **Construction permits** | Energy adoption, growth corridors, infrastructure stress |
+| **311 requests** | Service gaps, neighborhood issues, resource allocation |
+| **Inspections** | Compliance patterns, risk areas, enforcement gaps |
+| **Code violations** | Blight patterns, landlord behavior, gentrification signals |
+| **Incident reports** | Safety trends, response patterns, resource needs |
 
-**Undervolt finds the signals before that**: grid stress, solar adoption, battery gaps, redevelopment pressure--already buried inside permit text.
+**The challenge:**
+- Millions of records
+- Unstructured text descriptions
+- Inconsistent formats
+- Impossible to explore on CPU systems
 
-**The challenge is scale:**
-- **Millions of records**
-- **Unstructured descriptions**
-- **Inconsistent formats**
-- **Impossible to explore interactively on CPU systems**
+**Undervolt solves this** with GPU-accelerated NLP, LLM categorization, and on-device inference.
 
-So we built a **DGX-native pipeline** that:
-- **Cleans and structures 2.2M permits in seconds**
-- **Enriches them with GPU-accelerated NLP and clustering**
-- **Uses an on-device LLM to make the data conversational**
+---
 
-**The result:**
-- **Instant insights from millions of records**
-- **Interactive geographic and trend maps**
-- **A natural-language assistant that understands urban growth**
+## Who Needs This?
+
+| Audience | Use Case |
+|----------|----------|
+| **City governments** | Turn open data into actionable intelligence |
+| **Utilities** | Forecast load and infrastructure needs by neighborhood |
+| **Real estate / developers** | Identify growth corridors and infrastructure-ready zones |
+| **Researchers** | Analyze urban patterns at scale |
+| **Any org with location + text data** | Extract structure from chaos |
+
+---
+
+## Why Not Build Your Own?
+
+You could. But here's what you'd need to figure out:
+
+| Challenge | DIY | Undervolt |
+|-----------|-----|-----------|
+| **GPU data processing** | Learn RAPIDS/cuDF, handle memory | Already optimized for millions of rows |
+| **LLM integration** | Prompt engineering, batching, error handling | Config-driven, works out of the box |
+| **Schema design** | Decide what to extract, iterate | YAML config — swap categories in minutes |
+| **Edge deployment** | CUDA compatibility, memory constraints | Tested on Jetson AGX Orin |
+| **Cross-platform** | Different builds for each target | Same codebase: DGX → Jetson → Mac → Linux |
+| **Visualization** | Build maps, charts, dashboards | Interactive frontend included |
+| **Natural language queries** | RAG setup, context injection | Ollama + grounded responses ready |
+
+**What took us 48 hours at a hackathon + weeks of iteration:**
+- 2.3M records processed and validated
+- 8 ML clusters with keyword extraction
+- LLM categorization with 86% coverage
+- Edge deployment with zero cloud dependency
+- Interactive maps and chat interface
+
+**You get all of it. Point at your data and run.**
 
 Queries that once took minutes now run in **milliseconds**, **locally** and **privately**.
 
@@ -394,6 +423,43 @@ Open [http://localhost:3000](http://localhost:3000)
 | Backend | Next.js 16 with Turbopack |
 | Frontend | React 19, Leaflet, Recharts |
 | Services | systemd (auto-restart on boot) |
+
+### Portable & Adaptable
+
+This pipeline isn't locked to one city or one machine. The same codebase runs across:
+
+| Platform | Architecture | Use Case |
+|----------|--------------|----------|
+| **NVIDIA DGX Spark** | Grace Blackwell | Train on millions of records |
+| **NVIDIA Jetson AGX Orin** | ARM64 / 275 TOPS | Deploy at the edge, zero cloud |
+| **Mac** | Apple Silicon / Intel | Develop locally |
+| **Linux laptops** | x86_64 | Develop locally |
+
+**Why this matters:**
+- **Train big, deploy small** — Process millions of records on DGX, serve insights on a $2K edge device
+- **Ollama as abstraction** — Same LLM interface across all platforms
+- **Swap the data, keep the pipeline** — Point at any city's open data and rerun
+
+**Schema-agnostic extraction:**
+
+The pipeline doesn't assume permits. Define your extraction targets in config:
+
+```yaml
+# config/extraction.yaml
+dataset: "311_requests"
+text_field: "description"
+location_fields: ["latitude", "longitude"]
+
+categories:
+  - name: "pothole"
+    keywords: ["pothole", "road damage", "street repair"]
+  - name: "graffiti"
+    keywords: ["graffiti", "vandalism", "tagging"]
+  - name: "noise"
+    keywords: ["noise", "loud music", "barking"]
+```
+
+The same pipeline handles permits, 311 requests, inspections, code violations—any unstructured text with location data.
 
 ### What Changed Since DGX Hackathon
 
