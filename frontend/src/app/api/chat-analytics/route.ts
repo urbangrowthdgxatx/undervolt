@@ -99,9 +99,9 @@ async function generateGrowthResponse(query: string) {
   const growing = await getFastestGrowingClusters(5);
 
   return {
-    message: `**Top Growth Leaders (CAGR since 2020):**
+    message: `**Top Growth Leaders (CAGR = Compound Annual Growth Rate):**
 
-${growing.map((g, i) => `${i + 1}. ${g.name}: **+${g.cagr.toFixed(1)}%**`).join('\n')}
+${growing.map((g, i) => `${i + 1}. ${g.name}: **+${g.cagr.toFixed(1)}% CAGR**`).join('\n')}
 
 Demolition leads at +547% - Austin is tearing down the old to build the new.`,
 
@@ -109,7 +109,7 @@ Demolition leads at +547% - Austin is tearing down the old to build the new.`,
       id: `growth-${Date.now()}`,
       headline: '🔥 The Demolition Boom',
       insight: `Demolition permits exploded **+547% CAGR** since 2020. Austin is tearing down the old to make way for the new.`,
-      dataPoint: { label: 'CAGR growth', value: '+547%' },
+      dataPoint: { label: 'CAGR', value: '+547%' },
       whyStoryWorthy: 'turning-point',
       evidence: [
         { stat: 'Demolition: +547% CAGR since 2020', source: '2020-2025 permit trends' },

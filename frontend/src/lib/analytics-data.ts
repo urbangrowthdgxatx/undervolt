@@ -288,7 +288,7 @@ export async function getKeyInsights(): Promise<string> {
 ## Cluster Analysis (8 Named Clusters)
 ${clusters.map(c => `- ${c.name}: ${c.size.toLocaleString()} permits (${c.percentage.toFixed(1)}%)`).join('\n')}
 
-## Explosive Growth (CAGR)
+## Explosive Growth (CAGR = Compound Annual Growth Rate)
 ${fastestGrowing.map((g, i) => `${i + 1}. ${g.name}: +${g.cagr.toFixed(1)}% CAGR`).join('\n')}
 
 ## Energy Infrastructure
@@ -354,7 +354,7 @@ export async function searchAnalytics(query: string): Promise<string> {
   // Check for growth-related queries
   if (lowerQuery.includes('grow') || lowerQuery.includes('trend') || lowerQuery.includes('increase')) {
     const growing = await getFastestGrowingClusters(5);
-    results.push('## Fastest Growing (CAGR)');
+    results.push('## Fastest Growing (CAGR = Compound Annual Growth Rate)');
     results.push(growing.map((g, i) =>
       `${i + 1}. ${g.name}: +${g.cagr.toFixed(1)}% CAGR`
     ).join('\n'));

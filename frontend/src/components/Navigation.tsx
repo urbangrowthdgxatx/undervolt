@@ -2,16 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Brain, Map, Sparkles } from "lucide-react";
+import { Sparkles, Map, MessageCircle, Info } from "lucide-react";
 
 export function Navigation() {
   const pathname = usePathname();
 
   const links = [
-    { href: "/", label: "Intro", icon: Sparkles },
-    { href: "/story", label: "Story Builder", icon: BookOpen },
-    { href: "/dashboard", label: "Map & Chat", icon: Map },
-    { href: "/methodology", label: "ML Pipeline", icon: Brain },
+    { href: "/", label: "Home", icon: Sparkles },
+    { href: "/dashboard", label: "Map", icon: Map },
+    { href: "/story", label: "Ask", icon: MessageCircle },
+    { href: "/about", label: "About", icon: Info },
   ];
 
   return (

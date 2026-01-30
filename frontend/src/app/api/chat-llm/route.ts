@@ -26,7 +26,7 @@ function sendEvent(controller: ReadableStreamDefaultController, event: string, d
 /**
  * LLM-powered chat endpoint using local Ollama
  *
- * MODEL: Llama 3.2 3B (local, via Ollama HTTP API)
+ * MODEL: NVIDIA Nemotron Mini 4B (local, via Ollama HTTP API)
  */
 export async function POST(req: Request) {
   const { message } = await req.json();
@@ -39,18 +39,30 @@ export async function POST(req: Request) {
     async start(controller) {
       try {
         // Load analytics context (cached after first call)
-        sendEvent(controller, 'status', { step: 'loading-analytics', message: '🦙 Llama 3.2 3B (local)' });
+        sendEvent(controller, 'status', { step: 'loading-analytics', message: '🤖 Nemotron Mini 4B (local)' });
 
         const { clusters, energy, growing } = await getAnalyticsData();
 
-        // Minimal prompt for speed (no verbose context)
-        const systemPrompt = `Austin permits analyst. 2 sentences max. Bold stats with **. Data: Demolition +547%, Batteries 10K, New Construction 41%, Solar 2.4K.`;
+        // Build real data context from actual database stats
+        const realStats = `
+VERIFIED DATA (use ONLY these numbers):
+- Total permits: 2.3M
+- Solar: ${energy.solar_stats?.total_permits?.toLocaleString() || energy.by_type?.solar?.toLocaleString() || '26,050'}
+- Battery: ${energy.by_type?.battery?.toLocaleString() || '1,172'}
+- EV Chargers: ${energy.by_type?.ev_charger?.toLocaleString() || '1,490'}
+- Generators: ${energy.by_type?.generator?.toLocaleString() || '7,293'}
+- Fastest growing: ${growing[0]?.name || 'Demolition'} at +${growing[0]?.cagr || 547}% CAGR (Compound Annual Growth Rate)
+`;
+
+        // Minimal prompt for speed - with REAL data
+        const systemPrompt = `Austin permits analyst. Use ONLY the verified data below. 2 sentences max. Bold key stats with **.
+${realStats}`;
 
         // Generate LLM response using Ollama HTTP API
         sendEvent(controller, 'status', { step: 'generating', message: 'Thinking...' });
 
         const ollamaUrl = process.env.VLLM_BASE_URL?.replace('/v1', '') || 'http://localhost:11434';
-        const modelName = process.env.VLLM_MODEL_NAME || 'llama3.2:3b';
+        const modelName = process.env.VLLM_MODEL_NAME || 'nemotron-mini';
 
         const response = await fetch(`${ollamaUrl}/api/generate`, {
           method: 'POST',
@@ -140,7 +152,7 @@ function createStoryBlockFromResponse(
     dataPoint: { label: 'insight', value: keyStat.slice(0, 20) },
     whyStoryWorthy,
     evidence: [
-      { stat: 'Generated from 2.3M permits', source: 'Llama 3.2 3B analysis' }
+      { stat: 'Generated from 2.3M permits', source: 'NVIDIA Nemotron Mini analysis' }
     ],
     confidence: 'high' as const,
   };

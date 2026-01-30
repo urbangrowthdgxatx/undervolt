@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const storyContext = blocks.map((b: any) => b.headline).join(', ');
 
     const ollamaUrl = process.env.VLLM_BASE_URL?.replace('/v1', '') || 'http://localhost:11434';
-    const modelName = process.env.VLLM_MODEL_NAME || 'llama3.2:3b';
+    const modelName = process.env.VLLM_MODEL_NAME || 'nemotron-mini';
 
     const response = await fetch(`${ollamaUrl}/api/generate`, {
       method: 'POST',

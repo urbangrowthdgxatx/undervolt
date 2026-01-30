@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     }
 
     const ollamaUrl = process.env.VLLM_BASE_URL?.replace('/v1', '') || 'http://localhost:11434';
-    const modelName = process.env.VLLM_MODEL_NAME || 'llama3.2:3b';
+    const modelName = process.env.VLLM_MODEL_NAME || 'nemotron-mini';
 
     const realStats = await getQuickStats();
 
@@ -38,17 +38,23 @@ export async function POST(req: Request) {
       `${i+1}. ${b.headline}: ${b.insight}`
     ).join('\n');
 
-    const prompt = `Synthesize these Austin permit insights into ONE overarching theme:
+    const prompt = `Synthesize these Austin permit insights into ONE overarching theme.
 
+CRITICAL: Use ONLY the exact numbers from the VERIFIED DATA below. Do NOT invent or estimate any statistics.
+
+Insights to synthesize:
 ${blockSummary}
+
+VERIFIED DATA:
 ${realStats}
 
-Create a meta-insight that connects all these findings. For the dataPoint, use a REAL number from the data above (not 0). Respond with ONLY a JSON object:
+Create a meta-insight connecting these findings. For dataPoint, use a REAL number from the verified data above.
+Respond with ONLY a JSON object:
 {
   "id": "synth-<timestamp>",
-  "headline": "The Theme Title",
-  "insight": "2-3 sentences explaining the synthesis",
-  "dataPoint": {"label": "Key Stat", "value": "A real number from the data"},
+  "headline": "Short Theme Title",
+  "insight": "2-3 sentences using ONLY numbers from the verified data",
+  "dataPoint": {"label": "Key Stat", "value": "Exact number from verified data"},
   "whyStoryWorthy": "meta-pattern",
   "confidence": "high",
   "isTheme": true

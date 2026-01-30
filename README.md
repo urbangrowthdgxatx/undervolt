@@ -1,6 +1,12 @@
 # Undervolt
 
-Welcome to **UnderVolt** -- Your Urban Growth Intelligence Partner
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![NVIDIA](https://img.shields.io/badge/NVIDIA-DGX%20Spark-76B900?logo=nvidia)](https://nvidia.com)
+[![Jetson](https://img.shields.io/badge/NVIDIA-Jetson%20AGX%20Orin-76B900?logo=nvidia)](https://developer.nvidia.com/embedded/jetson-agx-orin)
+
+**1st Place Urban Growth** | NVIDIA DGX Spark Hackathon 2026
+
+Welcome to **Undervolt** -- Your Urban Growth Intelligence Partner
 
 ## Problem Statement
 > **Urban growth is happening faster than cities can understand it.**
@@ -193,7 +199,7 @@ The Next.js frontend connects to Supabase Postgres via PostgREST:
 |          v                                                             |
 |   +-------------+                                                      |
 |   |  Ollama     |  Local LLM for narrative generation                  |
-|   |  + Context  |  - Llama 3.2:3b on Jetson GPU                       |
+|   |  + Context  |  - Nemotron Mini 4B on Jetson GPU                   |
 |   |             |  - Formats insight as StoryBlock                     |
 |   +------+------+                                                      |
 |          |                                                             |
@@ -219,11 +225,11 @@ The Next.js frontend connects to Supabase Postgres via PostgREST:
 
 | Signal | Count | Insight |
 |--------|-------|---------|
-| Solar | 25,982 | Grid-tied, saves money but useless when grid fails |
-| EV Chargers | 3,642 | Electrification accelerating |
-| Generators | 7,248 | +246% after 2021 freeze -- trust is broken |
-| Batteries | 1,161 | Only 1 for every 22 solar -- storage is the bottleneck |
-| HVAC | 71,331 | Climate adaptation in progress |
+| Solar | 26,050 | Grid-tied, saves money but useless when grid fails |
+| EV Chargers | 3,681 | Electrification accelerating |
+| Generators | 7,293 | +246% after 2021 freeze -- grid trust is broken |
+| Batteries | 1,172 | Only 1 for every 22 solar -- storage is the bottleneck |
+| HVAC | 71,506 | Climate adaptation in progress |
 
 **LLM Categorization (86% coverage):**
 | Category | Top Values |
@@ -379,27 +385,28 @@ Open [http://localhost:3000](http://localhost:3000)
 
 | Layer | Technology |
 |-------|------------|
-| Hardware | NVIDIA Jetson AGX Orin (64GB) |
+| Hardware | NVIDIA Jetson AGX Orin 64GB (275 TOPS) |
+| Training Hardware | NVIDIA DGX Spark (Grace Blackwell) |
 | GPU Processing | CUDA 11.4, RAPIDS cuDF/cuML |
-| LLM | Ollama + Llama 3.2:3b (local) |
+| LLM | NVIDIA Nemotron Mini 4B via Ollama |
 | Database | Supabase Postgres (cloud, 2.3M rows) |
 | API Layer | Supabase PostgREST + RPC functions |
-| Backend | Next.js 16 |
+| Backend | Next.js 16 with Turbopack |
 | Frontend | React 19, Leaflet, Recharts |
 | Services | systemd (auto-restart on boot) |
 
 ### What Changed Since DGX Hackathon
 
-| Component | Hackathon (DGX) | Current (Jetson) |
-|-----------|-----------------|------------------|
-| Hardware | DGX Spark | Jetson AGX Orin 64GB |
+| Component | Hackathon (DGX Spark) | Production (Jetson) |
+|-----------|----------------------|---------------------|
+| Hardware | DGX Spark (Grace Blackwell) | Jetson AGX Orin 64GB |
 | Database | Neon Postgres (cloud) | Supabase Postgres (cloud) |
-| LLM | vLLM + 8B model | Ollama + Llama 3.2:3b |
+| LLM | vLLM + 8B model | Ollama + Nemotron Mini 4B |
 | Clustering | cuML k-means | cuML k-means (same) |
 | Categorization | LLM-only | Rule-based + LLM hybrid |
 | Deployment | Manual | systemd services |
 | API Routes | Drizzle ORM + SQLite | Supabase PostgREST |
-| Cost | Cloud DB fees | Supabase free tier |
+| Cloud Dependency | Required | Zero (edge-native) |
 
 
 ## Roadmap

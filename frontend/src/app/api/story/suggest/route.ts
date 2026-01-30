@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       : blocks.map((b: { headline: string; insight: string }) => `${b.headline}`).join(', ');
 
     const ollamaUrl = process.env.VLLM_BASE_URL?.replace('/v1', '') || 'http://localhost:11434';
-    const modelName = process.env.VLLM_MODEL_NAME || 'llama3.2:3b';
+    const modelName = process.env.VLLM_MODEL_NAME || 'nemotron-mini';
 
     const prompt = `You are exploring Austin construction permits (2015-2025).
 Mode: ${modeConfig.label}

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Layers, Search, MessageCircle, X, Send, Loader2 } from "lucide-react";
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 import { clusterMapping } from '@/config/dashboard';
 
 // Dynamically import Leaflet map (better performance on Jetson - no WebGL required)
-const LeafletMap = dynamic(() => import('@/components/LeafletMap').then(mod => ({ default: mod.LeafletMap })), {
+const LeafletMap = dynamicImport(() => import('@/components/LeafletMap').then(mod => ({ default: mod.LeafletMap })), {
   ssr: false,
   loading: () => <div className="w-full h-full flex items-center justify-center"><div className="text-white/40">Loading map...</div></div>
 });
@@ -74,7 +75,8 @@ interface GeoJSONFeature {
   };
 }
 
-export default function Dashboard() {
+function DashboardContent() {
+  const searchParams = useSearchParams();
   const [stats, setStats] = useState<Stats | null>(null);
   const [clusterData, setClusterData] = useState<any[]>([]);  // Cluster polygons
   const [individualPermits, setIndividualPermits] = useState<any[]>([]);  // Individual permits
@@ -83,6 +85,18 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showEnergyOnly, setShowEnergyOnly] = useState(false);
   const [selectedEnergyType, setSelectedEnergyType] = useState<string | null>(null);
+
+  // Read filter from URL on mount
+  useEffect(() => {
+    const filter = searchParams.get("filter");
+    if (filter) {
+      const validFilters = ["solar", "battery", "ev_charger", "generator", "panel_upgrade", "hvac"];
+      if (validFilters.includes(filter)) {
+        setSelectedEnergyType(filter);
+        setShowEnergyOnly(true);
+      }
+    }
+  }, [searchParams]);
   const [selectedProjectType, setSelectedProjectType] = useState<string | null>(null);
   const [selectedBuildingType, setSelectedBuildingType] = useState<string | null>(null);
   const [selectedTrade, setSelectedTrade] = useState<string | null>(null);
@@ -1116,6 +1130,21 @@ export default function Dashboard() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen flex items-center justify-center bg-black pt-16">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-white/40">Loading...</p>
+        </div>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 }
 

@@ -52,7 +52,7 @@ async function callOllama(prompt: string): Promise<string> {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'llama3.2:3b',  // Faster model (50% faster than neural-chat)
+        model: 'nemotron-mini',  // NVIDIA Nemotron Mini 4B
         prompt: prompt,
         stream: false,
         temperature: 0.7,
@@ -68,6 +68,48 @@ async function callOllama(prompt: string): Promise<string> {
   }
 }
 
+// Guardrails: sanitize and validate user input
+function sanitizeInput(input: string): { safe: boolean; cleaned: string; reason?: string } {
+  // Max length
+  if (input.length > 500) {
+    return { safe: false, cleaned: '', reason: 'Message too long. Please keep questions under 500 characters.' };
+  }
+
+  // Block obvious prompt injection patterns
+  const injectionPatterns = [
+    /ignore (all |previous |above )?instructions/i,
+    /forget (everything|all|your)/i,
+    /you are now/i,
+    /act as/i,
+    /pretend (to be|you're)/i,
+    /new (instructions|prompt|rules)/i,
+    /system prompt/i,
+    /\[INST\]/i,
+    /<\|.*\|>/,
+    /```.*system/i,
+  ];
+
+  for (const pattern of injectionPatterns) {
+    if (pattern.test(input)) {
+      return { safe: false, cleaned: '', reason: 'I can only answer questions about Austin construction permits and infrastructure.' };
+    }
+  }
+
+  // Check if question is remotely on-topic (Austin, permits, construction, energy)
+  const onTopicKeywords = /austin|permit|solar|battery|generator|ev|charger|construction|building|energy|zip|neighborhood|trend|cluster|growth|demolition|remodel|hvac|pool|infrastructure/i;
+  if (!onTopicKeywords.test(input) && input.length > 20) {
+    return { safe: false, cleaned: '', reason: 'I specialize in Austin construction permits. Try asking about solar installations, generators, construction trends, or neighborhood data.' };
+  }
+
+  // Clean the input - remove potential control characters
+  const cleaned = input
+    .replace(/[\x00-\x1F\x7F]/g, '') // Remove control chars
+    .replace(/[<>]/g, '') // Remove angle brackets
+    .trim();
+
+  return { safe: true, cleaned };
+}
+
 export async function POST(req: Request) {
   const { message } = await req.json();
 
@@ -75,74 +117,104 @@ export async function POST(req: Request) {
     return Response.json({ error: 'Message is required' }, { status: 400 });
   }
 
+  // Apply guardrails
+  const { safe, cleaned, reason } = sanitizeInput(message);
+  if (!safe) {
+    return Response.json({
+      message: reason,
+      storyBlock: {
+        id: `guard-${Date.now()}`,
+        headline: 'Off Topic',
+        insight: reason,
+        whyStoryWorthy: 'guardrail',
+        confidence: 'high'
+      }
+    });
+  }
+
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        const intent = detectIntent(message);
-        sendEvent(controller, 'status', { step: 'analyzing', message: `Analyzing (intent: ${intent})...` });
+        const intent = detectIntent(cleaned);
+
+        // Engaging status messages
+        const engagingMessages: Record<string, { searching: string; thinking: string }> = {
+          energy: {
+            searching: 'Scanning 26,000+ energy permits across Austin...',
+            thinking: 'Finding patterns in solar, battery & generator data...'
+          },
+          trends: {
+            searching: 'Analyzing decade of construction activity...',
+            thinking: 'Spotting growth patterns and emerging trends...'
+          },
+          clusters: {
+            searching: 'Mapping permit clusters across the city...',
+            thinking: 'Identifying neighborhood patterns...'
+          },
+          luxury: {
+            searching: 'Exploring high-value permit data...',
+            thinking: 'Analyzing premium construction trends...'
+          },
+          general: {
+            searching: 'Searching 2.3 million permits...',
+            thinking: 'Connecting the dots...'
+          },
+        };
+
+        const msgs = engagingMessages[intent] || engagingMessages.general;
+        sendEvent(controller, 'status', { step: 'analyzing', message: msgs.searching });
 
         let responseText = '';
 
-        // Emit tool-call for Supabase query
-        const sql = getQuerySQL(intent);
-        sendEvent(controller, 'tool-call', { name: 'supabase.query', input: { sql } });
-
-        // Get analytics data
+        // Get analytics data (no SQL shown to user)
         const analyticsData = await searchAnalytics(message);
-
-        // Emit tool-result for Supabase query
-        sendEvent(controller, 'tool-result', { name: 'supabase.query', result: analyticsData.substring(0, 500) });
 
         // Build LLM prompt based on intent
         let prompt = '';
-        let statusMsg = '';
         let fallbackText = '';
 
-        const promptSuffix = `\n\nIMPORTANT: Start your response directly with the insight. Do NOT start with "Here is a summary" or similar preamble. Answer the specific question: "${message}"`;
+        // CRITICAL: Strongly constrain LLM to ONLY use provided data - no hallucinations
+        const groundingInstruction = `
+INSTRUCTIONS:
+1. The answer IS in the data above - find the relevant numbers and report them.
+2. Use the EXACT numbers from the data. Example: "- Generators: 7,293" means there are 7,293 generators.
+3. Start your response directly with the insight - no preamble like "Based on the data" or "Here is a summary".
+4. Keep response to 2-3 sentences, cite the actual numbers.
+5. Answer this question: "${message}"
+`;
 
         if (intent === 'energy') {
-          statusMsg = 'Summarizing energy data...';
-          prompt = `Answer this question about Austin energy infrastructure in 2-3 sentences: "${message}"\n\nData:\n${analyticsData}${promptSuffix}`;
+          prompt = `You are a data analyst. Answer this question about Austin energy infrastructure using ONLY the data provided below. Do NOT make up any numbers.\n\nQuestion: "${message}"\n\nVERIFIED DATA:\n${analyticsData}${groundingInstruction}`;
           fallbackText = `Austin's energy infrastructure:\n\n${analyticsData}`;
         } else if (intent === 'trends') {
-          statusMsg = 'Analyzing trends...';
-          prompt = `Answer this question about Austin construction trends: "${message}"\n\nData:\n${analyticsData}${promptSuffix}`;
+          prompt = `You are a data analyst. Answer this question about Austin construction trends using ONLY the data provided below. Do NOT make up any numbers.\n\nQuestion: "${message}"\n\nVERIFIED DATA:\n${analyticsData}${groundingInstruction}`;
           fallbackText = `Construction trends in Austin:\n\n${analyticsData}`;
         } else if (intent === 'clusters') {
-          statusMsg = 'Analyzing clusters...';
-          prompt = `Answer this question about Austin construction clusters: "${message}"\n\nData:\n${analyticsData}${promptSuffix}`;
+          prompt = `You are a data analyst. Answer this question about Austin construction clusters using ONLY the data provided below. Do NOT make up any numbers.\n\nQuestion: "${message}"\n\nVERIFIED DATA:\n${analyticsData}${groundingInstruction}`;
           fallbackText = `Austin permit clusters:\n\n${analyticsData}`;
         } else if (intent === 'luxury') {
-          statusMsg = 'Analyzing luxury trends...';
-          prompt = `Answer this question about Austin luxury construction: "${message}"\n\nData:\n${analyticsData}${promptSuffix}`;
+          prompt = `You are a data analyst. Answer this question about Austin luxury construction using ONLY the data provided below. Do NOT make up any numbers.\n\nQuestion: "${message}"\n\nVERIFIED DATA:\n${analyticsData}${groundingInstruction}`;
           fallbackText = `Austin luxury construction trends:\n\n${analyticsData}`;
         } else {
-          statusMsg = 'Thinking...';
           const insights = await getKeyInsights();
-          prompt = `You are an Austin construction expert. User asks: "${message}"\n\nContext:\n${insights}${promptSuffix}`;
+          prompt = `You are an Austin construction data analyst. Answer the user's question using ONLY the verified data below. Do NOT make up any numbers.\n\nQuestion: "${message}"\n\nVERIFIED DATA:\n${insights}${groundingInstruction}`;
           fallbackText = `I can help with Austin construction insights. Try asking about solar, generators, trends, or clusters.`;
         }
 
-        sendEvent(controller, 'status', { step: 'processing', message: statusMsg });
-
-        // Emit tool-call for Ollama LLM
-        sendEvent(controller, 'tool-call', { name: 'ollama.generate', input: { sql: `llama3.2:3b -- ${statusMsg}` } });
+        sendEvent(controller, 'status', { step: 'processing', message: msgs.thinking });
 
         const llmResponse = await callOllama(prompt);
         responseText = llmResponse || fallbackText;
-
-        // Emit tool-result for Ollama
-        sendEvent(controller, 'tool-result', { name: 'ollama.generate', result: responseText.substring(0, 300) });
 
         sendEvent(controller, 'status', { step: 'complete', message: 'Done' });
 
         // Build response object matching ChatResponse schema
         // Strip preamble for headline
-        const cleaned = responseText
+        const cleanedResponse = responseText
           .replace(/^(here is |here are |here's |this is |the following |based on |according to )/i, '')
           .replace(/^\*\*/g, '')
           .trim();
-        const firstSentence = cleaned.split(/[.!?\n]/)[0].replace(/\*\*/g, '').trim();
+        const firstSentence = cleanedResponse.split(/[.!?\n]/)[0].replace(/\*\*/g, '').trim();
         const headline = firstSentence.length > 50
           ? firstSentence.substring(0, 47) + '...'
           : firstSentence || 'Austin Insight';
