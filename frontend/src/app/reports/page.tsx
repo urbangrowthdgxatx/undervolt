@@ -16,7 +16,7 @@ const TABS: { id: Tab; label: string; icon: typeof Battery }[] = [
   { id: "overview", label: "Key Findings", icon: BarChart3 },
   { id: "storage", label: "Energy Gap", icon: Battery },
   { id: "surge", label: "Generator Surge", icon: AlertTriangle },
-  { id: "divide", label: "The Divide", icon: Users },
+  { id: "divide", label: "Who Can Afford Backup Power?", icon: Users },
 ];
 
 export default function ReportsPage() {
@@ -461,12 +461,11 @@ function InfrastructureDivide() {
     <div className="space-y-8">
       {/* Context intro */}
       <div className="p-6 rounded-xl bg-blue-500/5 border border-blue-500/20">
-        <h3 className="text-lg font-semibold text-blue-400 mb-3">The Resilience Gap</h3>
+        <h3 className="text-lg font-semibold text-blue-400 mb-3">Backup Power = Wealth</h3>
         <p className="text-white/70 leading-relaxed">
           After Winter Storm Uri left millions without power, Austinites rushed to install backup generators.
-          But not everyone could afford the <span className="text-white font-medium">$5,000–$15,000 investment</span>.
-          The permit data reveals a stark divide: wealthy neighborhoods rapidly fortified their homes,
-          while lower-income areas—often the same communities hit hardest by outages—were left vulnerable.
+          But generators cost <span className="text-white font-medium">$5,000–$15,000</span> — affordable for some, impossible for others.
+          The permit data shows exactly who could protect their families and who was left exposed to the next outage.
         </p>
       </div>
 
