@@ -14,9 +14,9 @@ type Tab = "storage" | "surge" | "divide" | "overview";
 
 const TABS: { id: Tab; label: string; icon: typeof Battery }[] = [
   { id: "overview", label: "Key Findings", icon: BarChart3 },
-  { id: "storage", label: "Energy Gap", icon: Battery },
-  { id: "surge", label: "Generator Surge", icon: AlertTriangle },
-  { id: "divide", label: "Who Can Afford Backup Power?", icon: Users },
+  { id: "storage", label: "Solar vs Storage", icon: Battery },
+  { id: "surge", label: "Post-2021 Generators", icon: AlertTriangle },
+  { id: "divide", label: "Generators by Neighborhood", icon: Users },
 ];
 
 export default function ReportsPage() {
@@ -461,11 +461,11 @@ function InfrastructureDivide() {
     <div className="space-y-8">
       {/* Context intro */}
       <div className="p-6 rounded-xl bg-blue-500/5 border border-blue-500/20">
-        <h3 className="text-lg font-semibold text-blue-400 mb-3">Backup Power = Wealth</h3>
+        <h3 className="text-lg font-semibold text-blue-400 mb-3">Generator Distribution by Area</h3>
         <p className="text-white/70 leading-relaxed">
-          After Winter Storm Uri left millions without power, Austinites rushed to install backup generators.
-          But generators cost <span className="text-white font-medium">$5,000–$15,000</span> — affordable for some, impossible for others.
-          The permit data shows exactly who could protect their families and who was left exposed to the next outage.
+          Following Winter Storm Uri in 2021, generator permit applications increased across Austin.
+          The data shows significant variation by neighborhood, with installation rates correlating
+          with median household income. Typical generator installations cost <span className="text-white font-medium">$5,000–$15,000</span>.
         </p>
       </div>
 
@@ -502,10 +502,10 @@ function InfrastructureDivide() {
         </div>
       </div>
 
-      {/* Quote */}
-      <div className="py-6 text-center">
-        <p className="text-xl text-white/70 italic">
-          "The same data that shows Austin's growth also reveals who gets left behind."
+      {/* Summary */}
+      <div className="py-4 text-center">
+        <p className="text-lg text-white/50">
+          Permit data shows clear geographic patterns in backup power adoption.
         </p>
       </div>
 
@@ -562,25 +562,25 @@ function InfrastructureDivide() {
         </div>
       </div>
 
-      {/* Why it matters */}
+      {/* Data insights */}
       <div className="p-6 rounded-xl bg-white/[0.02] border border-white/5 space-y-4">
-        <h3 className="font-semibold">Why This Matters</h3>
+        <h3 className="font-semibold">Data Insights</h3>
         <div className="grid md:grid-cols-2 gap-4 text-sm">
           <div className="p-4 rounded-lg bg-white/[0.02]">
-            <div className="text-blue-400 font-medium mb-2">Grid Vulnerability</div>
-            <p className="text-white/60">When the next storm hits, the same communities will face the longest outages with the least protection.</p>
+            <div className="text-blue-400 font-medium mb-2">12× Range</div>
+            <p className="text-white/60">Generator installations vary 12× between highest and lowest districts.</p>
           </div>
           <div className="p-4 rounded-lg bg-white/[0.02]">
-            <div className="text-blue-400 font-medium mb-2">Health Risks</div>
-            <p className="text-white/60">Elderly, disabled, and medically dependent residents in under-resourced areas face life-threatening risks during extended outages.</p>
+            <div className="text-blue-400 font-medium mb-2">Income Correlation</div>
+            <p className="text-white/60">Districts with higher median incomes show proportionally higher generator permits.</p>
           </div>
           <div className="p-4 rounded-lg bg-white/[0.02]">
-            <div className="text-blue-400 font-medium mb-2">Economic Impact</div>
-            <p className="text-white/60">Lost wages, spoiled food, and property damage compound existing financial hardships in lower-income neighborhoods.</p>
+            <div className="text-blue-400 font-medium mb-2">Geographic Pattern</div>
+            <p className="text-white/60">West Austin districts (D10, D8) lead in installations; East Austin (D1, D4) has fewer.</p>
           </div>
           <div className="p-4 rounded-lg bg-white/[0.02]">
-            <div className="text-blue-400 font-medium mb-2">Policy Opportunity</div>
-            <p className="text-white/60">This data can inform targeted resilience programs, subsidies, and community solar+storage initiatives.</p>
+            <div className="text-blue-400 font-medium mb-2">Trend Continuing</div>
+            <p className="text-white/60">The gap between high and low-installation areas has widened each year since 2021.</p>
           </div>
         </div>
       </div>
