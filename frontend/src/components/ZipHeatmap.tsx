@@ -133,16 +133,16 @@ export function ZipHeatmap({ data, title, colorScale = "amber", maxValue }: ZipH
           return (
             <div
               key={idx}
-              className="aspect-square rounded-md flex flex-col items-center justify-center text-center p-1 transition-all hover:scale-105 cursor-default"
+              className="aspect-square rounded-lg flex flex-col items-center justify-center text-center p-2 transition-all hover:scale-105 cursor-default min-w-[50px]"
               style={{
                 backgroundColor: hasData ? getColor(zipData.value) : "rgba(255,255,255,0.04)",
                 border: hasData ? `1px solid ${colors.border}` : "1px solid rgba(255,255,255,0.08)",
               }}
               title={hasData ? `${zip}: ${zipData.value.toLocaleString()} ${zipData.label || ""}` : zip}
             >
-              <span className="text-[10px] text-white/50 font-mono leading-none">{zip.slice(-3)}</span>
+              <span className="text-xs text-white/70 font-mono font-medium">{zip.slice(-3)}</span>
               {hasData && (
-                <span className="text-[11px] font-bold leading-none mt-0.5" style={{ color: colors.text }}>
+                <span className="text-sm font-bold" style={{ color: colors.text }}>
                   {zipData.value > 999 ? `${(zipData.value / 1000).toFixed(1)}k` : zipData.value}
                 </span>
               )}

@@ -280,36 +280,30 @@ function EnergyStorage() {
       </div>
 
       {/* Map and Heatmap side by side */}
-      <div className="grid md:grid-cols-2 gap-6 items-stretch">
-        <div className="rounded-xl overflow-hidden border border-amber-500/20 flex flex-col">
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="rounded-xl overflow-hidden border border-amber-500/20 h-[320px]">
           <div className="p-3 bg-amber-500/10 border-b border-amber-500/20">
             <p className="text-sm text-amber-400 font-medium">Solar & Battery Locations</p>
           </div>
-          <div className="flex-1 min-h-[250px]">
-            <SimpleMap markers={SOLAR_BATTERY_DATA} height={250} filter={["solar", "battery"]} />
-          </div>
+          <SimpleMap markers={SOLAR_BATTERY_DATA} height={270} filter={["solar", "battery"]} />
         </div>
-        <div className="rounded-xl overflow-hidden border border-amber-500/20 flex flex-col">
-          <div className="p-3 bg-amber-500/10 border-b border-amber-500/20">
-            <p className="text-sm text-amber-400 font-medium">Permits by ZIP Code</p>
-          </div>
-          <div className="flex-1 p-4">
-            <ZipHeatmap
-              colorScale="amber"
-              data={[
-                { zip: "78660", value: 2834 },
-                { zip: "78745", value: 2156 },
-                { zip: "78748", value: 1987 },
-                { zip: "78704", value: 1823 },
-                { zip: "78753", value: 1654 },
-                { zip: "78749", value: 1432 },
-                { zip: "78758", value: 1289 },
-                { zip: "78759", value: 1198 },
-                { zip: "78746", value: 1087 },
-                { zip: "78731", value: 976 },
-              ]}
-            />
-          </div>
+        <div className="rounded-xl overflow-hidden border border-amber-500/20 h-[320px] p-4">
+          <p className="text-sm text-amber-400 font-medium mb-3">Permits by ZIP Code</p>
+          <ZipHeatmap
+            colorScale="amber"
+            data={[
+              { zip: "78660", value: 2834 },
+              { zip: "78745", value: 2156 },
+              { zip: "78748", value: 1987 },
+              { zip: "78704", value: 1823 },
+              { zip: "78753", value: 1654 },
+              { zip: "78749", value: 1432 },
+              { zip: "78758", value: 1289 },
+              { zip: "78759", value: 1198 },
+              { zip: "78746", value: 1087 },
+              { zip: "78731", value: 976 },
+            ]}
+          />
         </div>
       </div>
 
@@ -402,36 +396,30 @@ function GeneratorSurge() {
       </div>
 
       {/* Map and Heatmap side by side */}
-      <div className="grid md:grid-cols-2 gap-6 items-stretch">
-        <div className="rounded-xl overflow-hidden border border-red-500/20 flex flex-col">
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="rounded-xl overflow-hidden border border-red-500/20 h-[320px]">
           <div className="p-3 bg-red-500/10 border-b border-red-500/20">
             <p className="text-sm text-red-400 font-medium">Generator Locations</p>
           </div>
-          <div className="flex-1 min-h-[250px]">
-            <SimpleMap markers={GENERATOR_DATA} height={250} filter="generator" />
-          </div>
+          <SimpleMap markers={GENERATOR_DATA} height={270} filter="generator" />
         </div>
-        <div className="rounded-xl overflow-hidden border border-red-500/20 flex flex-col">
-          <div className="p-3 bg-red-500/10 border-b border-red-500/20">
-            <p className="text-sm text-red-400 font-medium">Permits by ZIP Code</p>
-          </div>
-          <div className="flex-1 p-4">
-            <ZipHeatmap
-              colorScale="red"
-              data={[
-                { zip: "78746", value: 892 },
-                { zip: "78731", value: 654 },
-                { zip: "78735", value: 543 },
-                { zip: "78703", value: 487 },
-                { zip: "78749", value: 398 },
-                { zip: "78759", value: 312 },
-                { zip: "78748", value: 287 },
-                { zip: "78745", value: 234 },
-                { zip: "78758", value: 198 },
-                { zip: "78757", value: 156 },
-              ]}
-            />
-          </div>
+        <div className="rounded-xl overflow-hidden border border-red-500/20 h-[320px] p-4">
+          <p className="text-sm text-red-400 font-medium mb-3">Permits by ZIP Code</p>
+          <ZipHeatmap
+            colorScale="red"
+            data={[
+              { zip: "78746", value: 892 },
+              { zip: "78731", value: 654 },
+              { zip: "78735", value: 543 },
+              { zip: "78703", value: 487 },
+              { zip: "78749", value: 398 },
+              { zip: "78759", value: 312 },
+              { zip: "78748", value: 287 },
+              { zip: "78745", value: 234 },
+              { zip: "78758", value: 198 },
+              { zip: "78757", value: 156 },
+            ]}
+          />
         </div>
       </div>
 
@@ -535,36 +523,30 @@ function InfrastructureDivide() {
       </div>
 
       {/* Map and Heatmap side by side */}
-      <div className="grid md:grid-cols-2 gap-6 items-stretch">
-        <div className="rounded-xl overflow-hidden border border-blue-500/20 flex flex-col">
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="rounded-xl overflow-hidden border border-blue-500/20 h-[320px]">
           <div className="p-3 bg-blue-500/10 border-b border-blue-500/20">
             <p className="text-sm text-blue-400 font-medium">The Divide Visualized</p>
           </div>
-          <div className="flex-1 min-h-[250px]">
-            <SimpleMap markers={GENERATOR_DATA} height={250} filter="generator" />
-          </div>
+          <SimpleMap markers={GENERATOR_DATA} height={270} filter="generator" />
         </div>
-        <div className="rounded-xl overflow-hidden border border-blue-500/20 flex flex-col">
-          <div className="p-3 bg-blue-500/10 border-b border-blue-500/20">
-            <p className="text-sm text-blue-400 font-medium">Investment by ZIP Code</p>
-          </div>
-          <div className="flex-1 p-4">
-            <ZipHeatmap
-              colorScale="blue"
-              data={[
-                { zip: "78746", value: 1243 },
-                { zip: "78731", value: 987 },
-                { zip: "78735", value: 876 },
-                { zip: "78703", value: 743 },
-                { zip: "78749", value: 654 },
-                { zip: "78759", value: 598 },
-                { zip: "78748", value: 487 },
-                { zip: "78745", value: 398 },
-                { zip: "78702", value: 76 },
-                { zip: "78701", value: 45 },
-              ]}
-            />
-          </div>
+        <div className="rounded-xl overflow-hidden border border-blue-500/20 h-[320px] p-4">
+          <p className="text-sm text-blue-400 font-medium mb-3">Investment by ZIP Code</p>
+          <ZipHeatmap
+            colorScale="blue"
+            data={[
+              { zip: "78746", value: 1243 },
+              { zip: "78731", value: 987 },
+              { zip: "78735", value: 876 },
+              { zip: "78703", value: 743 },
+              { zip: "78749", value: 654 },
+              { zip: "78759", value: 598 },
+              { zip: "78748", value: 487 },
+              { zip: "78745", value: 398 },
+              { zip: "78702", value: 76 },
+              { zip: "78701", value: 45 },
+            ]}
+          />
         </div>
       </div>
 
