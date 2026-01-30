@@ -140,7 +140,7 @@ export function ZipHeatmap({ data, title, colorScale = "amber", maxValue }: ZipH
               }}
               title={hasData ? `${zip}: ${zipData.value.toLocaleString()} ${zipData.label || ""}` : zip}
             >
-              <span className="text-xs text-white/70 font-mono font-medium">{zip.slice(-3)}</span>
+              <span className="text-[11px] text-white/80 font-mono font-semibold">{zip}</span>
               {hasData && (
                 <span className="text-sm font-bold" style={{ color: colors.text }}>
                   {zipData.value > 999 ? `${(zipData.value / 1000).toFixed(1)}k` : zipData.value}
