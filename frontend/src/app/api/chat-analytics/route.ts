@@ -130,30 +130,36 @@ async function generateEnergyResponse(query: string) {
   const solarLeaders = energy.by_zip.slice(0, 3).sort((a, b) => b.solar - a.solar);
   const batteryLeaders = energy.by_zip.slice(0, 3).sort((a, b) => b.battery - a.battery);
 
+  // Calculate actual ratio: solar / battery
+  const solarCount = energy.solar_stats.total_permits || 0;
+  const batteryCount = energy.by_type.battery || 0;
+  const ratio = batteryCount > 0 ? Math.round(solarCount / batteryCount) : 0;
+
   return {
     message: `**Energy Infrastructure:**
-- **${(energy.by_type.battery || 0).toLocaleString()} batteries** vs ${energy.solar_stats.total_permits.toLocaleString()} solar (4:1 ratio!)
+- **${solarCount.toLocaleString()} solar** vs only ${batteryCount.toLocaleString()} batteries (${ratio}:1 gap!)
 - **${(energy.by_type.ev_charger || 0).toLocaleString()} EV chargers**
+- **${(energy.by_type.generator || 0).toLocaleString()} generators** (grid backup)
 - Total: **${energy.total_energy_permits.toLocaleString()} permits** (${energy.energy_percentage}%)
 
-**Top Battery ZIP:** ${batteryLeaders[0].zip_code} (${batteryLeaders[0].battery} systems)
-**Top Solar ZIP:** ${solarLeaders[0].zip_code} (${solarLeaders[0].solar} installations)`,
+**Top Solar ZIP:** ${solarLeaders[0].zip_code} (${solarLeaders[0].solar} installations)
+**Top Battery ZIP:** ${batteryLeaders[0].zip_code} (${batteryLeaders[0].battery} systems)`,
 
     storyBlock: {
       id: `energy-${Date.now()}`,
-      headline: '⚡ The Battery Surprise',
-      insight: `**${(energy.by_type.battery || 0).toLocaleString()} battery systems** installed - 4x more than solar! ZIP ${batteryLeaders[0].zip_code} leads with **${batteryLeaders[0].battery} systems**.`,
-      dataPoint: { label: 'battery systems', value: (energy.by_type.battery || 0).toLocaleString() },
+      headline: '⚡ The Storage Gap',
+      insight: `**${solarCount.toLocaleString()} solar installations** but only **${batteryCount.toLocaleString()} battery systems** - a ${ratio}:1 ratio. Austin generates clean energy but can't store it.`,
+      dataPoint: { label: 'solar:battery ratio', value: `${ratio}:1` },
       whyStoryWorthy: 'paradox',
       evidence: [
-        { stat: `${(energy.by_type.battery || 0).toLocaleString()} batteries vs ${energy.solar_stats.total_permits.toLocaleString()} solar (4:1 ratio)`, source: 'Energy infrastructure tracker' },
-        { stat: `ZIP ${batteryLeaders[0].zip_code}: ${batteryLeaders[0].battery} battery systems`, source: 'ZIP-level aggregation' }
+        { stat: `${solarCount.toLocaleString()} solar vs ${batteryCount.toLocaleString()} batteries (${ratio}:1 storage gap)`, source: 'Energy infrastructure tracker' },
+        { stat: `${(energy.by_type.generator || 0).toLocaleString()} generators installed (grid trust broken)`, source: 'Permit analysis' }
       ],
       confidence: 'high',
       geoData: {
         type: 'zip',
-        zips: batteryLeaders.map(z => z.zip_code),
-        signal: 'battery'
+        zips: solarLeaders.map(z => z.zip_code),
+        signal: 'solar'
       }
     }
   };
@@ -337,26 +343,30 @@ async function generateOverviewResponse(query: string) {
   const energy = await getEnergyData();
   const growing = await getFastestGrowingClusters(3);
 
+  const solarCount = energy.solar_stats.total_permits || 0;
+  const batteryCount = energy.by_type.battery || 0;
+  const generatorCount = energy.by_type.generator || 0;
+  const ratio = batteryCount > 0 ? Math.round(solarCount / batteryCount) : 0;
+
   return {
     message: `**Austin: 2.3M Permits Analyzed**
 
-- **8 clusters** (ML)
-- **${energy.total_energy_permits.toLocaleString()} energy permits** (${energy.energy_percentage}%)
-- **Demolition: +547% CAGR**
-- **Batteries: ${(energy.by_type.battery || 0).toLocaleString()}** (4x solar)
+- **8 clusters** (ML-classified)
+- **${solarCount.toLocaleString()} solar** vs only **${batteryCount.toLocaleString()} batteries** (${ratio}:1 gap)
+- **${generatorCount.toLocaleString()} generators** (grid backup)
 
-Top 3 Growth: ${growing.map(g => g.name.split(' ')[0]).join(', ')}`,
+Top Growth: ${growing.map(g => g.name.split(' ')[0]).join(', ')}`,
 
     storyBlock: {
       id: `overview-${Date.now()}`,
-      headline: '🚀 Austin is Exploding',
-      insight: `Demolition permits up **+547% CAGR**. Urban redevelopment boom is transforming the city. Meanwhile, **${(energy.by_type.battery || 0).toLocaleString()} battery systems** installed (4x more than solar).`,
-      dataPoint: { label: 'total permits analyzed', value: '2.3M' },
+      headline: '🚀 The Grid Trust Gap',
+      insight: `**${solarCount.toLocaleString()} solar installations** but only **${batteryCount.toLocaleString()} batteries** and **${generatorCount.toLocaleString()} generators**. Austin generates clean energy but trusts gas backup over storage.`,
+      dataPoint: { label: 'solar:battery ratio', value: `${ratio}:1` },
       whyStoryWorthy: 'turning-point',
       evidence: [
         { stat: '8 clusters identified via K-Means clustering', source: 'ML pipeline' },
-        { stat: `${energy.total_energy_permits.toLocaleString()} energy permits (${energy.energy_percentage}%)`, source: 'Energy infrastructure tracker' },
-        { stat: 'Demolition: +547% CAGR since 2020', source: 'Time series analysis' }
+        { stat: `${solarCount.toLocaleString()} solar vs ${batteryCount.toLocaleString()} batteries (${ratio}:1 storage gap)`, source: 'Energy infrastructure tracker' },
+        { stat: `${generatorCount.toLocaleString()} generators (grid trust broken after Winter Storm Uri)`, source: 'Permit analysis' }
       ],
       confidence: 'high',
       chartData: {

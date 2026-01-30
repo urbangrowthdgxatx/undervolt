@@ -81,6 +81,7 @@ function DashboardContent() {
   const [clusterData, setClusterData] = useState<any[]>([]);  // Cluster polygons
   const [individualPermits, setIndividualPermits] = useState<any[]>([]);  // Individual permits
   const [loading, setLoading] = useState(true);
+  const [mapLoading, setMapLoading] = useState(false);
   const [selectedCluster, setSelectedCluster] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showEnergyOnly, setShowEnergyOnly] = useState(false);
@@ -819,10 +820,17 @@ function DashboardContent() {
           )}
 
           {/* Total Permits Badge - adjusted for mobile */}
-          <div className="absolute bottom-20 md:bottom-4 right-4 bg-black/70 backdrop-blur-md border border-white/20 rounded-full px-3 md:px-4 py-1.5 md:py-2 shadow-xl">
-            <p className="text-xs md:text-sm text-white/70">
-              <span className="font-semibold text-white">{stats.totalPermits.toLocaleString()}</span> permits
-            </p>
+          <div className="absolute bottom-20 md:bottom-4 right-4 flex flex-col items-end gap-2">
+            <div className="bg-black/70 backdrop-blur-md border border-white/20 rounded-full px-3 md:px-4 py-1.5 md:py-2 shadow-xl">
+              <p className="text-xs md:text-sm text-white/70">
+                <span className="font-semibold text-white">{stats.totalPermits.toLocaleString()}</span> permits
+              </p>
+            </div>
+            {/* NVIDIA Jetson Badge */}
+            <div className="hidden md:flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-3 py-1 text-[10px] text-emerald-400">
+              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+              Powered by Jetson AGX Orin
+            </div>
           </div>
 
           {/* Chat Toggle Button */}
@@ -894,8 +902,9 @@ function DashboardContent() {
 
               {chatLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-white/5 border border-white/10 rounded-xl px-3 py-2">
-                    <Loader2 size={16} className="animate-spin text-white/40" />
+                  <div className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 flex items-center gap-2">
+                    <Loader2 size={14} className="animate-spin text-emerald-400" />
+                    <span className="text-[10px] text-white/40">Running on Jetson AGX Orin...</span>
                   </div>
                 </div>
               )}
@@ -1096,8 +1105,9 @@ function DashboardContent() {
 
               {chatLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-white/5 border border-white/10 rounded-xl px-3 py-2">
-                    <Loader2 size={16} className="animate-spin text-white/40" />
+                  <div className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 flex items-center gap-2">
+                    <Loader2 size={14} className="animate-spin text-emerald-400" />
+                    <span className="text-[10px] text-white/40">Running on Jetson AGX Orin...</span>
                   </div>
                 </div>
               )}

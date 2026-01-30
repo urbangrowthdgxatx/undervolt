@@ -307,7 +307,7 @@ Battery Leaders: ${batteryLeaders.map(z => `${z.zip_code} (${z.battery})`).join(
 - Demolition projects growing at +547% CAGR (urban redevelopment boom)
 - ZIP 78758: Battery storage hub with ${batteryLeaders[0]?.battery || 801} systems
 - ZIP 78744: Solar leader with ${solarLeaders[0]?.solar || 572} installations
-- Batteries outnumber solar installations 4:1
+- Only 1 battery for every 22 solar installations (storage gap)
   `.trim();
 }
 

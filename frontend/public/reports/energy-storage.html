@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Austin Energy Storage Gap</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2b90d",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#000000",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "sans": ["Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>.grain-overlay {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBcyMAAqPeZzYj9iTwifcTHqG5kMBXGRnzFrSc35RD9kEMcyHyltfC_MNEIAmKsQGyHvVAVKIGEf09p1d7h8RfsFsjA0by2qRCcJh28LUBetiSheiV1vi43vYTuWKJImAZF2KZRyvWgjtyeIUWmZeS2haOM9txoAYwiAoJogD5xYHhYzGXkkV-x4H9myfK8hhuq1yVON_qR3QiosQ8i52RFKAELp4IA0NAoy2HWUyxi8-qd1VxnD5Thy7os5EfbpUWzMMb_3SlrwYY);
+    opacity: 0.05;
+    pointer-events: none
+    }
+.text-gradient {
+    background: linear-gradient(180deg, #f2b90d 0%, #a67c00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent
+    }</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white selection:bg-primary/30">
+<div class="fixed inset-0 grain-overlay z-0"></div>
+<div class="relative z-10 min-h-screen flex flex-col items-center justify-between py-12 px-6">
+<!-- Header / Logo Area -->
+<div class="w-full max-w-4xl flex justify-between items-center mb-12">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl">bolt</span>
+<span class="text-sm font-bold tracking-widest uppercase text-white/60">Austin Energy Analysis</span>
+</div>
+<div class="hidden md:block">
+<span class="text-xs font-medium text-white/40 tracking-tighter">GRID RESILIENCY REPORT • 2024</span>
+</div>
+</div>
+<!-- Main Content Container -->
+<main class="w-full max-w-3xl flex flex-col items-center text-center">
+<!-- Hero Stat -->
+<div class="mb-2">
+<h1 class="text-[120px] md:text-[180px] font-bold leading-none tracking-tighter text-gradient">
+                    22:1
+                </h1>
+<p class="text-2xl md:text-3xl font-medium text-white tracking-tight mt-[-10px]">
+                    Solar to Battery Ratio
+                </p>
+</div>
+<!-- Description -->
+<div class="mt-8 max-w-2xl">
+<p class="text-white/80 text-lg md:text-xl font-normal leading-relaxed">
+                    Austin has <span class="text-primary font-bold">25,982</span> solar installations, but storage permits lag significantly. This creates a critical grid resiliency risk during peak demand or outages.
+                </p>
+</div>
+<!-- Data Viz Section -->
+<div class="w-full mt-16 p-8 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm">
+<div class="flex justify-between items-end gap-12 h-64 md:h-80">
+<!-- Solar Bar -->
+<div class="flex-1 flex flex-col items-center justify-end h-full">
+<div class="w-full bg-primary rounded-t-lg relative group transition-all duration-500 hover:brightness-110 shadow-[0_0_40px_rgba(242,185,13,0.2)]" style="height: 100%;">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 font-bold text-primary text-xl">25,982</div>
+</div>
+<p class="mt-4 text-sm font-bold uppercase tracking-wider text-primary">Solar Permits</p>
+</div>
+<!-- Gap Visualization -->
+<div class="hidden md:flex flex-col items-center justify-center h-full text-white/20">
+<span class="material-symbols-outlined text-4xl mb-2">trending_down</span>
+<p class="text-[10px] font-bold uppercase vertical-text tracking-[0.2em] whitespace-nowrap">The Installation Gap</p>
+</div>
+<!-- Battery Bar -->
+<div class="flex-1 flex flex-col items-center justify-end h-full">
+<!-- Battery value is roughly 4.5% of solar (1,181 vs 25,982) -->
+<div class="w-full bg-neutral-700 rounded-t-lg relative transition-all duration-500 hover:bg-neutral-600" style="height: 4.5%;">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 font-bold text-neutral-400 text-xl">1,181</div>
+</div>
+<p class="mt-4 text-sm font-bold uppercase tracking-wider text-neutral-500">Battery Permits</p>
+</div>
+</div>
+<div class="mt-12 flex flex-col md:flex-row items-center justify-between border-t border-white/10 pt-6 gap-4">
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-start">
+<span class="text-[10px] text-white/40 uppercase font-bold tracking-widest">Data Point 2024</span>
+<span class="text-sm font-bold text-red-500">-95% Storage Gap</span>
+</div>
+</div>
+<div class="text-left md:text-right">
+<p class="text-[10px] text-white/40 uppercase font-bold tracking-widest mb-1">Impact Analysis</p>
+<p class="text-xs text-white/60 leading-tight max-w-[200px]">Excess generation cannot be stored for overnight peak loads.</p>
+</div>
+</div>
+</div>
+<!-- Call to Action -->
+<div class="mt-16 w-full flex flex-col items-center gap-6">
+<a class="group relative inline-flex items-center justify-center px-10 py-4 font-bold text-background-dark transition-all duration-200 bg-primary font-display rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary hover:scale-[1.02] active:scale-[0.98]" href="https://undervolt-atx.vercel.app">
+<span class="mr-2">Explore data at undervolt-atx.vercel.app</span>
+<span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<p class="text-xs text-white/30 uppercase tracking-[0.3em]">Interactive Dashboard Available Now</p>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full max-w-4xl mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-white/40">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold uppercase">Source: Austin Open Data Portal via Undervolt Analysis</span>
+</div>
+<div class="flex gap-6">
+<a class="text-[10px] font-bold uppercase hover:text-primary transition-colors" href="#">Methodology</a>
+<a class="text-[10px] font-bold uppercase hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="text-[10px] font-bold uppercase hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+</footer>
+</div>
+</body></html>

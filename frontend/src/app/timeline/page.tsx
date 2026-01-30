@@ -13,54 +13,41 @@ interface Milestone {
 
 const MILESTONES: Milestone[] = [
   {
-    date: "January 2026",
-    title: "NVIDIA DGX Spark Hackathon",
-    description: "48-hour hackathon in Austin. Built initial ML pipeline to cluster 2.3M permits. Won 1st Place in Urban Growth category.",
+    date: "Day 1",
+    title: "The Challenge",
+    description: "2.3M Austin permits. Unstructured text. 48 hours to find the signal in the noise.",
+    status: "completed",
+  },
+  {
+    date: "Day 1",
+    title: "Data Wrangling",
+    description: "RAPIDS cuDF on DGX Spark. Cleaned and normalized millions of records in seconds.",
+    status: "completed",
+  },
+  {
+    date: "Day 1",
+    title: "ML Pipeline",
+    description: "TF-IDF vectorization, PCA reduction, KMeans clustering. 8 distinct permit categories emerged.",
+    status: "completed",
+  },
+  {
+    date: "Day 2",
+    title: "Energy Discovery",
+    description: "Found the story: 7,293 generators vs 1,172 batteries. Grid trust is broken.",
     status: "completed",
     highlight: true,
   },
   {
-    date: "January 2026",
-    title: "ML Pipeline Development",
-    description: "TF-IDF vectorization, PCA dimensionality reduction, and KMeans clustering on DGX Spark hardware.",
+    date: "Day 2",
+    title: "Edge Vision",
+    description: "Designed for Jetson deployment. Zero cloud. Data stays local.",
     status: "completed",
   },
   {
-    date: "January 2026",
-    title: "Energy Infrastructure Analysis",
-    description: "Discovered battery storage patterns (1,172 systems), solar installations (26,050), and generator deployment (7,293).",
+    date: "Day 2",
+    title: "1st Place Urban Growth",
+    description: "Judges saw what we saw: infrastructure intelligence that cities actually need.",
     status: "completed",
-  },
-  {
-    date: "January 2026",
-    title: "Edge Deployment Planning",
-    description: "Evaluated Jetson AGX Orin for production. Designed zero-cloud architecture for data sovereignty.",
-    status: "completed",
-  },
-  {
-    date: "January 2026",
-    title: "Nemotron Mini Integration",
-    description: "Replaced Llama 3.2 3B with NVIDIA Nemotron Mini 4B for improved inference quality on Jetson.",
-    status: "completed",
-  },
-  {
-    date: "January 2026",
-    title: "Production on Jetson AGX Orin",
-    description: "Full stack running on edge hardware. 275 TOPS for local LLM inference, zero latency to cloud.",
-    status: "current",
-    highlight: true,
-  },
-  {
-    date: "February 2026",
-    title: "GTC Golden Ticket Submission",
-    description: "Submitting Undervolt for NVIDIA GTC 2026 Golden Ticket consideration.",
-    status: "upcoming",
-  },
-  {
-    date: "March 2026",
-    title: "GTC 2026 San Jose",
-    description: "Potential showcase at NVIDIA GTC 2026 - the world's largest AI conference.",
-    status: "upcoming",
     highlight: true,
   },
 ];
@@ -176,9 +163,6 @@ export default function TimelinePage() {
 
         {/* CTA */}
         <div className="mt-16 text-center">
-          <p className="text-white/40 text-sm mb-6">
-            Follow our journey to GTC 2025
-          </p>
           <div className="flex items-center justify-center gap-4">
             <Link
               href="/stack"
