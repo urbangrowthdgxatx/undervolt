@@ -130,8 +130,11 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
       {/* Problem Section - Rotating Cards */}
-      <section className="py-20 px-6 bg-[#0a0a0f]">
+      <section className="py-24 px-6 bg-gradient-to-b from-black to-amber-950/20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 mb-4">
@@ -202,9 +205,13 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
+
       {/* The Divide - Equity Story */}
-      <section className="py-20 px-6 bg-[#06060a]">
-        <div className="max-w-4xl mx-auto">
+      <section className="py-24 px-6 bg-gradient-to-b from-amber-950/20 via-blue-950/30 to-black relative">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent" />
+        <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-10">
             <span className="text-blue-400/80 text-sm font-medium tracking-wide uppercase">The Divide</span>
             <h2 className="text-2xl md:text-3xl font-bold text-white mt-3 mb-4">Not Everyone is Preparing the Same</h2>
@@ -233,9 +240,13 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
+
       {/* Stats Section - Clickable */}
-      <section className="py-20 px-6 bg-[#0a0a0f]">
-        <div className="max-w-5xl mx-auto">
+      <section className="py-24 px-6 bg-black relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:32px_32px]" />
+        <div className="max-w-5xl mx-auto relative z-10">
           <div className="text-center mb-10">
             <span className="text-purple-400/80 text-sm font-medium tracking-wide uppercase">Live Data</span>
             <h2 className="text-2xl md:text-3xl font-bold text-white mt-3 mb-3">Explore by Category</h2>
@@ -271,8 +282,11 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+
       {/* Who Is This For */}
-      <section className="py-20 px-6 bg-[#06060a]">
+      <section className="py-24 px-6 bg-gradient-to-b from-black via-slate-950 to-black">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-white/40 text-sm font-medium tracking-wide uppercase">Use Cases</span>
@@ -329,11 +343,15 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="h-24 bg-gradient-to-b from-black to-purple-950/30" />
+
       {/* How It Works */}
-      <section className="py-20 px-6 bg-[#0a0a0f]">
-        <div className="max-w-5xl mx-auto">
+      <section className="py-24 px-6 bg-purple-950/30 relative">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-500/10 via-transparent to-transparent" />
+        <div className="max-w-5xl mx-auto relative z-10">
           <div className="text-center mb-12">
-            <span className="text-white/40 text-sm font-medium tracking-wide uppercase">Technology</span>
+            <span className="text-purple-400/80 text-sm font-medium tracking-wide uppercase">Technology</span>
             <h2 className="text-2xl md:text-3xl font-bold text-white mt-3 mb-3">How It Works</h2>
             <p className="text-white/40 max-w-xl mx-auto">
               GPU-accelerated pipeline transforms raw permit data into urban intelligence
@@ -390,9 +408,13 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="h-24 bg-gradient-to-b from-purple-950/30 to-green-950/20" />
+
       {/* From Cloud to Edge */}
-      <section className="py-20 px-6 bg-[#06060a]">
-        <div className="max-w-4xl mx-auto">
+      <section className="py-24 px-6 bg-gradient-to-b from-green-950/20 to-black relative">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-green-500/5 via-transparent to-transparent" />
+        <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-12">
             <span className="text-green-400/80 text-sm font-medium tracking-wide uppercase">The Journey</span>
             <h2 className="text-2xl md:text-3xl font-bold text-white mt-3 mb-3">From Cloud to Edge</h2>
@@ -477,9 +499,13 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-green-500/20 to-transparent" />
+
       {/* CTA Section */}
-      <section className="py-20 px-6 bg-[#0a0a0f]">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="py-24 px-6 bg-black relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-transparent to-blue-500/5" />
+        <div className="max-w-3xl mx-auto text-center relative z-10">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
             Start Exploring
           </h2>
@@ -499,8 +525,11 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
       {/* Team Section */}
-      <section className="py-16 px-6 bg-[#06060a]">
+      <section className="py-20 px-6 bg-gradient-to-b from-black to-slate-950">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <h3 className="text-xl font-semibold text-white mb-2">The Team</h3>
@@ -539,8 +568,11 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
       {/* Contact Form */}
-      <section className="py-16 px-6 bg-[#0a0a0f]" id="contact">
+      <section className="py-20 px-6 bg-gradient-to-b from-slate-950 to-purple-950/30" id="contact">
         <div className="max-w-xl mx-auto">
           <div className="p-8 rounded-2xl bg-gradient-to-b from-purple-500/10 to-transparent border border-purple-500/20">
             <h3 className="text-xl font-semibold text-white mb-3 text-center">Interested in applying this to your data?</h3>
@@ -618,8 +650,11 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+
       {/* Hackathon Credits */}
-      <section className="py-12 px-6 bg-[#06060a]">
+      <section className="py-16 px-6 bg-gradient-to-b from-purple-950/30 to-black">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400/80 text-sm mb-6">
             <span>🏆</span>
