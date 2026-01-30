@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 // Dynamic imports for charts and map
 const MiniChart = dynamic(() => import("@/components/MiniChart").then(m => ({ default: m.MiniChart })), { ssr: false });
 const ZipHeatmap = dynamic(() => import("@/components/ZipHeatmap").then(m => ({ default: m.ZipHeatmap })), { ssr: false });
-const LeafletMap = dynamic(() => import("@/components/LeafletMap").then(m => ({ default: m.LeafletMap })), { ssr: false });
+const SimpleMap = dynamic(() => import("@/components/SimpleMap").then(m => ({ default: m.SimpleMap })), { ssr: false });
 
 type Tab = "storage" | "surge" | "divide" | "overview";
 
@@ -164,13 +164,7 @@ function Overview() {
         <div className="p-3 bg-white/[0.02] border-b border-white/5">
           <p className="text-sm text-white/60 font-medium">Energy Infrastructure Across Austin</p>
         </div>
-        <div className="h-[350px]">
-          <LeafletMap
-            filter="all"
-            showLegend={true} simpleMode
-            individualPermits={SAMPLE_MAP_DATA}
-          />
-        </div>
+        <SimpleMap markers={SAMPLE_MAP_DATA} height={350} filter="all" />
       </div>
 
       <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
@@ -291,9 +285,7 @@ function EnergyStorage() {
           <div className="p-3 bg-amber-500/10 border-b border-amber-500/20">
             <p className="text-sm text-amber-400 font-medium">Solar & Battery Locations</p>
           </div>
-          <div className="h-[280px]">
-            <LeafletMap filter={["solar", "battery"]} showLegend={false} simpleMode individualPermits={SOLAR_BATTERY_DATA} />
-          </div>
+          <SimpleMap markers={SOLAR_BATTERY_DATA} height={280} filter={["solar", "battery"]} />
         </div>
         <ZipHeatmap
           title="Solar Installations by ZIP"
@@ -407,9 +399,7 @@ function GeneratorSurge() {
           <div className="p-3 bg-red-500/10 border-b border-red-500/20">
             <p className="text-sm text-red-400 font-medium">Generator Locations</p>
           </div>
-          <div className="h-[280px]">
-            <LeafletMap filter="generator" showLegend={false} simpleMode individualPermits={GENERATOR_DATA} />
-          </div>
+          <SimpleMap markers={GENERATOR_DATA} height={280} filter="generator" />
         </div>
         <ZipHeatmap
           title="Generators by ZIP (Post-2021)"
@@ -534,9 +524,7 @@ function InfrastructureDivide() {
           <div className="p-3 bg-blue-500/10 border-b border-blue-500/20">
             <p className="text-sm text-blue-400 font-medium">The Divide Visualized</p>
           </div>
-          <div className="h-[280px]">
-            <LeafletMap filter="generator" showLegend={false} simpleMode individualPermits={GENERATOR_DATA} />
-          </div>
+          <SimpleMap markers={GENERATOR_DATA} height={280} filter="generator" />
         </div>
         <ZipHeatmap
           title="Investment by ZIP"
