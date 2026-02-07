@@ -70,8 +70,9 @@ export default function HomePage() {
               </a>
             </div>
 
-            {/* Tech Stack */}
-            <div className="flex items-center justify-center gap-10">
+            {/* Tech Stack - Animated */}
+            <div className="relative overflow-hidden w-full max-w-sm mx-auto">
+              <div className="flex animate-marquee gap-14 whitespace-nowrap">
               {/* NVIDIA */}
               <a href="https://developer.nvidia.com/embedded/jetson-agx-orin" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#76B900">
