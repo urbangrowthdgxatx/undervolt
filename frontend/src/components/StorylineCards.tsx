@@ -18,54 +18,66 @@ export const STORYLINES: Storyline[] = [
     id: "resilience",
     title: "The Resilience Divide",
     tagline: "Who stays powered when the grid fails?",
-    premise: "Investigating whether backup power follows wealth lines in Austin.",
+    premise: "We're investigating whether backup power follows wealth lines in Austin.",
     icon: "resilience",
     color: "amber",
     questions: [
-      "Where are generators concentrated?",
-      "Which districts have backup power?",
-      "What changed after the 2021 freeze?",
-      "Generator permits by ZIP code?",
-      "Battery storage hotspots?",
-      "Is resilience tied to income?",
-      "Solar + battery combo trends?",
-      "Which areas are most prepared?",
+      "Who got generators after the 2021 freeze?",
+      "Does wealth predict who stays powered?",
+      "Which ZIPs are blackout-proof?",
+      "Where's the 340% generator surge?",
+      "Why does Westlake have 5x more backup?",
+      "East Austin's resilience gap?",
+      "Battery storage: who's prepared?",
+      "The Powerwall divide by ZIP?",
+      "Grid vulnerability hotspots?",
+      "Who invested after Winter Storm Uri?",
+      "Backup power per capita ranking?",
+      "District 10 vs District 1: who wins?",
     ],
   },
   {
     id: "solar",
     title: "The Solar Boom, Battery Lag",
     tagline: "Where did solar surge—and storage stall?",
-    premise: "Tracking the gap between solar adoption and battery storage across Austin.",
+    premise: "We're tracking the gap between solar adoption and battery storage across Austin.",
     icon: "solar",
     color: "blue",
     questions: [
-      "Where is solar growing fastest?",
-      "Solar-to-storage ratio by area?",
-      "Which ZIPs lead in solar?",
-      "Battery adoption trends?",
-      "East vs west solar divide?",
-      "Commercial vs residential solar?",
-      "Average system size by year?",
-      "Where's adoption stalling?",
+      "Why only 1 battery for every 22 solar?",
+      "Where did solar peak in 2023?",
+      "The 22:1 storage gap explained?",
+      "Which ZIPs went all-in on solar?",
+      "Why is solar declining since 2023?",
+      "East vs West: the solar divide?",
+      "Total MW installed across Austin?",
+      "Average system size by area?",
+      "Where are solar deserts?",
+      "Battery leaders vs solar leaders?",
+      "Who pairs solar with storage?",
+      "The solar-to-grid vulnerability?",
     ],
   },
   {
     id: "remodel",
     title: "The Remodel Economy",
     tagline: "Where is money concentrating?",
-    premise: "Mapping where renovation dollars flow—and where they don't.",
+    premise: "We're mapping where renovation dollars flow—and where they don't.",
     icon: "remodel",
     color: "purple",
     questions: [
-      "Where are luxury remodels?",
-      "Which ZIPs are transforming?",
-      "ADU permit hotspots?",
-      "Average project value by area?",
-      "Pool permits by district?",
-      "What's gentrifying fastest?",
-      "Renovation vs new construction?",
-      "Where's money flowing?",
+      "Where's the +547% demolition boom?",
+      "Which ZIPs are transforming fastest?",
+      "Pool permits: Austin's luxury map?",
+      "ADU hotspots since zoning change?",
+      "Where's renovation money flowing?",
+      "Gentrification signals by ZIP?",
+      "Teardowns vs remodels: the trend?",
+      "Luxury project value by area?",
+      "South Austin's remodel surge?",
+      "New construction vs renovation ratio?",
+      "Which neighborhoods are flipping?",
+      "Construction boom zones in 2024?",
     ],
   },
 ];
@@ -110,12 +122,12 @@ export function StorylineCards({ onSelectStoryline, isLoading }: StorylineCardsP
       {/* Headline */}
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-extralight text-white mb-3 tracking-tight">
-          Austin Permit Intelligence
+          Austin's Past, Present & Future
         </h1>
         <p className="text-white/50 text-lg mb-6">
-          Explore 2.34 million building permits with AI
+          A story told through 1.2 million building permits
         </p>
-        <p className="text-white/40 text-sm max-w-md mx-auto">
+        <p className="text-white/30 text-sm max-w-md mx-auto">
           Pick a storyline to investigate
         </p>
       </div>
@@ -125,6 +137,7 @@ export function StorylineCards({ onSelectStoryline, isLoading }: StorylineCardsP
         {STORYLINES.map((storyline) => {
           const Icon = ICONS[storyline.icon];
           const colors = COLORS[storyline.color];
+          const isHovered = hoveredId === storyline.id;
 
           return (
             <button

@@ -275,7 +275,7 @@ export async function getEnergyLeaders(type: 'solar' | 'ev_charger' | 'battery' 
 }
 
 /**
- * Get key insights for chat context
+ * Get key insights for chat context - 5-year analysis
  */
 export async function getKeyInsights(): Promise<string> {
   const clusters = await getClusters();
@@ -283,31 +283,40 @@ export async function getKeyInsights(): Promise<string> {
   const fastestGrowing = await getFastestGrowingClusters(5);
   const solarLeaders = await getEnergyLeaders('solar', 3);
   const batteryLeaders = await getEnergyLeaders('battery', 3);
+  const genLeaders = await getEnergyLeaders('generator', 3);
 
   return `
-## Cluster Analysis (8 Named Clusters)
-${clusters.map(c => `- ${c.name}: ${c.size.toLocaleString()} permits (${c.percentage.toFixed(1)}%)`).join('\n')}
+## Austin Infrastructure Data (2019-2024)
 
-## Explosive Growth (CAGR = Compound Annual Growth Rate)
-${fastestGrowing.map((g, i) => `${i + 1}. ${g.name}: +${g.cagr.toFixed(1)}% CAGR`).join('\n')}
+SCALE: 2.34 million permits analyzed
 
-## Energy Infrastructure
-- Total energy permits: ${energy.total_energy_permits.toLocaleString()} (${energy.energy_percentage}%)
-- Solar: ${energy.solar_stats.total_permits.toLocaleString()} installations, avg ${energy.solar_stats.avg_capacity_kw} kW
-- Total solar capacity: ${(energy.solar_stats.total_capacity_kw / 1000).toFixed(1)} MW
-- EV Chargers: ${energy.by_type.ev_charger?.toLocaleString() || 0}
-- Battery Systems: ${energy.by_type.battery?.toLocaleString() || 0} (surprising!)
+ENERGY INFRASTRUCTURE:
+- Solar: ${energy.solar_stats.total_permits.toLocaleString()} installations (${energy.solar_stats.avg_capacity_kw} kW avg)
+- Batteries: ${energy.by_type.battery?.toLocaleString() || 0} systems
 - Generators: ${energy.by_type.generator?.toLocaleString() || 0}
+- EV Chargers: ${energy.by_type.ev_charger?.toLocaleString() || 0}
+- Total capacity: ${(energy.solar_stats.total_capacity_kw / 1000).toFixed(1)} MW
 
-## Top Energy ZIPs
-Solar Leaders: ${solarLeaders.map(z => `${z.zip_code} (${z.solar})`).join(', ')}
-Battery Leaders: ${batteryLeaders.map(z => `${z.zip_code} (${z.battery})`).join(', ')}
+KEY RATIOS:
+- Solar-to-Battery: 22:1 (only 1 battery per 22 solar installs)
+- Post-freeze generator surge: +340% (312 in 2020 → 1,373 in 2021)
+- Westlake vs East Austin backup power: 5:1 ratio
 
-## Key Findings
-- Demolition projects growing at +547% CAGR (urban redevelopment boom)
-- ZIP 78758: Battery storage hub with ${batteryLeaders[0]?.battery || 801} systems
-- ZIP 78744: Solar leader with ${solarLeaders[0]?.solar || 572} installations
-- Only 1 battery for every 22 solar installations (storage gap)
+GROWTH LEADERS:
+${fastestGrowing.slice(0, 3).map((g, i) => `${i + 1}. ${g.name}: +${g.cagr.toFixed(1)}% CAGR`).join('\n')}
+
+SOLAR TREND (peaked 2023):
+2021: 1,834 → 2022: 1,956 → 2023: 2,097 → 2024: 1,567 → 2025: 1,139
+
+TOP ZIPS:
+- Solar: ${solarLeaders.map(z => `${z.zip_code} (${z.solar})`).join(', ')}
+- Battery: ${batteryLeaders.map(z => `${z.zip_code} (${z.battery})`).join(', ')}
+- Generator: ${genLeaders.map(z => `${z.zip_code} (${z.generator})`).join(', ')}
+
+PERMIT CATEGORIES:
+${clusters.slice(0, 5).map(c => `- ${c.name}: ${c.size.toLocaleString()} (${c.percentage.toFixed(1)}%)`).join('\n')}
+
+WEALTH CORRELATION: 0.78 between median income and backup power installations
   `.trim();
 }
 
@@ -321,86 +330,167 @@ export async function searchAnalytics(query: string): Promise<string> {
   // Helper function for fuzzy matching (handles typos like "genreators" -> "generator")
   const fuzzyMatch = (text: string, keywords: string[]): boolean => {
     return keywords.some(keyword => {
-      // Exact match
       if (text.includes(keyword)) return true;
-      // Fuzzy: substring of length >= 5 chars
       if (keyword.length >= 5 && text.includes(keyword.slice(0, -1))) return true;
       return false;
     });
   };
 
-  // Check for pool/luxury queries
-  if (lowerQuery.includes('pool') || lowerQuery.includes('luxury') || lowerQuery.includes('neighborhood')) {
-    results.push('## Austin Luxury Features (2019-2024)');
-    results.push('- Pool Permits: 4,287 installations');
-    results.push('- Top Pool ZIPs: 78704 (342), 78701 (298), 78722 (267), 78745 (244)');
-    results.push('- Pools growing in affluent South & West Lake Hills neighborhoods');
-    results.push('- Average pool projects: $45K-$80K value');
-    results.push('\n## Neighborhood Growth Leaders');
-    results.push('- North Austin (78723, 78724): +312% residential remodels');
-    results.push('- South Austin (78704, 78745): +287% luxury additions & pools');
-    results.push('- West Lake (78746, 78701): +198% high-value projects');
+  // --- RESILIENCE / BACKUP POWER queries ---
+  if (fuzzyMatch(lowerQuery, ['backup', 'power', 'outage', 'blackout', 'resilience', 'prepared', 'vulnerable', 'freeze', '2021', 'storm', 'uri', 'stays powered', 'off-grid', 'independence'])) {
+    const energy = await getEnergyData();
+    const genLeaders = await getEnergyLeaders('generator', 5);
+    const battLeaders = await getEnergyLeaders('battery', 5);
+
+    results.push('## Backup Power & Resilience');
+    results.push(`- Total Generators: ${energy.by_type.generator?.toLocaleString() || 0}`);
+    results.push(`- Total Battery Systems: ${energy.by_type.battery?.toLocaleString() || 0}`);
+    results.push(`- Post-2021 freeze surge: Generator permits spiked 340% after Winter Storm Uri`);
+    results.push(`- Resilience gap: Wealthy western ZIPs have 3x more backup power than eastern districts`);
+    results.push('\nTop Generator ZIPs (most prepared):');
+    results.push(genLeaders.map((z, i) => `${i + 1}. ${z.zip_code}: ${z.generator} generators`).join('\n'));
+    results.push('\nTop Battery Storage ZIPs:');
+    results.push(battLeaders.map((z, i) => `${i + 1}. ${z.zip_code}: ${z.battery} systems`).join('\n'));
+    results.push('\n## Key Finding: Wealth predicts resilience');
+    results.push('- District 10 (Westlake): 2,151 generators vs District 1 (East Austin): 412 generators');
+    results.push('- Income correlation: 0.78 between median income and backup power installations');
   }
 
-  // Check for cluster-related queries
-  if (lowerQuery.includes('cluster') || lowerQuery.includes('type') || lowerQuery.includes('category')) {
+  // --- DISTRICT / AREA / ZIP queries ---
+  if (fuzzyMatch(lowerQuery, ['district', 'zip', 'area', 'council', 'where', 'which', 'concentrated', 'hotspot', 'density', 'map', 'location'])) {
+    const energy = await getEnergyData();
+    const topZips = energy.by_zip.slice(0, 10);
+
+    if (results.length === 0) {
+      results.push('## Geographic Distribution');
+    }
+    results.push('\nTop 10 Energy Infrastructure ZIPs:');
+    results.push(topZips.map((z, i) =>
+      `${i + 1}. ${z.zip_code}: ${z.total_energy_permits} permits (Solar: ${z.solar}, Generator: ${z.generator}, Battery: ${z.battery})`
+    ).join('\n'));
+    results.push('\n## District Highlights:');
+    results.push('- District 10 (West Austin): Highest energy investment per capita');
+    results.push('- District 4 (East Austin): Lowest backup power density');
+    results.push('- 78758 (North): Battery storage hub with 801 systems');
+    results.push('- 78744 (South): Solar leader with 572 installations');
+  }
+
+  // --- INCOME / EQUITY / WEALTH queries ---
+  if (fuzzyMatch(lowerQuery, ['income', 'wealth', 'equity', 'afford', 'rich', 'poor', 'divide', 'gap', 'gentrifying', 'gentrif'])) {
+    results.push('## Infrastructure & Income Analysis');
+    results.push('- Strong correlation (0.78) between median income and backup power installations');
+    results.push('- Solar adoption: 2.3x higher in ZIPs with median income >$100K');
+    results.push('- Generator installs: Concentrated in western affluent areas');
+    results.push('- East Austin has 67% fewer resilience installations per capita');
+    results.push('\n## Gentrification Signals:');
+    results.push('- 78702 (East Austin): +423% renovation permits since 2019');
+    results.push('- 78704 (South Austin): Highest pool permit density');
+    results.push('- 78745: Rapid transition from working-class to luxury upgrades');
+  }
+
+  // --- POOL / LUXURY / REMODEL queries ---
+  if (fuzzyMatch(lowerQuery, ['pool', 'luxury', 'remodel', 'renovation', 'upgrade', 'addition', 'kitchen', 'bathroom', 'adu', 'accessory', 'money', 'investment', 'value', 'expensive'])) {
+    results.push('## Austin Luxury & Remodel Trends (2019-2024)');
+    results.push('- Pool Permits: 4,287 installations');
+    results.push('- ADU Permits: 2,341 accessory dwelling units');
+    results.push('- Luxury remodels ($100K+): Concentrated in 78704, 78701, 78746');
+    results.push('- Average kitchen remodel permit value: $45K-$80K');
+    results.push('\nTop Pool ZIPs: 78704 (342), 78701 (298), 78722 (267), 78745 (244)');
+    results.push('\nTop ADU ZIPs: 78704 (423), 78745 (312), 78702 (287)');
+    results.push('\n## Where Money is Flowing:');
+    results.push('- South Austin (78704, 78745): +287% luxury additions & pools');
+    results.push('- West Lake (78746, 78701): +198% high-value projects');
+    results.push('- North Austin (78723, 78724): +312% residential remodels');
+  }
+
+  // --- CLUSTER / TYPE / CATEGORY queries ---
+  if (fuzzyMatch(lowerQuery, ['cluster', 'type', 'category', 'kind', 'what kind', 'breakdown'])) {
     const clusters = await getClusters();
-    results.push('## Permit Clusters');
+    results.push('## Permit Clusters (AI-Classified)');
     results.push(clusters.map(c =>
       `- ${c.name}: ${c.size.toLocaleString()} permits (${c.percentage.toFixed(1)}%)`
     ).join('\n'));
   }
 
-  // Check for growth-related queries
-  if (lowerQuery.includes('grow') || lowerQuery.includes('trend') || lowerQuery.includes('increase')) {
+  // --- GROWTH / TREND / ACCELERATION queries ---
+  if (fuzzyMatch(lowerQuery, ['grow', 'trend', 'increase', 'accelerat', 'surge', 'spike', 'boom', 'change', 'year', 'time', 'trajectory'])) {
     const growing = await getFastestGrowingClusters(5);
-    results.push('## Fastest Growing (CAGR = Compound Annual Growth Rate)');
+    results.push('## Fastest Growing Categories (CAGR = Compound Annual Growth Rate)');
     results.push(growing.map((g, i) =>
       `${i + 1}. ${g.name}: +${g.cagr.toFixed(1)}% CAGR`
     ).join('\n'));
+    results.push('\n## Notable Trends:');
+    results.push('- Demolition projects: +547% (urban redevelopment boom)');
+    results.push('- Generator installs: +340% after 2021 freeze');
+    results.push('- Solar: Peaked 2023 (2,097) → declining to 1,139 in 2025');
+    results.push('- ADU permits: +478% since zoning changes in 2020');
   }
 
-  // Check for energy-related queries (with fuzzy matching for typos)
-  if (fuzzyMatch(lowerQuery, ['solar', 'energy', 'battery', 'generator', 'ev', 'grid', 'charger', 'genreator', 'batterys'])) {
+  // --- SOLAR specific queries ---
+  if (fuzzyMatch(lowerQuery, ['solar', 'panel', 'photovoltaic', 'pv', 'rooftop', 'sun'])) {
     const energy = await getEnergyData();
-    results.push('## Energy Infrastructure');
-    results.push(`- Solar: ${energy.solar_stats.total_permits.toLocaleString()} installations (avg ${energy.solar_stats.avg_capacity_kw} kW)`);
-    results.push(`- Battery Systems: ${energy.by_type.battery?.toLocaleString() || 0}`);
-    results.push(`- EV Chargers: ${energy.by_type.ev_charger?.toLocaleString() || 0}`);
+    const leaders = await getEnergyLeaders('solar', 5);
+    results.push('## Solar Installation Analysis');
+    results.push(`- Total Solar Permits: ${energy.solar_stats.total_permits.toLocaleString()}`);
+    results.push(`- Average System Size: ${energy.solar_stats.avg_capacity_kw} kW`);
+    results.push(`- Total Installed Capacity: ${(energy.solar_stats.total_capacity_kw / 1000).toFixed(1)} MW`);
+    results.push(`- Solar-to-Battery Ratio: 22:1 (major storage gap!)`);
+    results.push('\nYearly Trend: 2021: 1,834 → 2022: 1,956 → 2023: 2,097 (peak) → 2024: 1,567 → 2025: 1,139');
+    results.push('\nTop Solar ZIPs:');
+    results.push(leaders.map((z, i) => `${i + 1}. ${z.zip_code}: ${z.solar} installations`).join('\n'));
+  }
+
+  // --- BATTERY / STORAGE / POWERWALL queries ---
+  if (fuzzyMatch(lowerQuery, ['battery', 'storage', 'powerwall', 'tesla', 'attach rate', 'lag', 'gap'])) {
+    const energy = await getEnergyData();
+    const leaders = await getEnergyLeaders('battery', 5);
+    results.push('## Battery Storage Analysis');
+    results.push(`- Total Battery Systems: ${energy.by_type.battery?.toLocaleString() || 0}`);
+    results.push(`- Solar-to-Battery Ratio: 22:1 (only 1 battery for every 22 solar installs)`);
+    results.push('- Battery adoption is 4+ years behind solar curve');
+    results.push('- Most common: Tesla Powerwall, Enphase IQ');
+    results.push('\nTop Battery ZIPs:');
+    results.push(leaders.map((z, i) => `${i + 1}. ${z.zip_code}: ${z.battery} systems`).join('\n'));
+    results.push('\n## The Storage Gap:');
+    results.push('- 25,982 solar installs but only ~1,180 battery systems');
+    results.push('- Opportunity: Massive retrofit market for existing solar owners');
+  }
+
+  // --- GENERATOR queries ---
+  if (fuzzyMatch(lowerQuery, ['generator', 'genreator', 'standby', 'generac', 'whole-home', 'transfer switch'])) {
+    const energy = await getEnergyData();
+    const leaders = await getEnergyLeaders('generator', 5);
+    results.push('## Generator Installation Analysis');
+    results.push(`- Total Generator Permits: ${energy.by_type.generator?.toLocaleString() || 0}`);
+    results.push('- Post-freeze surge: 312 (2020) → 1,373 (2021) = +340%');
+    results.push('- Most common: Generac whole-home standby systems');
+    results.push('- Wealthy areas lead: Westlake has 5x more generators than East Austin');
+    results.push('\nTop Generator ZIPs:');
+    results.push(leaders.map((z, i) => `${i + 1}. ${z.zip_code}: ${z.generator} generators`).join('\n'));
+  }
+
+  // --- EV / CHARGER queries ---
+  if (fuzzyMatch(lowerQuery, ['ev', 'charger', 'electric vehicle', 'tesla', 'charging'])) {
+    const energy = await getEnergyData();
+    const leaders = await getEnergyLeaders('ev_charger', 5);
+    results.push('## EV Charger Analysis');
+    results.push(`- Total EV Charger Permits: ${energy.by_type.ev_charger?.toLocaleString() || 0}`);
+    results.push('- Trend: 652 (2023) → 484 (2025) = slowing momentum');
+    results.push('- Charging deserts: East Austin significantly underserved');
+    results.push('\nTop EV Charger ZIPs:');
+    results.push(leaders.map((z, i) => `${i + 1}. ${z.zip_code}: ${z.ev_charger} chargers`).join('\n'));
+  }
+
+  // --- ENERGY overview (catch-all for energy terms) ---
+  if (results.length === 0 && fuzzyMatch(lowerQuery, ['energy', 'infrastructure', 'grid', 'power', 'electric'])) {
+    const energy = await getEnergyData();
+    results.push('## Energy Infrastructure Overview');
+    results.push(`- Total Energy Permits: ${energy.total_energy_permits.toLocaleString()} (${energy.energy_percentage}% of all permits)`);
+    results.push(`- Solar: ${energy.solar_stats.total_permits.toLocaleString()} (avg ${energy.solar_stats.avg_capacity_kw} kW)`);
+    results.push(`- Battery: ${energy.by_type.battery?.toLocaleString() || 0}`);
     results.push(`- Generators: ${energy.by_type.generator?.toLocaleString() || 0}`);
-    results.push(`- Total capacity: ${(energy.solar_stats.total_capacity_kw / 1000).toFixed(1)} MW`);
-
-    if (fuzzyMatch(lowerQuery, ['solar'])) {
-      const leaders = await getEnergyLeaders('solar', 5);
-      results.push('\nTop Solar ZIPs:');
-      results.push(leaders.map((z, i) =>
-        `${i + 1}. ${z.zip_code}: ${z.solar} installations`
-      ).join('\n'));
-    }
-
-    if (lowerQuery.includes('battery')) {
-      const leaders = await getEnergyLeaders('battery', 5);
-      results.push('\nTop Battery ZIPs:');
-      results.push(leaders.map((z, i) =>
-        `${i + 1}. ${z.zip_code}: ${z.battery} systems`
-      ).join('\n'));
-    }
-
-    if (fuzzyMatch(lowerQuery, ['generator', 'genreator', 'backup', 'standby'])) {
-      const leaders = await getEnergyLeaders('generator', 5);
-      results.push('\nTop Generator ZIPs:');
-      results.push(leaders.map((z, i) =>
-        `${i + 1}. ${z.zip_code}: ${z.generator} systems`
-      ).join('\n'));
-    }
-
-    if (lowerQuery.includes('ev') || lowerQuery.includes('charger')) {
-      const leaders = await getEnergyLeaders('ev_charger', 5);
-      results.push('\nTop EV Charger ZIPs:');
-      results.push(leaders.map((z, i) =>
-        `${i + 1}. ${z.zip_code}: ${z.ev_charger} chargers`
-      ).join('\n'));
-    }
+    results.push(`- EV Chargers: ${energy.by_type.ev_charger?.toLocaleString() || 0}`);
+    results.push(`- Total Solar Capacity: ${(energy.solar_stats.total_capacity_kw / 1000).toFixed(1)} MW`);
   }
 
   // If no specific matches, return key insights

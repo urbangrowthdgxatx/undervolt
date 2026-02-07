@@ -1,6 +1,66 @@
 import { searchAnalytics, getKeyInsights } from '@/lib/analytics-data';
+import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+import crypto from 'crypto';
 
 export const maxDuration = 60;
+
+// Check if user is approved for custom queries
+async function isUserApproved(authHeader: string | null): Promise<boolean> {
+  if (!authHeader?.startsWith('Bearer ')) return false;
+
+  const token = authHeader.slice(7);
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+  const client = createClient(supabaseUrl, supabaseKey, {
+    global: { headers: { Authorization: `Bearer ${token}` } },
+  });
+
+  const { data: { user } } = await client.auth.getUser(token);
+  if (!user) return false;
+
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('approved')
+    .eq('id', user.id)
+    .single();
+
+  return profile?.approved === true;
+}
+
+// Check if question is a pre-cached storyline question
+async function isCachedQuestion(question: string): Promise<boolean> {
+  const hash = hashQuestion(question);
+  const { data } = await supabase
+    .from('cached_answers')
+    .select('id')
+    .eq('question_hash', hash)
+    .single();
+  return !!data;
+}
+
+// Hash question for cache lookup
+function hashQuestion(q: string): string {
+  return crypto.createHash('md5').update(q.toLowerCase().trim()).digest('hex');
+}
+
+// Check cache for pre-built answers
+async function getCachedAnswer(question: string): Promise<any | null> {
+  try {
+    const hash = hashQuestion(question);
+    const { data, error } = await supabase
+      .from('cached_answers')
+      .select('answer')
+      .eq('question_hash', hash)
+      .single();
+
+    if (error || !data) return null;
+    return data.answer;
+  } catch {
+    return null;
+  }
+}
 
 // Helper to send SSE events
 function sendEvent(controller: ReadableStreamDefaultController, event: string, data: unknown) {
@@ -112,9 +172,50 @@ function sanitizeInput(input: string): { safe: boolean; cleaned: string; reason?
 
 export async function POST(req: Request) {
   const { message } = await req.json();
+  const authHeader = req.headers.get('Authorization');
 
   if (!message || typeof message !== 'string') {
     return Response.json({ error: 'Message is required' }, { status: 400 });
+  }
+
+  // Check if this is a cached (pre-built) question - anyone can query
+  const isCached = await isCachedQuestion(message);
+
+  // For custom queries, require sign-in and approval
+  if (!isCached) {
+    // Check if CUSTOM_QUERIES_ENABLED is true (you control this)
+    const customQueriesEnabled = process.env.CUSTOM_QUERIES_ENABLED === 'true';
+
+    if (!customQueriesEnabled) {
+      // Still in "coming soon" mode - show waitlist
+      return Response.json({
+        message: 'Custom queries are coming soon! Sign up to be first in line.',
+        comingSoon: true,
+        storyBlock: {
+          id: `coming-soon-${Date.now()}`,
+          headline: 'Custom queries coming soon',
+          insight: 'We\'re building custom query support. Sign up to get early access when it launches!',
+          whyStoryWorthy: 'waitlist',
+          confidence: 'high',
+        },
+      });
+    }
+
+    // Custom queries enabled - require approved user
+    const approved = await isUserApproved(authHeader);
+    if (!approved) {
+      return Response.json({
+        message: 'Custom queries require an approved account.',
+        requiresAuth: true,
+        storyBlock: {
+          id: `auth-required-${Date.now()}`,
+          headline: 'Sign in required',
+          insight: 'Sign in with your approved account to ask custom questions.',
+          whyStoryWorthy: 'auth-gate',
+          confidence: 'high',
+        },
+      });
+    }
   }
 
   // Apply guardrails
@@ -135,6 +236,16 @@ export async function POST(req: Request) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
+        // Check cache first for pre-built answers (instant response)
+        const cachedAnswer = await getCachedAnswer(cleaned);
+        if (cachedAnswer) {
+          sendEvent(controller, 'status', { step: 'cached', message: 'Found answer...' });
+          sendEvent(controller, 'response', cachedAnswer);
+          sendEvent(controller, 'done', {});
+          controller.close();
+          return;
+        }
+
         const intent = detectIntent(cleaned);
 
         // Engaging status messages
@@ -173,14 +284,15 @@ export async function POST(req: Request) {
         let prompt = '';
         let fallbackText = '';
 
-        // CRITICAL: Strongly constrain LLM to ONLY use provided data - no hallucinations
+        // Generate engaging, informative insights using ONLY the provided data
         const groundingInstruction = `
 INSTRUCTIONS:
-1. The answer IS in the data above - find the relevant numbers and report them.
-2. Use the EXACT numbers from the data. Example: "- Generators: 7,293" means there are 7,293 generators.
-3. Start your response directly with the insight - no preamble like "Based on the data" or "Here is a summary".
-4. Keep response to 2-3 sentences, cite the actual numbers.
-5. Answer this question: "${message}"
+1. Be direct and insightful. Start with the key finding, then add context.
+2. Use EXACT numbers from the data. Example: "Generators: 7,293" means cite 7,293.
+3. Make comparisons that create perspective (e.g., "5x more than", "1 for every 22").
+4. Be conversational but authoritative - like a smart friend explaining data.
+5. Keep it to 2-3 clear sentences. No fluff.
+6. Answer: "${message}"
 `;
 
         if (intent === 'energy') {
@@ -208,6 +320,9 @@ INSTRUCTIONS:
 
         sendEvent(controller, 'status', { step: 'complete', message: 'Done' });
 
+        // Cache this response for future use
+        const questionHash = hashQuestion(cleaned);
+
         // Build response object matching ChatResponse schema
         // Strip preamble for headline
         const cleanedResponse = responseText
@@ -229,6 +344,15 @@ INSTRUCTIONS:
             confidence: 'medium',
           },
         };
+
+        // Cache this response for future queries (fire and forget)
+        supabase.from('cached_answers').upsert({
+          question: cleaned,
+          question_hash: questionHash,
+          answer: responseObject,
+          storyline: null,
+          updated_at: new Date().toISOString(),
+        }).then(() => {}).catch(() => {});
 
         // Send final response
         sendEvent(controller, 'response', responseObject);
