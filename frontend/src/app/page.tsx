@@ -362,7 +362,7 @@ export default function HomePage() {
             <div className="p-6 rounded-xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20">
               <div className="text-2xl mb-3">🔒</div>
               <h3 className="text-white font-semibold mb-2">Data Sovereignty</h3>
-              <p className="text-white/50 text-sm">Permit data stays local. No cloud transmission.</p>
+              <p className="text-white/50 text-sm">Data stays local. No cloud transmission.</p>
             </div>
             <div className="p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20">
               <div className="text-2xl mb-3">⚡</div>
