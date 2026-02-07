@@ -34,9 +34,9 @@ export default function HomePage() {
         <div className="flex-1 flex items-center justify-center px-8">
           <div className="max-w-4xl text-center">
             {/* Award Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/40 mb-6">
-              <Trophy className="w-4 h-4 text-amber-400" />
-              <span className="text-sm text-amber-300 font-medium">1st Place Urban Growth - NVIDIA DGX AITX Hackathon · Dec 2025</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/40 mb-6">
+              <Trophy className="w-3 h-3 text-amber-400" />
+              <span className="text-xs text-amber-300 font-medium">1st Place Urban Growth - NVIDIA DGX AITX Hackathon · Dec 2025</span>
             </div>
 
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
