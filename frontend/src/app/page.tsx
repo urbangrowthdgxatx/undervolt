@@ -2,15 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Github, AlertTriangle, Check, ChevronLeft, ChevronRight, Cloud, Cpu, Database, ExternalLink, Map, Zap, BarChart3, Loader2 } from "lucide-react";
-import { Orbitron } from "next/font/google";
-
-const orbitron = Orbitron({ subsets: ["latin"], weight: ["400", "700", "900"] });
+import { ArrowRight, Github, AlertTriangle, Database, BarChart3 } from "lucide-react";
 
 export default function HomePage() {
-  const [activeCard, setActiveCard] = useState(0);
-  const [formState, setFormState] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [formData, setFormData] = useState({ name: "", email: "", company: "", message: "" });
   const [dataDate, setDataDate] = useState<string | null>(null);
 
   useEffect(() => {
@@ -24,73 +18,10 @@ export default function HomePage() {
       .catch(() => {});
   }, []);
 
-  const resilienceCards = [
-    {
-      href: "/dashboard?filter=battery",
-      stat: "22:1",
-      color: "amber",
-      description: "Solar to battery ratio. The city produces clean energy but cannot store it.",
-      cta: "Explore battery gap →"
-    },
-    {
-      href: "/dashboard?filter=generator",
-      stat: "+246%",
-      color: "red",
-      description: "Generator permits after the 2021 freeze. Grid trust is broken.",
-      cta: "See generator surge →"
-    },
-    {
-      href: "/dashboard?filter=solar",
-      stat: "25,982",
-      color: "yellow",
-      description: "Solar installations tracking clean energy adoption across neighborhoods.",
-      cta: "View solar map →"
-    },
-    {
-      href: "/dashboard?filter=ev_charger",
-      stat: "3,642",
-      color: "green",
-      description: "EV chargers installed. Infrastructure racing to keep up with adoption.",
-      cta: "Explore EV infrastructure →"
-    }
-  ];
-  
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveCard((prev) => (prev + 1) % resilienceCards.length);
-    }, 8000);
-    return () => clearInterval(interval);
-  }, [resilienceCards.length]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormState("loading");
-
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        setFormState("success");
-        setFormData({ name: "", email: "", company: "", message: "" });
-      } else {
-        setFormState("error");
-      }
-    } catch {
-      setFormState("error");
-    }
-  };
-
   return (
     <div className="min-h-screen bg-black text-white pt-16">
-            {/* Hero Section - Black */}
+      {/* Hero Section */}
       <section className="relative min-h-screen flex flex-col">
-
-        {/* Hero Content */}
         <div className="flex-1 flex items-center justify-center px-8">
           <div className="max-w-4xl text-center">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
@@ -116,21 +47,17 @@ export default function HomePage() {
                 <span>GitHub</span>
               </a>
             </div>
-
-
           </div>
         </div>
-
       </section>
 
       {/* Divider */}
       <div className="h-px bg-white/10" />
 
-      {/* Problem Section - Dark Gray */}
+      {/* Problem Section */}
       <section className="py-24 px-8 bg-neutral-900">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-16 items-center">
-            {/* Left - Headline */}
             <div>
               <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase mb-4 block">The Problem</span>
               <h2 className="text-4xl md:text-5xl font-bold leading-tight">
@@ -139,7 +66,6 @@ export default function HomePage() {
               </h2>
             </div>
 
-            {/* Right - Points */}
             <div className="space-y-6">
               <div className="flex gap-4">
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
@@ -176,7 +102,6 @@ export default function HomePage() {
       {/* Divider */}
       <div className="h-px bg-white/10" />
 
-
       {/* Built For Section */}
       <section className="py-20 px-8 bg-black">
         <div className="max-w-5xl mx-auto">
@@ -184,7 +109,7 @@ export default function HomePage() {
             <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">Who is this for</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-4">Built for decision makers</h2>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-6">
             <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10">
               <div className="text-2xl mb-3">🏛️</div>
@@ -207,141 +132,60 @@ export default function HomePage() {
 
       {/* Divider */}
       <div className="h-px bg-white/10" />
-      {/* Live Stats Section - Black */}
-      <section className="py-24 px-8 bg-black">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">Performance Benchmarks</span>
-            <h2 className="text-4xl font-bold mt-4">Live Stats</h2>
-          </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <Link href="/dashboard" className="group p-8 rounded-xl bg-white/[0.02] border border-white/10 hover:border-emerald-500/50 transition-all">
-              <Database className="w-6 h-6 text-emerald-400 mb-4" />
-              <div className="text-5xl font-bold mb-2">2.3<span className="text-2xl text-white/40">M</span></div>
-              <div className="text-white/60 font-medium">Permits Processed</div>
-              <div className="text-white/40 text-sm mt-2">Real-time Austin database synchronization</div>
-            </Link>
-
-            <Link href="/dashboard" className="group p-8 rounded-xl bg-white/[0.02] border border-white/10 hover:border-blue-500/50 transition-all">
-              <Zap className="w-6 h-6 text-blue-400 mb-4" />
-              <div className="text-5xl font-bold mb-2">80<span className="text-2xl text-white/40">ms</span></div>
-              <div className="text-white/60 font-medium">Query Speed</div>
-              <div className="text-white/40 text-sm mt-2">Sub-second spatial analysis execution</div>
-            </Link>
-
-            <Link href="/dashboard" className="group p-8 rounded-xl bg-white/[0.02] border border-white/10 hover:border-cyan-500/50 transition-all">
-              <Map className="w-6 h-6 text-cyan-400 mb-4" />
-              <div className="text-5xl font-bold mb-2">4.2<span className="text-2xl text-white/40">GB</span></div>
-              <div className="text-white/60 font-medium">GeoJSON Output</div>
-              <div className="text-white/40 text-sm mt-2">Aggregated spatial data structure</div>
-            </Link>
-          </div>
-
-          <div className="flex items-center justify-center gap-2 mt-8 text-sm text-white/40">
-            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-            System Status: Optimal
-          </div>
-        </div>
-      </section>
-
-      {/* Divider */}
-      <div className="h-px bg-white/10" />
-
-      {/* Infrastructure Signals - Dark Gray */}
+      {/* Reports Callout */}
       <section className="py-24 px-8 bg-neutral-900">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="text-amber-400 text-sm font-medium tracking-wide uppercase">Infrastructure Signals</span>
-            <h2 className="text-4xl font-bold mt-4 mb-4">Austin is Changing Fast</h2>
-            <p className="text-white/50 text-lg">
-              Solar panels, EV chargers, and generators are spreading rapidly.
-            </p>
-          </div>
+        <div className="max-w-4xl mx-auto text-center">
+          <span className="text-amber-400 text-sm font-medium tracking-wide uppercase">Infrastructure Analysis</span>
+          <h2 className="text-4xl font-bold mt-4 mb-4">Austin is Changing Fast</h2>
+          <p className="text-white/50 text-lg mb-8 max-w-2xl mx-auto">
+            Solar installations, EV chargers, generators, and grid infrastructure patterns revealed through permit data analysis.
+          </p>
 
-          {/* Rotating Card */}
-          <div className="relative bg-white/[0.02] rounded-2xl border border-white/10 p-10 md:p-14">
-            <div className="flex items-center justify-center gap-8 md:gap-12">
-              <button
-                onClick={() => setActiveCard((prev) => (prev - 1 + resilienceCards.length) % resilienceCards.length)}
-                className="p-3 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
-              >
-                <ChevronLeft className="w-5 h-5 text-white/50" />
-              </button>
-
-              <Link
-                href={resilienceCards[activeCard].href}
-                className="flex-1 text-center group max-w-md"
-              >
-                <div className={`text-6xl md:text-7xl font-bold mb-6 ${
-                  resilienceCards[activeCard].color === 'amber' ? 'text-amber-400' :
-                  resilienceCards[activeCard].color === 'red' ? 'text-red-400' :
-                  resilienceCards[activeCard].color === 'yellow' ? 'text-yellow-400' :
-                  'text-emerald-400'
-                }`}>
-                  {resilienceCards[activeCard].stat}
-                </div>
-                <p className="text-white/50 text-lg mb-5">
-                  {resilienceCards[activeCard].description}
-                </p>
-                <span className="text-sm text-white/40 group-hover:text-white/60 transition-colors">
-                  {resilienceCards[activeCard].cta}
-                </span>
-              </Link>
-
-              <button
-                onClick={() => setActiveCard((prev) => (prev + 1) % resilienceCards.length)}
-                className="p-3 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
-              >
-                <ChevronRight className="w-5 h-5 text-white/50" />
-              </button>
+          <div className="grid md:grid-cols-3 gap-6 mb-10">
+            <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10 text-center">
+              <div className="text-3xl font-bold text-amber-400 mb-2">22:1</div>
+              <p className="text-white/50 text-sm">Solar to battery ratio</p>
             </div>
-
-            <div className="flex justify-center gap-3 mt-10">
-              {resilienceCards.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveCard(idx)}
-                  className={`h-2 rounded-full transition-all ${
-                    idx === activeCard ? 'bg-white/50 w-8' : 'bg-white/15 w-2'
-                  }`}
-                />
-              ))}
+            <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10 text-center">
+              <div className="text-3xl font-bold text-red-400 mb-2">+246%</div>
+              <p className="text-white/50 text-sm">Generator surge post-2021</p>
+            </div>
+            <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10 text-center">
+              <div className="text-3xl font-bold text-emerald-400 mb-2">25,982</div>
+              <p className="text-white/50 text-sm">Solar installations</p>
             </div>
           </div>
+
+          <Link
+            href="/reports"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-lg font-medium hover:bg-white/90 transition-colors"
+          >
+            <BarChart3 className="w-5 h-5" />
+            View Reports
+          </Link>
         </div>
       </section>
 
       {/* Divider */}
       <div className="h-px bg-white/10" />
 
-      {/* The Divide - Black */}
-      <section className="py-24 px-8 bg-black">
+      {/* Architecture Callout */}
+      <section className="py-20 px-8 bg-black">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="text-blue-400 text-sm font-medium tracking-wide uppercase">The Divide</span>
-            <h2 className="text-4xl font-bold mt-4 mb-4">Not Everyone is Preparing the Same</h2>
-            <p className="text-white/50 text-lg">
-              After the 2021 freeze, wealthier neighborhoods added backup power. Others couldn't.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="text-center p-10 rounded-2xl bg-blue-500/5 border border-blue-500/20">
-              <p className="text-white/40 text-sm mb-4">District 10 (Westlake)</p>
-              <div className="text-6xl font-bold text-blue-400 mb-3">2,151</div>
-              <p className="text-white/40">generators since 2021</p>
+          <div className="flex flex-col md:flex-row items-center gap-8 p-8 rounded-2xl bg-white/[0.02] border border-white/10">
+            <div className="flex-1">
+              <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">Architecture</span>
+              <h3 className="text-2xl font-bold mt-2 mb-3">GPU-Accelerated Pipeline</h3>
+              <p className="text-white/50">
+                From NVIDIA DGX Spark development to Jetson AGX Orin edge deployment. RAPIDS cuDF processing, on-device LLM inference, and real-time spatial queries.
+              </p>
             </div>
-            <div className="text-center p-10 rounded-2xl bg-white/[0.02] border border-white/10">
-              <p className="text-white/40 text-sm mb-4">East Austin</p>
-              <div className="text-6xl font-bold text-white/30 mb-3">175</div>
-              <p className="text-white/40">generators since 2021</p>
-            </div>
-          </div>
-
-          <div className="text-center mt-10">
-            <Link href="/dashboard?filter=generator" className="inline-flex items-center gap-2 text-blue-400/70 hover:text-blue-400 text-sm transition-colors">
-              Explore the data yourself
+            <Link
+              href="/about"
+              className="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 border border-white/20 rounded-lg transition-colors whitespace-nowrap"
+            >
+              Learn More
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -351,259 +195,36 @@ export default function HomePage() {
       {/* Divider */}
       <div className="h-px bg-white/10" />
 
-      {/* Technical Architecture - Dark Gray */}
-      <section className="py-24 px-8 bg-neutral-900">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">Technical Architecture</span>
-            <h2 className="text-4xl font-bold mt-4 mb-4">How It Works</h2>
-            <p className="text-white/50">GPU-accelerated pipeline from raw data to urban intelligence</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="p-8 rounded-xl bg-black border border-white/10">
-              <div className="text-blue-400 text-xs font-mono mb-4">01 / INGEST</div>
-              <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-5">
-                <Database className="w-6 h-6 text-blue-400" />
-              </div>
-              <h3 className="text-lg font-semibold mb-3">Austin Open Data</h3>
-              <p className="text-white/40 text-sm">2.34M permits ingested and cleaned with GPU-accelerated RAPIDS cuDF</p>
-            </div>
-
-            <div className="p-8 rounded-xl bg-black border border-white/10">
-              <div className="text-emerald-400 text-xs font-mono mb-4">02 / PROCESS</div>
-              <div className="w-12 h-12 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-5">
-                <Cpu className="w-6 h-6 text-emerald-400" />
-              </div>
-              <h3 className="text-lg font-semibold mb-3">NVIDIA DGX Processing</h3>
-              <p className="text-white/40 text-sm">TF-IDF vectorization, PCA reduction, and KMeans clustering on GPU</p>
-            </div>
-
-            <div className="p-8 rounded-xl bg-black border border-white/10">
-              <div className="text-cyan-400 text-xs font-mono mb-4">03 / SERVE</div>
-              <div className="w-12 h-12 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-5">
-                <Map className="w-6 h-6 text-cyan-400" />
-              </div>
-              <h3 className="text-lg font-semibold mb-3">Edge Deployment</h3>
-              <p className="text-white/40 text-sm">Jetson AGX Orin serves real-time queries with on-device LLM</p>
-            </div>
-          </div>
-
-          {/* Tech Stack */}
-          <div className="mt-10 p-5 rounded-lg bg-black border border-white/10">
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm text-white/40 font-mono">
-              <span>RAPIDS cuDF</span>
-              <span className="text-white/20">•</span>
-              <span>scikit-learn</span>
-              <span className="text-white/20">•</span>
-              <span>Nemotron 4B</span>
-              <span className="text-white/20">•</span>
-              <span>Ollama</span>
-              <span className="text-white/20">•</span>
-              <span>Next.js</span>
-              <span className="text-white/20">•</span>
-              <span>Leaflet</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Divider */}
-      <div className="h-px bg-white/10" />
-
-      {/* DGX to Jetson - Black */}
-      <section className="py-24 px-8 bg-black">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-14">
-            <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">The Journey</span>
-            <h2 className="text-4xl font-bold mt-4 mb-4">DGX Spark to Jetson</h2>
-            <p className="text-white/50">GPU-accelerated from development to production</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="p-8 rounded-xl bg-white/[0.02] border border-white/10">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                  <Cloud className="w-6 h-6 text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">NVIDIA DGX Spark</h3>
-                  <p className="text-white/40 text-sm">Training & Development</p>
-                </div>
-              </div>
-              <ul className="space-y-3 text-white/50 text-sm">
-                <li className="flex items-start gap-3">
-                  <span className="text-blue-400">•</span>
-                  NVIDIA RAPIDS cuDF for GPU data processing
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-blue-400">•</span>
-                  Ollama + NIM for local LLM inference
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-blue-400">•</span>
-                  CUDA-accelerated ML: TF-IDF, PCA, KMeans
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-blue-400">•</span>
-                  2.34M permits processed on DGX Spark
-                </li>
-              </ul>
-            </div>
-
-            <div className="p-8 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                  <Cpu className="w-6 h-6 text-emerald-400" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">Jetson AGX Orin 64GB</h3>
-                  <p className="text-white/40 text-sm">Production Deployment</p>
-                </div>
-              </div>
-              <ul className="space-y-3 text-white/50 text-sm">
-                <li className="flex items-start gap-3">
-                  <span className="text-emerald-400">•</span>
-                  Nemotron Mini 4B via Ollama
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-emerald-400">•</span>
-                  Zero cloud dependency, data stays local
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-emerald-400">•</span>
-                  Real-time queries on edge hardware
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Divider */}
-
-
-      {/* Contact Form - Black */}
-      <section className="py-24 px-8 bg-black" id="contact">
-        <div className="max-w-xl mx-auto">
-          <div className="p-10 rounded-2xl bg-white/[0.02] border border-white/10">
-            <h3 className="text-2xl font-semibold mb-4 text-center">Want to collaborate?</h3>
-            <p className="text-white/50 mb-8 text-center">
-              Open to contributions, partnerships, and adapting for other cities.
-            </p>
-
-            {formState === "success" ? (
-              <div className="text-center py-10">
-                <div className="w-14 h-14 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-5">
-                  <Check className="w-7 h-7 text-emerald-400" />
-                </div>
-                <p className="font-medium text-lg mb-2">Message sent!</p>
-                <p className="text-white/50">You'll hear back soon.</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid md:grid-cols-2 gap-5">
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:border-emerald-500/50 focus:outline-none transition-colors"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:border-emerald-500/50 focus:outline-none transition-colors"
-                  />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Company / Organization (optional)"
-                  value={formData.company}
-                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:border-emerald-500/50 focus:outline-none transition-colors"
-                />
-                <textarea
-                  placeholder="Your message"
-                  rows={4}
-                  required
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:border-emerald-500/50 focus:outline-none transition-colors resize-none"
-                />
-                <button
-                  type="submit"
-                  disabled={formState === "loading"}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-emerald-500 hover:bg-emerald-600 text-black rounded-lg font-medium transition-colors disabled:opacity-50"
-                >
-                  {formState === "loading" ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      Send Message
-                      <ArrowRight className="w-5 h-5" />
-                    </>
-                  )}
-                </button>
-                {formState === "error" && (
-                  <p className="text-red-400 text-sm text-center">Something went wrong. Please try again.</p>
-                )}
-              </form>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Divider */}
-      <div className="h-px bg-white/10" />
-
-      {/* Open Source Call to Action */}
-      <section className="py-16 px-8 bg-neutral-900">
-        <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-2xl font-semibold mb-4">Open Source</h3>
-          <p className="text-white/50 mb-6">
-            Open and extensible. Adapt the pipeline to any dataset. MIT Licensed.
+      {/* Open Source CTA */}
+      <section className="py-20 px-8 bg-neutral-900">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-4">Open Source</h2>
+          <p className="text-white/50 mb-8 text-lg">
+            Extensible data pipeline. Adapt it for any city, any dataset. MIT Licensed.
           </p>
-
-          <div className="flex items-center justify-center gap-6 mb-8">
+          <div className="flex items-center justify-center gap-4 mb-10">
             <a
               href="https://github.com/urbangrowthdgxatx/undervolt"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 border border-white/20 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-lg font-medium hover:bg-white/90 transition-colors"
             >
               <Github className="w-5 h-5" />
-              View Repository
+              View on GitHub
             </a>
-
+            <a
+              href="mailto:undervolt-team@aisoft.us"
+              className="px-6 py-3 text-white/70 hover:text-white transition-colors"
+            >
+              Get in Touch
+            </a>
           </div>
 
-          <div className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm w-fit mx-auto mb-8">
-            <span>🌵</span>
-            <span>Made in Austin</span>
-          </div>
-
-
-
-          <div className="text-white/30 text-sm mb-4">
-            Data: <a href="https://data.austintexas.gov/Building-and-Development/Issued-Construction-Permits/3syk-w9eu" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white underline underline-offset-2">City of Austin Open Data</a> • {dataDate && <span>Updated through {dataDate} • </span>}Building, Electrical, Mechanical, Plumbing & Driveway Permits
-          </div>
-
-
-          
-          <div className="text-white/20 text-[10px] mt-4">
-            v{process.env.NEXT_PUBLIC_VERSION || "dev"} • {process.env.NEXT_PUBLIC_COMMIT?.slice(0, 7) || "local"}
+          <div className="text-white/30 text-sm">
+            Data: <a href="https://data.austintexas.gov/Building-and-Development/Issued-Construction-Permits/3syk-w9eu" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white underline underline-offset-2">City of Austin Open Data</a>{dataDate && <span> • Updated {dataDate}</span>}
           </div>
         </div>
       </section>
-
     </div>
   );
 }
