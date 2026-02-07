@@ -3,7 +3,7 @@ import { Suspense } from "react";
 
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Sparkles, ArrowLeft, RefreshCw, Send, PlayCircle } from "lucide-react";
+import { Sparkles, ArrowLeft, RefreshCw, Send, PlayCircle, Lock } from "lucide-react";
 import { FloatingQuestions } from "@/components/FloatingQuestions";
 import { StorylineCards, STORYLINES, type Storyline } from "@/components/StorylineCards";
 import { StoryCards, type StoryCardItem } from "@/components/StoryCards";
@@ -43,6 +43,13 @@ function ExplorationPageContent() {
 
   // Custom question input (for story mode)
   const [customQuestion, setCustomQuestion] = useState("");
+  const [showSignupModal, setShowSignupModal] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  // Check if user is signed up
+  useEffect(() => {
+    setUserEmail(localStorage.getItem("undervolt_email"));
+  }, []);
 
   // Derived state
   const hasStartedExploring = cards.length > 0;
@@ -742,16 +749,21 @@ function ExplorationPageContent() {
                         type="text"
                         value={customQuestion}
                         onChange={(e) => setCustomQuestion(e.target.value)}
-                        placeholder="Ask anything..."
+                        placeholder={userEmail ? "Ask anything..." : "Sign up to ask custom questions..."}
                         disabled={isLoading}
-                        className="w-full px-4 py-2.5 pr-10 rounded-full bg-white/5 border border-white/20 text-white placeholder-white/30 text-sm focus:outline-none focus:border-white/40 focus:bg-white/10 transition-all disabled:opacity-50"
+                        className={`w-full px-4 py-2.5 pr-10 rounded-full border text-white text-sm focus:outline-none transition-all disabled:opacity-50 ${
+                          userEmail
+                            ? "bg-white/5 border-white/20 placeholder-white/30 focus:border-white/40 focus:bg-white/10"
+                            : "bg-white/[0.02] border-white/10 placeholder-white/20 cursor-pointer"
+                        }`}
+                        onClick={() => !userEmail && setShowSignupModal(true)}
                       />
                       <button
                         type="submit"
                         disabled={isLoading || !customQuestion.trim()}
                         className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white/40 hover:text-white disabled:opacity-30 transition-colors"
                       >
-                        <Send size={14} />
+                        {userEmail ? <Send size={14} /> : <Lock size={14} />}
                       </button>
                     </div>
                   </form>
