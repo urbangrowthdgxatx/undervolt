@@ -136,35 +136,31 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+            <div className="flex items-center justify-center gap-3 mb-8">
+              <Link
+                href="/explore"
+                className="flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-black rounded-lg font-medium transition-colors"
+              >
+                <Map className="w-4 h-4" />
+                Explore
+              </Link>
+              <Link
+                href="/story"
+                className="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 border border-white/30 rounded-lg font-medium transition-colors"
+              >
+                <Zap className="w-4 h-4" />
+                Ask AI
+              </Link>
               <a
                 href="https://github.com/urbangrowthdgxatx/undervolt"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 px-8 py-4 bg-white/10 hover:bg-white/15 border border-white/30 rounded-lg font-medium transition-colors"
+                className="flex items-center justify-center w-11 h-11 bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg transition-colors"
+                title="View on GitHub"
               >
-                <Github className="w-5 h-5" />
-                View on GitHub
+                <Github className="w-4 h-4" />
               </a>
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-black rounded-lg font-medium transition-colors"
-              >
-                Explore Dashboard
-                <ArrowRight className="w-5 h-5" />
-              </Link>
             </div>
-
-            {/* Award Banner */}
-            <a 
-              href="https://lu.ma/aitx-dgx-hackathon"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-full text-amber-400 text-sm hover:bg-amber-500/20 transition-colors mb-8"
-            >
-              <span>🏆</span>
-              <span>1st in Urban Growth - NVIDIA DGX AITX Hackathon</span>
-            </a>
 
             {/* Waitlist Signup */}
             <div className="flex justify-center">
