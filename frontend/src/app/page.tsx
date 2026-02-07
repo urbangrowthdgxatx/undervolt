@@ -178,7 +178,7 @@ export default function HomePage() {
               <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">Architecture</span>
               <h3 className="text-2xl font-bold mt-2 mb-3">GPU-Accelerated Pipeline</h3>
               <p className="text-white/50">
-                From NVIDIA DGX Spark development to Jetson AGX Orin edge deployment. RAPIDS cuDF processing, on-device LLM inference, and real-time spatial queries.
+                From NVIDIA DGX Spark development to Jetson AGX Orin edge deployment. On-device LLM inference, and real-time spatial queries.
               </p>
             </div>
             <Link

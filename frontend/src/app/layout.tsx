@@ -20,12 +20,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Undervolt - Austin Energy Infrastructure Analytics",
-  description: "AI-powered platform analyzing 2.34M Austin construction permits to uncover grid infrastructure gaps. Built with NVIDIA RAPIDS, Ollama, and deployed on Jetson AGX Orin. 1st Place Winner - NVIDIA DGX AITX Hackathon.",
-  keywords: ["NVIDIA", "DGX Spark", "RAPIDS", "Ollama", "Austin", "energy", "infrastructure", "permits", "AI", "GPU", "Jetson", "hackathon"],
+  description: "AI-powered platform analyzing 2.34M Austin construction permits to uncover grid infrastructure gaps. Built with NVIDIA Jetson, Ollama, and deployed on Jetson AGX Orin. 1st Place Winner - NVIDIA DGX AITX Hackathon.",
+  keywords: ["NVIDIA", "DGX Spark", "Ollama", "Austin", "energy", "infrastructure", "permits", "AI", "GPU", "Jetson", "hackathon"],
   authors: [{ name: "Undervolt Team" }],
   openGraph: {
     title: "Undervolt - Austin Energy Infrastructure Analytics",
-    description: "1st Place NVIDIA DGX AITX Hackathon | Analyzing 2.34M permits with GPU-accelerated AI to reveal Austin grid gaps. Built on NVIDIA RAPIDS and Jetson AGX Orin.",
+    description: "1st Place NVIDIA DGX AITX Hackathon | Analyzing 2.34M permits with GPU-accelerated AI to reveal Austin grid gaps. Built on NVIDIA Jetson and Jetson AGX Orin.",
     url: "https://undervolt-atx.vercel.app",
     siteName: "Undervolt",
     type: "website",

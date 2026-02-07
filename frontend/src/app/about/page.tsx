@@ -145,7 +145,7 @@ function HowItWorks() {
           <div className="p-5 rounded-xl bg-amber-500/5 border border-amber-500/20">
             <div className="text-2xl mb-2">⚡</div>
             <h3 className="font-semibold mb-1">GPU-accelerated</h3>
-            <p className="text-white/50 text-sm">NVIDIA RAPIDS processes 2.34M permits in seconds, not hours.</p>
+            <p className="text-white/50 text-sm">NVIDIA Jetson processes 2.34M permits in seconds, not hours.</p>
           </div>
           <div className="p-5 rounded-xl bg-blue-500/5 border border-blue-500/20">
             <div className="text-2xl mb-2">📖</div>
@@ -316,7 +316,7 @@ function Roadmap() {
   ];
 
   const inProgress = [
-    { title: "cuML GPU Clustering", desc: "NVIDIA RAPIDS cuML for GPU-accelerated KMeans" },
+    { title: "cuML GPU Clustering", desc: "NVIDIA Jetson cuML for GPU-accelerated KMeans" },
     { title: "NeMo Integration", desc: "NVIDIA NeMo for permit classification" },
     { title: "Multi-city Expansion", desc: "Preparing pipeline for additional cities" },
   ];
