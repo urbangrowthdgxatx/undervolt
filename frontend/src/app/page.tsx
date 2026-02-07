@@ -206,44 +206,86 @@ export default function HomePage() {
       {/* Divider */}
       <div className="h-px bg-white/10" />
 
-      {/* Features Section */}
+      {/* Features Bento Grid */}
       <section className="py-20 px-8 bg-black">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">Why Undervolt</span>
-            <h2 className="text-3xl md:text-4xl font-bold mt-4">What Makes It Unique</h2>
-          </div>
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Large card - Edge-first */}
+            <div className="md:col-span-1 md:row-span-2 p-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-white/10 flex flex-col">
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2" /></svg>
+                <h3 className="font-semibold text-white">Edge-first</h3>
+              </div>
+              <p className="text-white/60 text-sm mb-4">Runs entirely on <span className="text-emerald-400">NVIDIA Jetson</span>. Your data stays local. Zero cloud costs.</p>
+              <div className="flex-1 flex items-center justify-center">
+                <div className="w-24 h-24 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                  <svg className="w-12 h-12 text-emerald-400/50" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+              </div>
+              <div className="mt-4 space-y-2 text-xs text-white/40">
+                <div className="flex items-center gap-2"><span className="text-emerald-400">✓</span> No cloud dependency</div>
+                <div className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Data sovereignty</div>
+                <div className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Low latency queries</div>
+              </div>
+            </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
-              <div className="text-2xl mb-2">🔓</div>
-              <h3 className="font-semibold mb-1">Open Source</h3>
-              <p className="text-white/50 text-sm">MIT licensed. Fork it for your city, customize freely.</p>
+            {/* GPU-accelerated */}
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10">
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                <h3 className="font-semibold text-white">GPU-accelerated</h3>
+              </div>
+              <p className="text-white/60 text-sm">Process <span className="text-amber-400">2.34M permits</span> efficiently on edge hardware.</p>
             </div>
-            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
-              <div className="text-2xl mb-2">🏠</div>
-              <h3 className="font-semibold mb-1">Edge-first</h3>
-              <p className="text-white/50 text-sm">Runs entirely on NVIDIA Jetson. Your data stays local.</p>
+
+            {/* Local LLM */}
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10">
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                <h3 className="font-semibold text-white">Local LLM</h3>
+              </div>
+              <p className="text-white/60 text-sm"><span className="text-purple-400">Ollama + Nemotron</span> for on-device AI. No cloud APIs.</p>
             </div>
-            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
-              <div className="text-2xl mb-2">⚡</div>
-              <h3 className="font-semibold mb-1">GPU-accelerated</h3>
-              <p className="text-white/50 text-sm">Processes 2.34M permits efficiently on edge hardware.</p>
+
+            {/* Open Source */}
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10">
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <h3 className="font-semibold text-white">Open Source</h3>
+              </div>
+              <p className="text-white/60 text-sm"><span className="text-blue-400">MIT licensed</span>. Fork it for your city, customize freely.</p>
             </div>
-            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
-              <div className="text-2xl mb-2">📖</div>
-              <h3 className="font-semibold mb-1">Story-driven</h3>
-              <p className="text-white/50 text-sm">Turns raw data into insights like the 22:1 solar-to-battery ratio.</p>
+
+            {/* Story-driven */}
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10">
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                <h3 className="font-semibold text-white">Story-driven</h3>
+              </div>
+              <p className="text-white/60 text-sm">Raw data → insights like the <span className="text-cyan-400">22:1</span> solar-to-battery ratio.</p>
             </div>
-            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
-              <div className="text-2xl mb-2">🔋</div>
-              <h3 className="font-semibold mb-1">Energy Focus</h3>
-              <p className="text-white/50 text-sm">Where is the grid failing? Who is preparing?</p>
+
+            {/* Wide card - Energy Focus */}
+            <div className="md:col-span-2 p-6 rounded-2xl bg-gradient-to-r from-red-500/10 to-amber-500/10 border border-white/10">
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" /></svg>
+                <h3 className="font-semibold text-white">Energy Focus</h3>
+              </div>
+              <p className="text-white/60 text-sm mb-4">Track grid resilience across Austin. Where are generators clustering? Who added solar after the freeze?</p>
+              <div className="flex gap-4 text-xs">
+                <div className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50">Solar: 25,982</div>
+                <div className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50">Generators: +246%</div>
+                <div className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50">EV Chargers: 3,642</div>
+              </div>
             </div>
-            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
-              <div className="text-2xl mb-2">🤖</div>
-              <h3 className="font-semibold mb-1">Local LLM</h3>
-              <p className="text-white/50 text-sm">Ollama + Nemotron for on-device AI without cloud APIs.</p>
+
+            {/* Data Pipeline card */}
+            <div className="md:col-span-1 p-6 rounded-2xl bg-white/[0.02] border border-white/10">
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-5 h-5 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" /></svg>
+                <h3 className="font-semibold text-white">Extensible</h3>
+              </div>
+              <p className="text-white/60 text-sm">Adapt the pipeline for <span className="text-white">any city, any dataset</span>.</p>
             </div>
           </div>
         </div>
