@@ -628,175 +628,19 @@ function DashboardContent() {
               </div>
             </div>
 
-            {/* LLM Categories Section */}
-            {stats.llmCategories && stats.llmCategories.totalCategorized > 0 && (
-              <>
-                <div className="border-t border-white/10" />
-                <div>
-                  <h3 className="text-[10px] font-medium text-white/40 uppercase tracking-wider mb-2 flex items-center justify-between">
-                    <span>LLM Analysis</span>
-                    <span className="text-white/30">{stats.llmCategories.totalCategorized.toLocaleString()} analyzed</span>
-                  </h3>
-
-                  {/* Project Type */}
-                  <div className="mb-3">
-                    <p className="text-[9px] text-white/30 mb-1">Project Type</p>
-                    <div className="flex flex-wrap gap-1">
-                      {stats.llmCategories.projectType.slice(0, 4).map((pt) => (
-                        <button
-                          key={pt.value}
-                          onClick={() => setSelectedProjectType(selectedProjectType === pt.value ? null : pt.value)}
-                          className={`px-2 py-1 rounded text-[10px] transition-all ${
-                            selectedProjectType === pt.value
-                              ? 'bg-cyan-500/30 border border-cyan-500 text-cyan-300'
-                              : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white/80'
-                          }`}
-                        >
-                          {pt.value.replace(/_/g, ' ')}
-                          <span className="ml-1 text-white/30">{pt.count}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Building Type */}
-                  <div className="mb-3">
-                    <p className="text-[9px] text-white/30 mb-1">Building Type</p>
-                    <div className="flex flex-wrap gap-1">
-                      {stats.llmCategories.buildingType.slice(0, 4).map((bt) => (
-                        <button
-                          key={bt.value}
-                          onClick={() => setSelectedBuildingType(selectedBuildingType === bt.value ? null : bt.value)}
-                          className={`px-2 py-1 rounded text-[10px] transition-all ${
-                            selectedBuildingType === bt.value
-                              ? 'bg-purple-500/30 border border-purple-500 text-purple-300'
-                              : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white/80'
-                          }`}
-                        >
-                          {bt.value.replace(/_/g, ' ')}
-                          <span className="ml-1 text-white/30">{bt.count}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Trade */}
-                  <div>
-                    <p className="text-[9px] text-white/30 mb-1">Trade</p>
-                    <div className="flex flex-wrap gap-1">
-                      {stats.llmCategories.trade.slice(0, 6).map((t) => (
-                        <button
-                          key={t.value}
-                          onClick={() => setSelectedTrade(selectedTrade === t.value ? null : t.value)}
-                          className={`px-2 py-1 rounded text-[10px] transition-all ${
-                            selectedTrade === t.value
-                              ? 'bg-orange-500/30 border border-orange-500 text-orange-300'
-                              : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white/80'
-                          }`}
-                        >
-                          {t.value}
-                          <span className="ml-1 text-white/30">{t.count}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Clear LLM filters */}
-                  {(selectedProjectType || selectedBuildingType || selectedTrade) && (
-                    <button
-                      onClick={() => {
-                        setSelectedProjectType(null);
-                        setSelectedBuildingType(null);
-                        setSelectedTrade(null);
-                      }}
-                      className="mt-2 text-[10px] text-white/40 hover:text-white/60"
-                    >
-                      Clear LLM filters
-                    </button>
-                  )}
-                </div>
-              </>
-            )}
-
-            {/* Divider */}
-            <div className="border-t border-white/10" />
-
-            {/* Cluster List */}
-            <div>
-              <h3 className="text-[10px] font-medium text-white/40 uppercase tracking-wider mb-3 flex items-center gap-2">
-                <Layers size={12} />
-                Clusters
-                {searchQuery && (
-                  <span className="text-[10px] text-white/40">({filteredClusters.length})</span>
-                )}
-              </h3>
-              <div className="space-y-1">
-                {filteredClusters.map((cluster) => {
-                  // Map cluster ID to color (matching map visualization)
-                  const clusterColors: Record<number, string> = {
-                    0: '#10b981',  // Green - New Residential Construction
-                    1: '#ec4899',  // Pink - General Construction & Repairs
-                    2: '#f59e0b',  // Amber - Electrical & Roofing Work
-                    4: '#3b82f6',  // Blue - HVAC Installations
-                    6: '#a855f7',  // Purple - Window Installations
-                    7: '#6366f1',  // Indigo - Foundation Repairs
-                  };
-                  const color = clusterColors[cluster.id] || '#6b7280';
-                  const isExpanded = selectedCluster === cluster.id;
-
-                  return (
-                    <div key={cluster.id} className="group">
-                      <button
-                        onClick={() => setSelectedCluster(cluster.id === selectedCluster ? null : cluster.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 ${
-                          isExpanded
-                            ? 'bg-white/15 border border-white/30 shadow-lg'
-                            : 'hover:bg-white/8 border border-transparent hover:border-white/10'
-                        }`}
-                        style={{
-                          boxShadow: isExpanded ? `0 0 20px ${color}20` : undefined,
-                        }}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <div
-                            className={`rounded-full flex-shrink-0 transition-all duration-300 ${
-                              isExpanded
-                                ? 'w-4 h-4 shadow-lg scale-125'
-                                : 'w-2.5 h-2.5 group-hover:w-3 group-hover:h-3 group-hover:scale-110'
-                            }`}
-                            style={{
-                              backgroundColor: color,
-                              boxShadow: isExpanded ? `0 0 12px ${color}90, 0 0 24px ${color}40` : undefined,
-                            }}
-                          />
-                          <span className={`text-xs flex-1 transition-colors duration-200 ${
-                            isExpanded ? 'text-white font-medium' : 'text-white/80 group-hover:text-white/95'
-                          }`}>
-                            {cluster.name}
-                          </span>
-                          <span className={`text-[10px] transition-colors duration-200 ${
-                            isExpanded ? 'text-white/60' : 'text-white/40 group-hover:text-white/50'
-                          }`}>
-                            {cluster.percentage.toFixed(0)}%
-                          </span>
-                        </div>
-                      </button>
-
-                      {/* Expanded keywords with animation */}
-                      {isExpanded && cluster.keywords && (
-                        <div className="ml-7 mt-1.5 mb-2 px-3 py-2 bg-white/8 rounded-lg text-[10px] border border-white/10 animate-in fade-in slide-in-from-top-1 duration-200">
-                          {cluster.keywords.slice(0, 3).map((kw: any, idx: number) => (
-                            <span key={kw.keyword} className="text-white/70">
-                              {kw.keyword}
-                              {idx < 2 && (cluster.keywords?.length || 0) > idx + 1 ? ', ' : ''}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+            
+            {/* Zip Search */}
+            <div className="pt-4 border-t border-white/10">
+              <label className="text-[10px] font-medium text-white/40 uppercase tracking-wider mb-2 block">
+                Search by Zip
+              </label>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Enter zip code..."
+                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30"
+              />
             </div>
           </div>
         </div>
@@ -840,45 +684,6 @@ function DashboardContent() {
                 <p className="text-white/60 font-medium">Loading infrastructure data...</p>
                 <p className="text-white/30 text-xs mt-2">Rendering permit clusters</p>
               </div>
-            </div>
-          )}
-
-          {/* Floating Selected Cluster Info */}
-          {selectedCluster !== null && (
-            <div className="absolute top-2 left-2 right-2 md:right-auto md:top-4 md:left-4 bg-black/90 backdrop-blur-md border border-white/30 rounded-xl p-3 md:p-4 md:max-w-sm shadow-2xl animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-3 h-3 rounded-full shadow-lg"
-                    style={{
-                      backgroundColor: stats.clusterDistribution.find(c => c.id === selectedCluster)
-                        ? (() => {
-                            const clusterColors: Record<number, string> = {
-                              0: '#10b981', 1: '#ec4899', 2: '#f59e0b',
-                              4: '#3b82f6', 6: '#a855f7', 7: '#6366f1',
-                            };
-                            return clusterColors[selectedCluster] || '#6b7280';
-                          })()
-                        : '#6b7280',
-                    }}
-                  />
-                  <h4 className="text-sm font-medium text-white">
-                    {stats.clusterDistribution.find(c => c.id === selectedCluster)?.name || `Cluster ${selectedCluster}`}
-                  </h4>
-                </div>
-                <button
-                  onClick={() => setSelectedCluster(null)}
-                  className="text-white/40 hover:text-white/80 hover:bg-white/10 rounded p-1 transition-all duration-200"
-                >
-                  ✕
-                </button>
-              </div>
-              <p className="text-xs text-white/60">
-                {stats.clusterDistribution.find(c => c.id === selectedCluster)?.count.toLocaleString()} permits
-                <span className="text-white/40 ml-1">
-                  ({stats.clusterDistribution.find(c => c.id === selectedCluster)?.percentage.toFixed(1)}%)
-                </span>
-              </p>
             </div>
           )}
 
