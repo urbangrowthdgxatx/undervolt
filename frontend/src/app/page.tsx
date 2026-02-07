@@ -168,6 +168,52 @@ export default function HomePage() {
       {/* Divider */}
       <div className="h-px bg-white/10" />
 
+      {/* Features Section */}
+      <section className="py-20 px-8 bg-black">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">Why Undervolt</span>
+            <h2 className="text-3xl md:text-4xl font-bold mt-4">What Makes It Unique</h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+              <div className="text-2xl mb-2">🔓</div>
+              <h3 className="font-semibold mb-1">Open Source</h3>
+              <p className="text-white/50 text-sm">MIT licensed. Fork it for your city, customize freely.</p>
+            </div>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+              <div className="text-2xl mb-2">🏠</div>
+              <h3 className="font-semibold mb-1">Edge-first</h3>
+              <p className="text-white/50 text-sm">Runs entirely on NVIDIA Jetson. Your data stays local.</p>
+            </div>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+              <div className="text-2xl mb-2">⚡</div>
+              <h3 className="font-semibold mb-1">GPU-accelerated</h3>
+              <p className="text-white/50 text-sm">Processes 2.34M permits efficiently on edge hardware.</p>
+            </div>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+              <div className="text-2xl mb-2">📖</div>
+              <h3 className="font-semibold mb-1">Story-driven</h3>
+              <p className="text-white/50 text-sm">Turns raw data into insights like the 22:1 solar-to-battery ratio.</p>
+            </div>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+              <div className="text-2xl mb-2">🔋</div>
+              <h3 className="font-semibold mb-1">Energy Focus</h3>
+              <p className="text-white/50 text-sm">Where is the grid failing? Who is preparing?</p>
+            </div>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+              <div className="text-2xl mb-2">🤖</div>
+              <h3 className="font-semibold mb-1">Local LLM</h3>
+              <p className="text-white/50 text-sm">Ollama + Nemotron for on-device AI without cloud APIs.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="h-px bg-white/10" />
+
       {/* Built For Section */}
       <section className="py-20 px-8 bg-black">
         <div className="max-w-5xl mx-auto">

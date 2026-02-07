@@ -128,44 +128,6 @@ export default function AboutPage() {
 function HowItWorks() {
   return (
     <div className="space-y-12">
-      {/* Value Proposition */}
-      <div>
-        <h2 className="text-xl font-semibold mb-6">What Makes Undervolt Unique</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="p-5 rounded-xl bg-purple-500/5 border border-purple-500/20">
-            <div className="text-2xl mb-2">🔓</div>
-            <h3 className="font-semibold mb-1">Open Source</h3>
-            <p className="text-white/50 text-sm">MIT licensed. Fork it for your city, customize freely, no licensing fees.</p>
-          </div>
-          <div className="p-5 rounded-xl bg-green-500/5 border border-green-500/20">
-            <div className="text-2xl mb-2">🏠</div>
-            <h3 className="font-semibold mb-1">Edge-first</h3>
-            <p className="text-white/50 text-sm">Runs entirely on NVIDIA Jetson. Your data stays local. Zero cloud costs.</p>
-          </div>
-          <div className="p-5 rounded-xl bg-amber-500/5 border border-amber-500/20">
-            <div className="text-2xl mb-2">⚡</div>
-            <h3 className="font-semibold mb-1">GPU-accelerated</h3>
-            <p className="text-white/50 text-sm">NVIDIA Jetson processes 2.34M permits in seconds, not hours.</p>
-          </div>
-          <div className="p-5 rounded-xl bg-blue-500/5 border border-blue-500/20">
-            <div className="text-2xl mb-2">📖</div>
-            <h3 className="font-semibold mb-1">Story-driven</h3>
-            <p className="text-white/50 text-sm">Turns raw data into insights like the 22:1 solar-to-battery ratio.</p>
-          </div>
-          <div className="p-5 rounded-xl bg-red-500/5 border border-red-500/20">
-            <div className="text-2xl mb-2">🔋</div>
-            <h3 className="font-semibold mb-1">Energy Focus</h3>
-            <p className="text-white/50 text-sm">Where is the grid failing? Who is preparing? Where are the gaps?</p>
-          </div>
-          <div className="p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
-            <div className="text-2xl mb-2">🤖</div>
-            <h3 className="font-semibold mb-1">Local LLM</h3>
-            <p className="text-white/50 text-sm">Ollama + Nemotron for on-device AI without cloud APIs.</p>
-          </div>
-        </div>
-        <p className="text-white/40 text-sm mt-6 text-center italic">Infrastructure intelligence that cities can own and operate themselves.</p>
-      </div>
-
       {/* Pipeline */}
       <div>
         <h2 className="text-xl font-semibold mb-6">ML Pipeline</h2>
