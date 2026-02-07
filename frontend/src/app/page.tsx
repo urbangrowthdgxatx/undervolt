@@ -47,7 +47,7 @@ export default function HomePage() {
             </p>
 
             {/* Categories */}
-            <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-8 mb-12">
               {categories.map((cat) => (
                 <span
                   key={cat}
