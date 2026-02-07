@@ -127,7 +127,7 @@ export function FloatingQuestions({
       <div className="relative">
         {/* Horizontal scroll container */}
         <div
-          className="flex gap-2 overflow-x-auto py-3 px-4 scrollbar-hide"
+          className="flex gap-3 overflow-x-auto py-3 px-4 scrollbar-hide"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {questions.slice(0, 8).map((question, index) => {

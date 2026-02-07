@@ -693,7 +693,7 @@ function ExplorationPageContent() {
       )}
 
       {/* Main content */}
-      <main className={activeStoryline ? "pt-28 pb-12" : "pt-16 pb-12"}>
+      <main className={activeStoryline ? "pt-28 pb-24 min-h-screen" : "pt-16 pb-24 min-h-screen"}>
         {!activeStoryline ? (
           /* Homepage - storyline selection */
           <section className="max-w-5xl mx-auto px-6 py-16">
