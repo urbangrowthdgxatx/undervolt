@@ -330,7 +330,7 @@ export default function HomePage() {
       <div className="h-px bg-white/10" />
 
       {/* Architecture Callout */}
-      <section className="py-20 px-8 bg-neutral-900">
+      <section className="py-20 px-8 bg-black">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col md:flex-row items-center gap-8 p-8 rounded-2xl bg-gradient-to-r from-emerald-500/5 to-transparent border border-emerald-500/20">
             <div className="flex-1">
@@ -387,7 +387,7 @@ export default function HomePage() {
       <div className="h-px bg-white/10" />
 
       {/* Open Source CTA */}
-      <section className="py-20 px-8 bg-neutral-900">
+      <section className="py-20 px-8 bg-black">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">Open Source</h2>
           <p className="text-white/50 mb-8 text-lg">
