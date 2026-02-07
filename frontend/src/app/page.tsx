@@ -161,10 +161,6 @@ export default function HomePage() {
               </a>
             </div>
 
-            {/* Origin */}
-            <p className="text-white/30 text-xs mt-8 text-center">
-              🏆 1st Place at <a href="https://lu.ma/aitx-dgx-hackathon" target="_blank" rel="noopener noreferrer" className="underline hover:text-white/50">NVIDIA DGX AITX Hackathon</a> · Now powered by Jetson AGX Orin
-            </p>
 
           </div>
         </div>
@@ -630,15 +626,7 @@ export default function HomePage() {
               <Github className="w-5 h-5" />
               View Repository
             </a>
-            <a
-              href="https://lu.ma/aitx-dgx-hackathon"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-white/50 hover:text-white transition-colors"
-            >
-              <ExternalLink className="w-4 h-4" />
-              Hackathon Info
-            </a>
+
           </div>
 
           <div className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm w-fit mx-auto mb-8">
@@ -646,24 +634,13 @@ export default function HomePage() {
             <span>Made in Austin</span>
           </div>
 
-          <div className="text-white/30 text-sm mb-4">
-            🏆 <span className="text-amber-400 font-semibold">1st Place Winner</span> - Built on <span className="text-emerald-400">NVIDIA DGX Spark</span> at the{" "}
-            <a href="https://lu.ma/aitx-dgx-hackathon" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-white underline underline-offset-2">
-              NVIDIA AITX Frontier Hackathon
-            </a>
-          </div>
 
-          <div className="text-white/30 text-sm mb-8">
-            <span className="text-emerald-400">DGX Spark</span> → <span className="text-emerald-400/70">Jetson AGX Orin</span> Pipeline
-          </div>
 
           <div className="text-white/30 text-sm mb-4">
             Data: <a href="https://data.austintexas.gov/Building-and-Development/Issued-Construction-Permits/3syk-w9eu" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white underline underline-offset-2">City of Austin Open Data</a> • {dataDate && <span>Updated through {dataDate} • </span>}Building, Electrical, Mechanical, Plumbing & Driveway Permits
           </div>
 
-          <div className="text-white/20 text-xs">
-            Hackathon Sponsors: NVIDIA • AITX Community • ASUS • Arm • Antler
-          </div>
+
           
           <div className="text-white/20 text-[10px] mt-4">
             v{process.env.NEXT_PUBLIC_VERSION || "dev"} • {process.env.NEXT_PUBLIC_COMMIT?.slice(0, 7) || "local"}
