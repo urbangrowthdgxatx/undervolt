@@ -64,10 +64,13 @@ const MILESTONES = [
 
 // Team
 const TEAM = [
-  { name: "Ravinder Jilkapally", role: "GenAI Lead", focus: "Pipeline design, GPU optimization, vLLM", linkedin: "https://linkedin.com/in/jravinder" },
-  { name: "Avanish Joshi", role: "Data Science", focus: "EDA, trend identification, feature engineering", linkedin: "https://linkedin.com/in/avanishj" },
-  { name: "Tyrone Avnit", role: "Full Stack", focus: "UI prototyping, end-to-end integration", linkedin: "https://linkedin.com/in/tyroneavnit" },
-  { name: "Siddharth Gargava", role: "ML Engineer", focus: "NLP system, GPU feature extraction", linkedin: "https://linkedin.com/in/siddharthgargava" },
+  { name: "Ravinder Jilkapally", role: "Founder & Lead", focus: "Architecture, GPU pipelines, edge deployment", linkedin: "https://linkedin.com/in/jravinder", lead: true },
+];
+
+const HACKATHON_TEAM = [
+  { name: "Avanish Joshi", role: "Data Science", linkedin: "https://linkedin.com/in/avanishj" },
+  { name: "Tyrone Avnit", role: "Full Stack", linkedin: "https://linkedin.com/in/tyroneavnit" },
+  { name: "Siddharth Gargava", role: "ML Engineer", linkedin: "https://linkedin.com/in/siddharthgargava" },
 ];
 
 export default function AboutPage() {
@@ -164,8 +167,8 @@ function HowItWorks() {
         <div className="flex items-start gap-4">
           <div className="text-3xl">⚡</div>
           <div>
-            <h3 className="text-lg font-semibold text-white mb-2">Why Edge AI?</h3>
-            <p className="text-white/60 text-sm">All processing happens locally on NVIDIA Jetson AGX Orin. No cloud APIs, no data leaving your network. Real-time insights with full data sovereignty.</p>
+            <h3 className="text-lg font-semibold text-white mb-2">Run Anywhere</h3>
+            <p className="text-white/60 text-sm">Pipeline designed to run on any hardware: DGX Cloud, Jetson Edge, or standard CPU. Currently deployed on NVIDIA Jetson AGX Orin 64GB for local inference with full data sovereignty.</p>
           </div>
         </div>
       </div>
@@ -271,20 +274,20 @@ function Roadmap() {
       phase: "Hackathon", 
       color: "emerald",
       items: [
-        "2.34M Austin permits ingested",
-        "GPU-accelerated analysis pipeline",
-        "Interactive map & chat interface",
-        "Edge deployment on Jetson AGX Orin",
+        "Built on NVIDIA DGX Cloud",
+        "2.34M Austin permits processed",
+        "GPU-accelerated ML pipeline",
+        "1st Place - NVIDIA AITX",
       ]
     },
     { 
       phase: "Current", 
       color: "amber",
       items: [
-        "Nemotron AI responses",
-        "Cached Q&A for instant results",
-        "User waitlist & approval system",
-        "Story-driven data exploration",
+        "Runs on NVIDIA Jetson AGX Orin",
+        "Flexible: CPU, CUDA, or no GPU",
+        "Nemotron 4B local inference",
+        "Cached AI for instant responses",
       ]
     },
     { 
@@ -354,27 +357,45 @@ function Roadmap() {
 function Team() {
   return (
     <div className="space-y-8">
-      <p className="text-white/50">
-        The team behind Undervolt.
-      </p>
-
-      <div className="grid md:grid-cols-2 gap-4">
+      {/* Lead */}
+      <div>
+        <h3 className="text-sm text-white/40 uppercase tracking-wider mb-4">Project Lead</h3>
         {TEAM.map((member) => (
           <a
             key={member.name}
             href={member.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors group"
+            className="block p-6 rounded-xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 hover:border-amber-500/40 transition-colors group"
           >
-            <h3 className="text-white font-semibold mb-1">{member.name}</h3>
-            <p className="text-white/40 text-sm mb-2">{member.role}</p>
-            <p className="text-white/30 text-xs">{member.focus}</p>
-            <div className="mt-3 flex items-center gap-1 text-white/30 text-xs group-hover:text-white/50 transition-colors">
+            <h3 className="text-xl text-white font-semibold mb-1">{member.name}</h3>
+            <p className="text-amber-400 text-sm mb-2">{member.role}</p>
+            <p className="text-white/50 text-sm">{member.focus}</p>
+            <div className="mt-4 flex items-center gap-1 text-white/30 text-xs group-hover:text-white/50 transition-colors">
               LinkedIn <ArrowRight className="w-3 h-3" />
             </div>
           </a>
         ))}
+      </div>
+
+      {/* Hackathon Team */}
+      <div>
+        <h3 className="text-sm text-white/40 uppercase tracking-wider mb-4">Hackathon Contributors</h3>
+        <p className="text-white/50 text-sm mb-4">Special thanks to the team that helped build the initial prototype.</p>
+        <div className="grid md:grid-cols-3 gap-3">
+          {HACKATHON_TEAM.map((member) => (
+            <a
+              key={member.name}
+              href={member.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors group"
+            >
+              <h4 className="text-white font-medium text-sm">{member.name}</h4>
+              <p className="text-white/40 text-xs">{member.role}</p>
+            </a>
+          ))}
+        </div>
       </div>
 
       {/* Contact */}
