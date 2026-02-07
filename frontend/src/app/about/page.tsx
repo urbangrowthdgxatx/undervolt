@@ -69,7 +69,7 @@ const TEAM = [
     name: "Ravinder Jilkapally", 
     role: "AI Product & Platform Leader", 
     tagline: "Scaling AI at Xpanse",
-    focus: "18+ years building AI platforms. Passionate about edge-first, private LLM systems.", 
+    focus: "Builder. 18+ years shipping AI products & platforms. Startup advisor. Hands-on with local LLMs, data systems, and world-class teams.", 
     linkedin: "https://linkedin.com/in/jravinder", 
     lead: true, 
     avatar: "https://www.gravatar.com/avatar/07e9975093e352d88e8a43b95bbf3295?s=200" 
