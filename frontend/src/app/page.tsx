@@ -70,10 +70,11 @@ export default function HomePage() {
               </a>
             </div>
 
-            {/* Tech Stack - Using inline SVGs for reliability */}
-            <div className="flex items-center justify-center gap-10 md:gap-14">
+            {/* Tech Stack - Animated marquee */}
+            <div className="relative overflow-hidden w-full max-w-2xl mx-auto">
+              <div className="flex animate-marquee gap-16">
               {/* NVIDIA */}
-              <a href="https://developer.nvidia.com/embedded/jetson-agx-orin" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity">
+              <a href="https://developer.nvidia.com/embedded/jetson-agx-orin" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#76B900">
                   <path d="M11.058 12.824c-.05-.7-.15-1.4-.35-2.05-.2-.65-.5-1.25-.9-1.8-.4-.55-.9-1-1.45-1.35-.55-.35-1.2-.6-1.9-.7v2.1c.45.1.85.3 1.2.55.35.25.65.55.9.9.25.35.45.75.55 1.15.1.4.15.85.1 1.3-.05.4-.15.8-.35 1.15-.2.35-.45.65-.75.9-.3.25-.65.45-1.05.55-.4.1-.8.15-1.25.1v2.1c.7-.1 1.35-.35 1.9-.7.55-.35 1.05-.8 1.45-1.35.4-.55.7-1.15.9-1.8.2-.65.3-1.3.35-2v-.05z"/>
                   <path d="M6.058 5.824v2.1c1.1.15 2.1.55 2.95 1.15.85.6 1.55 1.4 2.05 2.35.5.95.8 2 .85 3.15.05 1.15-.15 2.25-.55 3.25-.4 1-.95 1.9-1.7 2.65-.75.75-1.6 1.35-2.6 1.75-1 .4-2.05.6-3.15.55v2.1c1.45 0 2.8-.3 4.05-.85 1.25-.55 2.35-1.3 3.25-2.25.9-.95 1.6-2.05 2.1-3.3.5-1.25.75-2.6.7-4-.05-1.4-.35-2.75-.9-4-.55-1.25-1.3-2.35-2.25-3.3-.95-.95-2.05-1.7-3.3-2.2-1.25-.5-2.6-.8-4.05-.85v.1-.05z"/>
@@ -82,13 +83,13 @@ export default function HomePage() {
               </a>
 
               {/* Ollama */}
-              <a href="https://ollama.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity">
+              <a href="https://ollama.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
                 <div className="w-8 h-8 flex items-center justify-center text-2xl">🦙</div>
                 <span className="text-xs text-white/40">Ollama</span>
               </a>
 
               {/* Supabase */}
-              <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity">
+              <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
                 <svg className="w-8 h-8" viewBox="0 0 109 113" fill="none">
                   <path d="M63.7076 110.284C60.8481 113.885 55.0502 111.912 54.9813 107.314L53.9738 40.0627L99.1935 40.0627C107.384 40.0627 111.952 49.5228 106.859 55.9374L63.7076 110.284Z" fill="url(#sb1)"/>
                   <path d="M45.317 2.07103C48.1765 -1.53037 53.9745 0.442937 54.0434 5.041L54.4849 72.2922H9.83113C1.64038 72.2922 -2.92775 62.8321 2.1655 56.4175L45.317 2.07103Z" fill="#3ECF8E"/>
@@ -98,7 +99,7 @@ export default function HomePage() {
               </a>
 
               {/* Next.js */}
-              <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity">
+              <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M11.572 0c-.176 0-.31.001-.358.007a19.76 19.76 0 0 1-.364.033C7.443.346 4.25 2.185 2.228 5.012a11.875 11.875 0 0 0-2.119 5.243c-.096.659-.108.854-.108 1.747s.012 1.089.108 1.748c.652 4.506 3.86 8.292 8.209 9.695.779.251 1.6.422 2.534.525.363.04 1.935.04 2.299 0 1.611-.178 2.977-.577 4.323-1.264.207-.106.247-.134.219-.158-.02-.013-.9-1.193-1.955-2.62l-1.919-2.592-2.404-3.558a338.739 338.739 0 0 0-2.422-3.556c-.009-.002-.018 1.579-.023 3.51-.007 3.38-.01 3.515-.052 3.595a.426.426 0 0 1-.206.214c-.075.037-.14.044-.495.044H7.81l-.108-.068a.438.438 0 0 1-.157-.171l-.05-.106.006-4.703.007-4.705.072-.092a.645.645 0 0 1 .174-.143c.096-.047.134-.051.54-.051.478 0 .558.018.682.154.035.038 1.337 1.999 2.895 4.361a10760.433 10760.433 0 0 0 4.735 7.17l1.9 2.879.096-.063a12.317 12.317 0 0 0 2.466-2.163 11.944 11.944 0 0 0 2.824-6.134c.096-.66.108-.854.108-1.748 0-.893-.012-1.088-.108-1.747-.652-4.506-3.859-8.292-8.208-9.695a12.597 12.597 0 0 0-2.499-.523A33.119 33.119 0 0 0 11.572 0zm4.069 7.217c.347 0 .408.005.486.047a.473.473 0 0 1 .237.277c.018.06.023 1.365.018 4.304l-.006 4.218-.744-1.14-.746-1.14v-3.066c0-1.982.01-3.097.023-3.15a.478.478 0 0 1 .233-.296c.096-.05.13-.054.5-.054z"/>
                 </svg>
@@ -106,12 +107,49 @@ export default function HomePage() {
               </a>
 
               {/* Vercel */}
-              <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity">
+              <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L2 19.5h20L12 2z"/>
                 </svg>
                 <span className="text-xs text-white/40">Vercel</span>
               </a>
+              {/* Duplicate for seamless loop */}
+              {/* NVIDIA */}
+              <a href="https://developer.nvidia.com/embedded/jetson-agx-orin" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
+                <div className="w-8 h-8 flex items-center justify-center">
+                  <span className="text-[#76B900] font-bold text-xs">NVIDIA</span>
+                </div>
+                <span className="text-xs text-white/40">Jetson</span>
+              </a>
+              {/* Ollama */}
+              <a href="https://ollama.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
+                <div className="w-8 h-8 flex items-center justify-center text-2xl">🦙</div>
+                <span className="text-xs text-white/40">Ollama</span>
+              </a>
+              {/* Supabase */}
+              <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
+                <svg className="w-8 h-8" viewBox="0 0 109 113" fill="none">
+                  <path d="M63.7076 110.284C60.8481 113.885 55.0502 111.912 54.9813 107.314L53.9738 40.0627L99.1935 40.0627C107.384 40.0627 111.952 49.5228 106.859 55.9374L63.7076 110.284Z" fill="url(#sb2)"/>
+                  <path d="M45.317 2.07103C48.1765 -1.53037 53.9745 0.442937 54.0434 5.041L54.4849 72.2922H9.83113C1.64038 72.2922 -2.92775 62.8321 2.1655 56.4175L45.317 2.07103Z" fill="#3ECF8E"/>
+                  <defs><linearGradient id="sb2" x1="53.9738" y1="54.974" x2="94.1635" y2="71.8295" gradientUnits="userSpaceOnUse"><stop stopColor="#249361"/><stop offset="1" stopColor="#3ECF8E"/></linearGradient></defs>
+                </svg>
+                <span className="text-xs text-white/40">Supabase</span>
+              </a>
+              {/* Next.js */}
+              <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
+                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M11.572 0c-.176 0-.31.001-.358.007a19.76 19.76 0 0 1-.364.033C7.443.346 4.25 2.185 2.228 5.012a11.875 11.875 0 0 0-2.119 5.243c-.096.659-.108.854-.108 1.747s.012 1.089.108 1.748c.652 4.506 3.86 8.292 8.209 9.695.779.251 1.6.422 2.534.525.363.04 1.935.04 2.299 0 1.611-.178 2.977-.577 4.323-1.264.207-.106.247-.134.219-.158-.02-.013-.9-1.193-1.955-2.62l-1.919-2.592-2.404-3.558a338.739 338.739 0 0 0-2.422-3.556c-.009-.002-.018 1.579-.023 3.51-.007 3.38-.01 3.515-.052 3.595a.426.426 0 0 1-.206.214c-.075.037-.14.044-.495.044H7.81l-.108-.068a.438.438 0 0 1-.157-.171l-.05-.106.006-4.703.007-4.705.072-.092a.645.645 0 0 1 .174-.143c.096-.047.134-.051.54-.051.478 0 .558.018.682.154.035.038 1.337 1.999 2.895 4.361a10760.433 10760.433 0 0 0 4.735 7.17l1.9 2.879.096-.063a12.317 12.317 0 0 0 2.466-2.163 11.944 11.944 0 0 0 2.824-6.134c.096-.66.108-.854.108-1.748 0-.893-.012-1.088-.108-1.747-.652-4.506-3.859-8.292-8.208-9.695a12.597 12.597 0 0 0-2.499-.523A33.119 33.119 0 0 0 11.572 0zm4.069 7.217c.347 0 .408.005.486.047a.473.473 0 0 1 .237.277c.018.06.023 1.365.018 4.304l-.006 4.218-.744-1.14-.746-1.14v-3.066c0-1.982.01-3.097.023-3.15a.478.478 0 0 1 .233-.296c.096-.05.13-.054.5-.054z"/>
+                </svg>
+                <span className="text-xs text-white/40">Next.js</span>
+              </a>
+              {/* Vercel */}
+              <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
+                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L2 19.5h20L12 2z"/>
+                </svg>
+                <span className="text-xs text-white/40">Vercel</span>
+              </a>
+              </div>
             </div>
           </div>
         </div>
