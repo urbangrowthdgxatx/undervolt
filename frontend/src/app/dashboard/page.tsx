@@ -97,6 +97,7 @@ function DashboardContent() {
   const [mapLoading, setMapLoading] = useState(true);
   const [selectedCluster, setSelectedCluster] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showZipDropdown, setShowZipDropdown] = useState(false);
   const [highlightZip, setHighlightZip] = useState<string | null>(null);
   const [showEnergyOnly, setShowEnergyOnly] = useState(false);
   const [selectedEnergyType, setSelectedEnergyType] = useState<string | null>(null);
@@ -497,21 +498,47 @@ function DashboardContent() {
       <div className="bg-black border-b border-white/5 px-3 md:px-6 py-2 md:py-3">
         <div className="max-w-2xl mx-auto flex items-center gap-2 md:gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-white/40" size={16} />
+            <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-white/40 z-10" size={16} />
             <input
               type="text"
-              placeholder="Search by zip code (e.g. 78701)..."
+              placeholder="Search zip code..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setShowZipDropdown(e.target.value.length > 0);
+              }}
+              onFocus={() => setShowZipDropdown(searchQuery.length > 0)}
+              onBlur={() => setTimeout(() => setShowZipDropdown(false), 200)}
               className="w-full pl-9 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 bg-white/10 border border-white/20 rounded-full text-sm md:text-base text-white placeholder-white/40 focus:border-white/40 focus:bg-white/15 outline-none transition-all"
             />
             {searchQuery && (
               <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
+                onClick={() => { setSearchQuery(""); setShowZipDropdown(false); }}
+                className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white z-10"
               >
                 ✕
               </button>
+            )}
+            {/* Zip Typeahead Dropdown */}
+            {showZipDropdown && stats?.topZips && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-black/95 border border-white/20 rounded-xl overflow-hidden z-50 max-h-48 overflow-y-auto">
+                {stats.topZips
+                  .filter(z => z.zip.startsWith(searchQuery))
+                  .slice(0, 6)
+                  .map(z => (
+                    <button
+                      key={z.zip}
+                      onClick={() => { setSearchQuery(z.zip); setShowZipDropdown(false); }}
+                      className="w-full px-4 py-2 text-left hover:bg-white/10 flex items-center justify-between"
+                    >
+                      <span className="text-sm text-white">{z.zip}</span>
+                      <span className="text-xs text-white/40">{z.count.toLocaleString()} permits</span>
+                    </button>
+                  ))}
+                {stats.topZips.filter(z => z.zip.startsWith(searchQuery)).length === 0 && (
+                  <div className="px-4 py-2 text-sm text-white/40">No matching zip codes</div>
+                )}
+              </div>
             )}
           </div>
         </div>
