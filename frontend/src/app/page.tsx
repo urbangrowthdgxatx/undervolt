@@ -352,7 +352,7 @@ export default function HomePage() {
       </section>
 
       {/* Why Edge Deployment */}
-      <section className="py-20 px-8 bg-gradient-to-b from-neutral-900 to-black">
+      <section className="py-20 px-8 bg-black">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">Why Edge?</span>
@@ -387,7 +387,7 @@ export default function HomePage() {
       <div className="h-px bg-white/10" />
 
       {/* Open Source CTA */}
-      <section className="py-20 px-8 bg-black">
+      <section className="py-20 px-8 bg-neutral-900">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">Open Source</h2>
           <p className="text-white/50 mb-8 text-lg">
