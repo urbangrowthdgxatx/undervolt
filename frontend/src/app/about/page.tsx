@@ -412,12 +412,16 @@ function Team() {
             rel="noopener noreferrer"
             className="flex items-start gap-4 p-6 rounded-xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 hover:border-amber-500/40 transition-colors group"
           >
-            <h3 className="text-xl text-white font-semibold mb-1">{member.name}</h3>
-            <p className="text-amber-400 text-sm mb-2">{member.role}</p>
-            <p className="text-white/50 text-sm">{member.focus}</p>
-            <div className="mt-4 flex items-center gap-1 text-white/30 text-xs group-hover:text-white/50 transition-colors">
-              LinkedIn <ArrowRight className="w-3 h-3" />
-            </div>
+            {member.avatar && (
+              <img src={member.avatar} alt={member.name} className="w-16 h-16 rounded-full border-2 border-amber-500/30 flex-shrink-0" />
+            )}
+            <div>
+              <h3 className="text-xl text-white font-semibold mb-1">{member.name}</h3>
+              <p className="text-amber-400 text-sm mb-2">{member.role}</p>
+              <p className="text-white/50 text-sm">{member.focus}</p>
+              <div className="mt-4 flex items-center gap-1 text-white/30 text-xs group-hover:text-white/50 transition-colors">
+                LinkedIn <ArrowRight className="w-3 h-3" />
+              </div>
             </div>
           </a>
         ))}
