@@ -36,13 +36,7 @@ export default function HomePage() {
             {/* Award Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/40 mb-6">
               <Trophy className="w-4 h-4 text-amber-400" />
-              <span className="text-sm text-amber-300 font-medium">1st Place - NVIDIA DGX AITX Hackathon</span>
-            </div>
-
-            {/* Award Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/40 mb-6">
-              <Trophy className="w-4 h-4 text-amber-400" />
-              <span className="text-sm text-amber-300 font-medium">1st Place - NVIDIA DGX AITX Hackathon</span>
+              <span className="text-sm text-amber-300 font-medium">1st Place - NVIDIA DGX AITX Hackathon · Dec 2025</span>
             </div>
 
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">

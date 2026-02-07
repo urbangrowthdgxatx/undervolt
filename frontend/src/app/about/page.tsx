@@ -257,7 +257,7 @@ function OriginStory() {
           <div>
             <div className="text-amber-400 text-xs font-medium uppercase tracking-wider mb-1">NVIDIA DGX AITX Hackathon</div>
             <h3 className="text-2xl font-bold text-white">1st Place Winner</h3>
-            <p className="text-white/60 text-sm mt-1">Urban Growth Category • December 2025</p>
+            <p className="text-white/60 text-sm mt-1">Urban Growth Category • Dec 2025</p>
           </div>
         </div>
       </div>
