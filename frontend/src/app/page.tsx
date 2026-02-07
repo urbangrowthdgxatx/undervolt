@@ -52,7 +52,7 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="flex items-center justify-center gap-4 mb-24">
+            <div className="flex items-center justify-center gap-4 mt-6 mb-24">
               <Link
                 href="/explore"
                 className="px-6 py-3 bg-white text-black rounded-lg font-medium hover:bg-white/90 transition-colors"
@@ -71,11 +71,11 @@ export default function HomePage() {
             </div>
 
             {/* Tech Stack - Animated */}
-            <div className="relative overflow-hidden w-full max-w-sm mx-auto">
+            <div className="relative overflow-hidden w-full max-w-lg mx-auto mt-6">
               <div className="flex animate-marquee gap-14 whitespace-nowrap">
               {/* NVIDIA */}
               <a href="https://developer.nvidia.com/embedded/jetson-agx-orin" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-80 hover:opacity-100 transition-opacity flex-shrink-0">
-                <img src="/nvidia-logo.png" alt="NVIDIA" className="h-5 rounded" />
+                <img src="/nvidia-logo.png" alt="NVIDIA" className="w-8 h-8 object-contain rounded" />
                 <span className="text-xs text-white/70">NVIDIA</span>
               </a>
 
