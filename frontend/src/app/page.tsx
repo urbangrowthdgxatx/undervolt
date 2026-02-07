@@ -77,7 +77,7 @@ export default function HomePage() {
             </div>
 
             {/* Tech Stack - Animated */}
-            <div className="relative overflow-hidden w-full max-w-lg mx-auto mt-6">
+            <div className="relative overflow-hidden w-full max-w-lg mx-auto mt-6" style={{ maskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, black 15%, black 85%, transparent)" }}>
               <div className="flex animate-marquee gap-14 whitespace-nowrap">
               {/* NVIDIA */}
               <a href="https://developer.nvidia.com/embedded/jetson-agx-orin" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-50 hover:opacity-90 transition-opacity flex-shrink-0">
