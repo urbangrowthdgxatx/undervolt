@@ -46,7 +46,7 @@ const MILESTONES: Milestone[] = [
   {
     date: "Day 2",
     title: "1st Place Urban Growth",
-    description: "Judges saw what we saw: infrastructure intelligence that cities actually need.",
+    description: "Infrastructure intelligence that cities actually need.",
     status: "completed",
     highlight: true,
   },

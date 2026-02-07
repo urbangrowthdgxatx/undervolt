@@ -405,7 +405,7 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">Technical Architecture</span>
-            <h2 className="text-4xl font-bold mt-4 mb-4">How We Built It</h2>
+            <h2 className="text-4xl font-bold mt-4 mb-4">How It Works</h2>
             <p className="text-white/50">GPU-accelerated pipeline from raw data to urban intelligence</p>
           </div>
 
@@ -538,7 +538,7 @@ export default function HomePage() {
           <div className="p-10 rounded-2xl bg-white/[0.02] border border-white/10">
             <h3 className="text-2xl font-semibold mb-4 text-center">Want to collaborate?</h3>
             <p className="text-white/50 mb-8 text-center">
-              We're open to contributions, partnerships, and adapting this for other cities.
+              Open to contributions, partnerships, and adapting for other cities.
             </p>
 
             {formState === "success" ? (
@@ -547,7 +547,7 @@ export default function HomePage() {
                   <Check className="w-7 h-7 text-emerald-400" />
                 </div>
                 <p className="font-medium text-lg mb-2">Message sent!</p>
-                <p className="text-white/50">We'll get back to you soon.</p>
+                <p className="text-white/50">You'll hear back soon.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -577,7 +577,7 @@ export default function HomePage() {
                   className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:border-emerald-500/50 focus:outline-none transition-colors"
                 />
                 <textarea
-                  placeholder="How can we help?"
+                  placeholder="Your message"
                   rows={4}
                   required
                   value={formData.message}
