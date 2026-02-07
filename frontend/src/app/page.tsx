@@ -167,7 +167,9 @@ export default function HomePage() {
             </a>
 
             {/* Waitlist Signup */}
+            <div className="flex justify-center">
             <WaitlistSignup />
+            </div>
           </div>
         </div>
 
