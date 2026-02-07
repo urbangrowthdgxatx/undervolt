@@ -17,13 +17,12 @@ interface FloatingQuestionsProps {
 
 // Circular positions around center (like a clock)
 const CIRCLE_POSITIONS = [
-  { angle: -60, radius: 38 },   // 10 o'clock
-  { angle: -20, radius: 42 },   // 11 o'clock  
-  { angle: 20, radius: 40 },    // 1 o'clock
-  { angle: 60, radius: 38 },    // 2 o'clock
-  { angle: 140, radius: 40 },   // 4 o'clock
-  { angle: 180, radius: 42 },   // 6 o'clock
-  { angle: 220, radius: 38 },   // 8 o'clock
+  { angle: -90, radius: 30 },   // top
+  { angle: -30, radius: 30 },   // top-right
+  { angle: 30, radius: 30 },    // bottom-right
+  { angle: 90, radius: 30 },    // bottom
+  { angle: 150, radius: 30 },   // bottom-left
+  { angle: 210, radius: 30 },   // top-left
 ];
 
 export function FloatingQuestions({

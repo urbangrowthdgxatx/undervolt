@@ -14,6 +14,17 @@ const LeafletMap = dynamicImport(() => import('@/components/LeafletMap').then(mo
   loading: () => <div className="w-full h-full flex items-center justify-center"><div className="text-white/40">Loading map...</div></div>
 });
 
+
+// Format markdown bold (**text**) to JSX
+function formatBold(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={i} className="text-white font-semibold">{part.slice(2, -2)}</strong>;
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
 interface ChatMessage {
   role: 'user' | 'assistant';
   text: string;
@@ -939,7 +950,7 @@ function DashboardContent() {
                       ? 'bg-white/15 text-white'
                       : 'bg-white/5 border border-white/10 text-white/80'
                   }`}>
-                    {msg.text}
+                    {formatBold(msg.text)}
                   </div>
                 </div>
               ))}
@@ -1142,7 +1153,7 @@ function DashboardContent() {
                       ? 'bg-white/15 text-white'
                       : 'bg-white/5 border border-white/10 text-white/80'
                   }`}>
-                    {msg.text}
+                    {formatBold(msg.text)}
                   </div>
                 </div>
               ))}
