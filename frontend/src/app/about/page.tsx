@@ -268,40 +268,33 @@ function OriginStory() {
 function Roadmap() {
   const roadmapItems = [
     { 
-      phase: "Shipped", 
+      phase: "Hackathon", 
       color: "emerald",
       items: [
-        "Story-driven Explore Page",
-        "Mobile Navigation",
-        "GPU Backend (CPU, cuPy, PyTorch)",
-        "Email Waitlist & Auth",
+        "2.34M Austin permits ingested",
+        "GPU-accelerated analysis pipeline",
+        "Interactive map & chat interface",
+        "Edge deployment on Jetson AGX Orin",
       ]
     },
     { 
-      phase: "In Progress", 
+      phase: "Current", 
       color: "amber",
       items: [
-        "GPU Analytics on Jetson",
-        "NeMo Permit Classification",
-        "Cached AI Responses",
-      ]
-    },
-    { 
-      phase: "Q1 2026", 
-      color: "blue",
-      items: [
-        "Multi-city Expansion",
-        "Predictive Analytics",
-        "Public API",
+        "Nemotron AI responses",
+        "Cached Q&A for instant results",
+        "User waitlist & approval system",
+        "Story-driven data exploration",
       ]
     },
     { 
       phase: "Future", 
       color: "purple",
       items: [
-        "Enterprise Deployments",
-        "Custom City Pipelines",
-        "Developer SDK",
+        "Multi-city expansion",
+        "Predictive analytics & forecasting",
+        "Public API for developers",
+        "Enterprise deployments",
       ]
     },
   ];
@@ -316,7 +309,7 @@ function Roadmap() {
   return (
     <div className="space-y-8">
       {/* Timeline */}
-      <div className="grid md:grid-cols-4 gap-6">
+      <div className="grid md:grid-cols-3 gap-6">
         {roadmapItems.map((section) => {
           const colors = colorMap[section.color];
           return (
