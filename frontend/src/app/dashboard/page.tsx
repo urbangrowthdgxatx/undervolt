@@ -67,7 +67,19 @@ interface GeoJSONFeature {
   geometry: {
     type: string;
     coordinates: [number, number];
-  };
+  }
+
+// Simple markdown bold formatter
+function formatBold(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={i} className="text-white font-medium">{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+}
+;
   properties: {
     zip_code: string;
     total_permits: number;
@@ -470,7 +482,7 @@ function DashboardContent() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-black pt-14 md:pt-16">
+    <div className="h-screen flex flex-col bg-black pt-14 md:pt-16 overflow-hidden">
       {/* Search Bar and Filters */}
       <div className="bg-black border-b border-white/5 px-3 md:px-6 py-2 md:py-3">
         <div className="max-w-2xl mx-auto flex items-center gap-2 md:gap-4">
@@ -939,7 +951,7 @@ function DashboardContent() {
                       ? 'bg-white/15 text-white'
                       : 'bg-white/5 border border-white/10 text-white/80'
                   }`}>
-                    {msg.text}
+                    {formatBold(msg.text)}
                   </div>
                 </div>
               ))}
@@ -1142,7 +1154,7 @@ function DashboardContent() {
                       ? 'bg-white/15 text-white'
                       : 'bg-white/5 border border-white/10 text-white/80'
                   }`}>
-                    {msg.text}
+                    {formatBold(msg.text)}
                   </div>
                 </div>
               ))}
