@@ -16,9 +16,10 @@ const TABS: { id: Tab; label: string; icon: typeof Brain }[] = [
 
 // Pipeline steps - simplified
 const PIPELINE = [
-  { step: "01", label: "Data", description: "2.34M Austin permits via Open Data API" },
-  { step: "02", label: "AI", description: "GPU-accelerated analysis on Jetson" },
-  { step: "03", label: "Insights", description: "Interactive maps, chat & reports" },
+  { step: "01", label: "Ingest", description: "2.34M permits from Austin Open Data", icon: "database", color: "emerald" },
+  { step: "02", label: "Process", description: "GPU-accelerated on NVIDIA Jetson", icon: "cpu", color: "purple" },
+  { step: "03", label: "Analyze", description: "AI categorization with Nemotron", icon: "sparkles", color: "amber" },
+  { step: "04", label: "Serve", description: "Interactive maps, chat & reports", icon: "globe", color: "blue" },
 ];
 // Hardware
 const HARDWARE = [
@@ -115,19 +116,57 @@ export default function AboutPage() {
 }
 
 function HowItWorks() {
+  const colorMap: Record<string, string> = {
+    emerald: "from-emerald-500/20 to-emerald-500/5 border-emerald-500/30 text-emerald-400",
+    purple: "from-purple-500/20 to-purple-500/5 border-purple-500/30 text-purple-400",
+    amber: "from-amber-500/20 to-amber-500/5 border-amber-500/30 text-amber-400",
+    blue: "from-blue-500/20 to-blue-500/5 border-blue-500/30 text-blue-400",
+  };
+  
   return (
     <div className="space-y-12">
+      {/* Stats Banner */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20">
+          <div className="text-2xl font-bold text-emerald-400">2.34M</div>
+          <div className="text-xs text-white/50">Permits Analyzed</div>
+        </div>
+        <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20">
+          <div className="text-2xl font-bold text-purple-400">64GB</div>
+          <div className="text-xs text-white/50">Jetson Memory</div>
+        </div>
+        <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20">
+          <div className="text-2xl font-bold text-amber-400">4B</div>
+          <div className="text-xs text-white/50">Nemotron Params</div>
+        </div>
+        <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20">
+          <div className="text-2xl font-bold text-blue-400">24+</div>
+          <div className="text-xs text-white/50">Years of Data</div>
+        </div>
+      </div>
+
       {/* Pipeline */}
       <div>
-        <h2 className="text-xl font-semibold mb-6">How It Works</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          {PIPELINE.map((item) => (
-            <div key={item.step} className="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
-              <div className="text-white/30 text-xs mb-2">{item.step}</div>
-              <div className="text-white font-medium text-sm mb-1">{item.label}</div>
-              <div className="text-white/40 text-xs">{item.description}</div>
+        <h2 className="text-xl font-semibold mb-6">Data Pipeline</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {PIPELINE.map((item, i) => (
+            <div key={item.step} className={`relative p-5 rounded-xl bg-gradient-to-br border ${colorMap[item.color]}`}>
+              <div className="text-3xl font-bold opacity-20 absolute top-2 right-3">{item.step}</div>
+              <div className="text-lg font-semibold text-white mb-2">{item.label}</div>
+              <div className="text-sm text-white/60">{item.description}</div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Key Insight */}
+      <div className="p-6 rounded-xl bg-gradient-to-r from-amber-500/10 via-transparent to-purple-500/10 border border-white/10">
+        <div className="flex items-start gap-4">
+          <div className="text-3xl">⚡</div>
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-2">Why Edge AI?</h3>
+            <p className="text-white/60 text-sm">All processing happens locally on NVIDIA Jetson AGX Orin. No cloud APIs, no data leaving your network. Real-time insights with full data sovereignty.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -227,79 +266,92 @@ function OriginStory() {
 
 
 function Roadmap() {
-  const completed = [
-    { title: "Story-driven Explore Page", desc: "Scroll-based narrative with interactive map" },
-    { title: "Mobile Navigation", desc: "Responsive UI across all devices" },
-    { title: "Dynamic OG Images", desc: "Auto-generated social cards" },
-    { title: "GPU Backend Architecture", desc: "Multi-backend: CPU, cuPy, PyTorch" },
-    { title: "Waitlist & Auth", desc: "Email signup with usage tracking" },
+  const roadmapItems = [
+    { 
+      phase: "Shipped", 
+      color: "emerald",
+      items: [
+        "Story-driven Explore Page",
+        "Mobile Navigation",
+        "GPU Backend (CPU, cuPy, PyTorch)",
+        "Email Waitlist & Auth",
+      ]
+    },
+    { 
+      phase: "In Progress", 
+      color: "amber",
+      items: [
+        "GPU Analytics on Jetson",
+        "NeMo Permit Classification",
+        "Cached AI Responses",
+      ]
+    },
+    { 
+      phase: "Q1 2026", 
+      color: "blue",
+      items: [
+        "Multi-city Expansion",
+        "Predictive Analytics",
+        "Public API",
+      ]
+    },
+    { 
+      phase: "Future", 
+      color: "purple",
+      items: [
+        "Enterprise Deployments",
+        "Custom City Pipelines",
+        "Developer SDK",
+      ]
+    },
   ];
 
-  const inProgress = [
-    { title: "GPU Analytics", desc: "NVIDIA Jetson for real-time pattern detection" },
-    { title: "NeMo Integration", desc: "NVIDIA NeMo for permit classification" },
-    { title: "Multi-city Expansion", desc: "Preparing pipeline for additional cities" },
-  ];
-
-  const planned = [
-    { title: "Predictive Analytics", desc: "Forecast permit trends and energy adoption" },
-    { title: "Public API", desc: "API access for developers and researchers" },
-    { title: "Enterprise Features", desc: "Custom deployments, SLAs, dedicated support" },
-  ];
+  const colorMap: Record<string, { bg: string; border: string; text: string; dot: string }> = {
+    emerald: { bg: "bg-emerald-500/10", border: "border-emerald-500/30", text: "text-emerald-400", dot: "bg-emerald-500" },
+    amber: { bg: "bg-amber-500/10", border: "border-amber-500/30", text: "text-amber-400", dot: "bg-amber-500" },
+    blue: { bg: "bg-blue-500/10", border: "border-blue-500/30", text: "text-blue-400", dot: "bg-blue-500" },
+    purple: { bg: "bg-purple-500/10", border: "border-purple-500/30", text: "text-purple-400", dot: "bg-purple-500" },
+  };
 
   return (
-    <div className="space-y-12">
-      <div>
-        <div className="flex items-center gap-2 mb-6">
-          <CheckCircle2 className="w-5 h-5 text-green-400" />
-          <h2 className="text-xl font-semibold">Recently Shipped</h2>
-        </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          {completed.map((item) => (
-            <div key={item.title} className="p-4 rounded-xl bg-green-500/5 border border-green-500/20">
-              <h3 className="text-white font-medium mb-1">{item.title}</h3>
-              <p className="text-white/40 text-sm">{item.desc}</p>
+    <div className="space-y-8">
+      {/* Timeline */}
+      <div className="grid md:grid-cols-4 gap-6">
+        {roadmapItems.map((section) => {
+          const colors = colorMap[section.color];
+          return (
+            <div key={section.phase} className="relative">
+              {/* Phase header */}
+              <div className={`flex items-center gap-2 mb-4`}>
+                <div className={`w-3 h-3 rounded-full ${colors.dot}`} />
+                <span className={`font-semibold ${colors.text}`}>{section.phase}</span>
+              </div>
+              {/* Items */}
+              <div className={`p-4 rounded-xl ${colors.bg} border ${colors.border} space-y-3`}>
+                {section.items.map((item, i) => (
+                  <div key={i} className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-white/30 mt-2 flex-shrink-0" />
+                    <span className="text-sm text-white/70">{item}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
-      <div>
-        <div className="flex items-center gap-2 mb-6">
-          <Zap className="w-5 h-5 text-yellow-400" />
-          <h2 className="text-xl font-semibold">In Progress</h2>
+      {/* CTA */}
+      <div className="p-6 rounded-xl bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h3 className="font-semibold text-white mb-1">Open Source</h3>
+          <p className="text-white/50 text-sm">Undervolt is MIT licensed. Fork it for your city.</p>
         </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          {inProgress.map((item) => (
-            <div key={item.title} className="p-4 rounded-xl bg-yellow-500/5 border border-yellow-500/20">
-              <h3 className="text-white font-medium mb-1">{item.title}</h3>
-              <p className="text-white/40 text-sm">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <div className="flex items-center gap-2 mb-6">
-          <Circle className="w-5 h-5 text-white/30" />
-          <h2 className="text-xl font-semibold">On the Roadmap</h2>
-        </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          {planned.map((item) => (
-            <div key={item.title} className="p-4 rounded-xl bg-white/[0.02] border border-white/10">
-              <h3 className="text-white font-medium mb-1">{item.title}</h3>
-              <p className="text-white/40 text-sm">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="p-6 rounded-xl bg-purple-500/5 border border-purple-500/20 text-center">
-        <h3 className="font-semibold mb-2">Want to Contribute?</h3>
-        <p className="text-white/50 text-sm mb-4">Undervolt is open source. Fork for your city!</p>
-        <a href="https://github.com/urbangrowthdgxatx/undervolt" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-lg font-medium hover:bg-white/90 text-sm">
+        <a 
+          href="https://github.com/urbangrowthdgxatx/undervolt" 
+          target="_blank"
+          className="px-5 py-2.5 bg-white text-black font-medium rounded-lg hover:bg-white/90 transition-colors text-sm"
+        >
           View on GitHub
-          <ArrowRight className="w-4 h-4" />
         </a>
       </div>
     </div>
