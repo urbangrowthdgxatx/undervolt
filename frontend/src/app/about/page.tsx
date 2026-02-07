@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Brain, Layers, Clock, Users, Cpu, Cloud, Database, ArrowRight, CheckCircle2, Circle, Zap,  Calendar } from "lucide-react";
+import { Brain, Layers, Clock, Users, Cpu, Cloud, Database, ArrowRight, CheckCircle2, Circle, Zap, Calendar, Trophy } from "lucide-react";
 import Link from "next/link";
 
 type Tab = "how" | "stack" | "story" | "roadmap" | "team";
@@ -247,6 +247,21 @@ function TechStack() {
 function OriginStory() {
   return (
     <div className="space-y-8">
+      {/* Award Banner - Highlighted */}
+      <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-500/20 via-yellow-500/20 to-amber-500/20 border-2 border-amber-500/40 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl" />
+        <div className="relative flex items-center gap-4">
+          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-lg shadow-amber-500/30">
+            <Trophy className="w-8 h-8 text-black" />
+          </div>
+          <div>
+            <div className="text-amber-400 text-xs font-medium uppercase tracking-wider mb-1">NVIDIA DGX AITX Hackathon</div>
+            <h3 className="text-2xl font-bold text-white">1st Place Winner</h3>
+            <p className="text-white/60 text-sm mt-1">Urban Growth Category • December 2025</p>
+          </div>
+        </div>
+      </div>
+
       {/* Origin banner */}
       <div className="p-6 rounded-xl bg-gradient-to-r from-amber-500/10 to-purple-500/10 border border-white/10">
         <div className="flex items-center gap-3 mb-2">
@@ -260,11 +275,11 @@ function OriginStory() {
 
       {/* Milestones */}
       <div className="space-y-4">
-        {MILESTONES.map((m, i) => {
+        {MILESTONES.filter(m => m.phase !== "Award").map((m, i) => {
           return (
-            <div key={i} className={`flex gap-4 p-4 rounded-xl border ${m.highlight ? "bg-purple-500/5 border-purple-500/20" : "bg-white/[0.02] border-white/5"}`}>
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-green-500/10`}>
-                <CheckCircle2 className="w-5 h-5 text-green-400" />
+            <div key={i} className={`flex gap-4 p-4 rounded-xl border bg-white/[0.02] border-white/5`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${m.status === 'in-progress' ? 'bg-amber-500/10' : 'bg-green-500/10'}`}>
+                {m.status === 'in-progress' ? <Circle className="w-5 h-5 text-amber-400" /> : <CheckCircle2 className="w-5 h-5 text-green-400" />}
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 text-white/40 text-xs mb-1">

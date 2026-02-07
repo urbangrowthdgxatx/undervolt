@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Github, AlertTriangle, Database, BarChart3 } from "lucide-react";
+import { ArrowRight, Github, AlertTriangle, Database, BarChart3, Trophy } from "lucide-react";
 
 export default function HomePage() {
   const [dataDate, setDataDate] = useState<string | null>(null);
@@ -33,6 +33,12 @@ export default function HomePage() {
       <section className="relative min-h-[85vh] flex flex-col">
         <div className="flex-1 flex items-center justify-center px-8">
           <div className="max-w-4xl text-center">
+            {/* Award Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/40 mb-6">
+              <Trophy className="w-4 h-4 text-amber-400" />
+              <span className="text-sm text-amber-300 font-medium">1st Place - NVIDIA DGX AITX Hackathon</span>
+            </div>
+
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
               Urban infrastructure intelligence
             </h1>

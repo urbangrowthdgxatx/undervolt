@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Github, Menu, X, User, LogOut, ChevronDown } from "lucide-react";
+import { Github, Menu, X, User, LogOut, ChevronDown } , Trophy } from "lucide-react";
 
 export function Navigation() {
   const pathname = usePathname();
