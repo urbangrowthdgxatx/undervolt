@@ -184,7 +184,7 @@ function TechStack() {
           ))}
         </div>
       </div>
-
+    </div>
   );
 }
 
