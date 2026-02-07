@@ -127,7 +127,7 @@ export function LeafletMap({
 }: LeafletMapProps) {
   const [selectedPermit, setSelectedPermit] = useState<PermitLocation | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const [zoom, setZoom] = useState(10);
+  const [zoom, setZoom] = useState(13);
   const center: LatLngExpression = [30.2672, -97.7431]; // Austin center
 
   // Multi-level zoom thresholds
@@ -418,7 +418,7 @@ export function LeafletMap({
       )}
       <MapContainer
         center={center}
-        zoom={10}
+        zoom={13}
         scrollWheelZoom={true}
         style={{ width: "100%", height: "100%" }}
         className="z-0"
