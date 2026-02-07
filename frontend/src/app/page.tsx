@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { WaitlistSignup } from "@/components/WaitlistSignup";
 import { ArrowRight, Github, AlertTriangle, Check, ChevronLeft, ChevronRight, Cloud, Cpu, Database, ExternalLink, Map, Zap, BarChart3, Loader2 } from "lucide-react";
 import { Orbitron } from "next/font/google";
 
@@ -112,19 +111,27 @@ export default function HomePage() {
             <p className="text-xl md:text-2xl text-white/60 mb-4">
               Analyzing <span className="text-white font-medium">2.34M Austin construction permits</span>
             </p>
-            {/* Tech Stack - Icons only */}
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <div className="w-9 h-9 flex items-center justify-center bg-[#76B900]/10 border border-[#76B900]/30 rounded-lg cursor-default" title="NVIDIA RAPIDS cuDF">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#76B900"><path d="M8.948 8.798v-1.43a6.7 6.7 0 0 1 .424-.018c3.922-.124 6.493 3.374 6.493 3.374s-2.774 3.851-5.75 3.851c-.412 0-.807-.063-1.167-.18v-4.475c1.224.164 1.472.768 2.209 2.063l1.722-1.465s-1.373-1.842-3.506-1.842c-.147 0-.287.009-.425.023v-.001zm0-4.762v2.06l.424-.036c5.136-.189 8.508 4.256 8.508 4.256s-3.898 4.823-7.283 4.823a5.5 5.5 0 0 1-1.649-.251v1.345a6.9 6.9 0 0 0 1.423.153c4.834 0 8.291-2.867 10.579-4.971.306.262 1.561 1.064 1.818 1.393-2.163 1.78-7.239 4.853-12.319 4.853a9.3 9.3 0 0 1-1.501-.122v1.453h14.039V4.036H8.948zm0 10.327v1.146a5.5 5.5 0 0 1-1.167-.251V8.632c.377-.095.774-.153 1.167-.169v.335c-2.052.163-3.478 2.159-3.478 2.159s1.18 2.406 3.478 3.406z"/></svg>
+            {/* Tech Stack - Icons with labels */}
+            <div className="flex items-center justify-center gap-6 mb-6">
+              {/* NVIDIA */}
+              <div className="flex flex-col items-center gap-1">
+                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#76B900"><path d="M8.948 8.798v-1.43a6.7 6.7 0 0 1 .424-.018c3.922-.124 6.493 3.374 6.493 3.374s-2.774 3.851-5.75 3.851c-.412 0-.807-.063-1.167-.18v-4.475c1.224.164 1.472.768 2.209 2.063l1.722-1.465s-1.373-1.842-3.506-1.842c-.147 0-.287.009-.425.023v-.001zm0-4.762v2.06l.424-.036c5.136-.189 8.508 4.256 8.508 4.256s-3.898 4.823-7.283 4.823a5.5 5.5 0 0 1-1.649-.251v1.345a6.9 6.9 0 0 0 1.423.153c4.834 0 8.291-2.867 10.579-4.971.306.262 1.561 1.064 1.818 1.393-2.163 1.78-7.239 4.853-12.319 4.853a9.3 9.3 0 0 1-1.501-.122v1.453h14.039V4.036H8.948zm0 10.327v1.146a5.5 5.5 0 0 1-1.167-.251V8.632c.377-.095.774-.153 1.167-.169v.335c-2.052.163-3.478 2.159-3.478 2.159s1.18 2.406 3.478 3.406z"/></svg>
+                <span className="text-[10px] text-white/40">NVIDIA</span>
               </div>
-              <div className="w-9 h-9 flex items-center justify-center bg-white/5 border border-white/20 rounded-lg cursor-default" title="Ollama">
-                <span className="text-lg">🦙</span>
+              {/* Ollama */}
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-2xl">🦙</span>
+                <span className="text-[10px] text-white/40">Ollama</span>
               </div>
-              <div className="w-9 h-9 flex items-center justify-center bg-purple-500/10 border border-purple-500/30 rounded-lg cursor-default" title="Nemotron Mini 4B">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#a855f7"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+              {/* Nemotron */}
+              <div className="flex flex-col items-center gap-1">
+                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#76B900"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                <span className="text-[10px] text-white/40">Nemotron</span>
               </div>
-              <div className="w-9 h-9 flex items-center justify-center bg-[#76B900]/10 border border-[#76B900]/30 rounded-lg cursor-default" title="NVIDIA Jetson AGX Orin">
-                <Cpu className="w-5 h-5 text-[#76B900]" />
+              {/* Jetson */}
+              <div className="flex flex-col items-center gap-1">
+                <Cpu className="w-8 h-8 text-[#76B900]" />
+                <span className="text-[10px] text-white/40">Jetson</span>
               </div>
             </div>
 
@@ -154,10 +161,6 @@ export default function HomePage() {
               </a>
             </div>
 
-            {/* Waitlist Signup */}
-            <div className="flex justify-center">
-            <WaitlistSignup />
-            </div>
           </div>
         </div>
 
