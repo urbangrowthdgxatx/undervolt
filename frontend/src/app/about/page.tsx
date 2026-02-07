@@ -65,7 +65,15 @@ const MILESTONES = [
 
 // Team
 const TEAM = [
-  { name: "Ravinder Jilkapally", role: "Lead", focus: "Architecture, GPU pipelines, edge deployment", linkedin: "https://linkedin.com/in/jravinder", lead: true, avatar: "https://www.gravatar.com/avatar/07e9975093e352d88e8a43b95bbf3295?s=200" },
+  { 
+    name: "Ravinder Jilkapally", 
+    role: "AI Product & Platform Leader", 
+    tagline: "Scaling AI at Xpanse",
+    focus: "18+ years shipping AI/ML platforms at scale. Director of GenAI. Building edge-first, private LLM systems.", 
+    linkedin: "https://linkedin.com/in/jravinder", 
+    lead: true, 
+    avatar: "https://www.gravatar.com/avatar/07e9975093e352d88e8a43b95bbf3295?s=200" 
+  },
 ];
 
 const HACKATHON_TEAM = [
@@ -420,7 +428,8 @@ function Team() {
             )}
             <div className="flex-1">
               <h3 className="text-2xl text-white font-semibold mb-1">{member.name}</h3>
-              <p className="text-amber-400 font-medium mb-3">{member.role}</p>
+              <p className="text-amber-400 font-medium">{member.role}</p>
+              {member.tagline && <p className="text-white/40 text-sm mb-3">{member.tagline}</p>}
               <p className="text-white/60 text-sm">{member.focus}</p>
               <div className="mt-4 inline-flex items-center gap-2 text-white/40 text-sm group-hover:text-amber-400 transition-colors">
                 View LinkedIn <ArrowRight className="w-4 h-4" />
