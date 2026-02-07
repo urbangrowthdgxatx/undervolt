@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Brain, Layers, Clock, Users, Cpu, Cloud, Database, ArrowRight, CheckCircle2, Circle, Zap,  Calendar } from "lucide-react";
 import Link from "next/link";
 
@@ -76,6 +76,19 @@ const HACKATHON_TEAM = [
 export default function AboutPage() {
   const [activeTab, setActiveTab] = useState<Tab>("how");
 
+  // Handle hash-based navigation
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "") as Tab;
+    if (hash && TABS.some(t => t.id === hash)) {
+      setActiveTab(hash);
+    }
+  }, []);
+
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+    window.history.replaceState(null, "", `#${tab}`);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white pt-16">
       {/* Header */}
@@ -91,7 +104,7 @@ export default function AboutPage() {
             {TABS.map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
-                onClick={() => setActiveTab(id)}
+                onClick={() => handleTabChange(id)}
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all whitespace-nowrap ${
                   activeTab === id
                     ? "border-white text-white"
