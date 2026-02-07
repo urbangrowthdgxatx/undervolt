@@ -497,7 +497,7 @@ function DashboardContent() {
             <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-white/40" size={16} />
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Search by zip code (e.g. 78701)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 bg-white/10 border border-white/20 rounded-full text-sm md:text-base text-white placeholder-white/40 focus:border-white/40 focus:bg-white/15 outline-none transition-all"
@@ -532,30 +532,28 @@ function DashboardContent() {
           <div className="p-5 space-y-5">
             {/* Header */}
             <div className="pb-4 border-b border-white/10">
-              <h1 className="text-lg font-medium text-white/90">Austin Infrastructure</h1>
-              <p className="text-xs text-white/50 mt-1">Energy infrastructure & construction activity</p>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-white">{stats.totalPermits.toLocaleString()}</span>
-                <span className="text-xs text-white/40">total permits</span>
+              <div className="flex items-center justify-between">
+                <h1 className="text-base font-medium text-white/90">Austin Permits</h1>
+                <span className="text-lg font-bold text-white">{stats.totalPermits.toLocaleString()}</span>
               </div>
               {stats.dateRange && (
-                <p className="text-xs text-white/40 mt-1">{formatDateRange(stats.dateRange)}</p>
+                <p className="text-[10px] text-white/40 mt-1">{formatDateRange(stats.dateRange)}</p>
               )}
             </div>
 
             {/* Quick Stats */}
             <div>
-              <h3 className="text-[10px] font-medium text-white/40 uppercase tracking-wider mb-2">
-                Energy Permits
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-[10px] font-medium text-white/40 uppercase tracking-wider">Filter by Type</h3>
                 {selectedEnergyType && (
                   <button
                     onClick={() => setSelectedEnergyType(null)}
-                    className="ml-2 text-white/60 hover:text-white"
+                    className="text-[10px] text-white/50 hover:text-white"
                   >
-                    ✕ Clear
+                    Clear
                   </button>
                 )}
-              </h3>
+              </div>
               <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => setSelectedEnergyType(selectedEnergyType === 'solar' ? null : 'solar')}
