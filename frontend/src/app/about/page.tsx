@@ -29,7 +29,7 @@ const HARDWARE = [
   {
     name: "NVIDIA DGX Spark",
     role: "Training & Development",
-    description: "GPU-accelerated ML pipeline. Batch processing of 2.3M permits with RAPIDS cuDF.",
+    description: "GPU-accelerated ML pipeline. GPU-accelerated development and ML training.",
     color: "purple",
     icon: Cloud,
   },
@@ -46,7 +46,7 @@ const HARDWARE = [
 const SOFTWARE = [
   { name: "Nemotron Mini 4B", category: "LLM", description: "NVIDIA's instruction-tuned model for permit queries.", logo: "nvidia" },
   { name: "Ollama", category: "LLM Serving", description: "Local model serving, on-device inference.", logo: "ollama" },
-  { name: "RAPIDS cuDF", category: "Data", description: "GPU DataFrame operations at GPU speed.", logo: "nvidia" },
+  { name: "Python Pipeline", category: "Data", description: "GPU data processing.", logo: "nvidia" },
   { name: "Next.js", category: "Frontend", description: "React framework with API routes.", logo: "nextjs" },
   { name: "Supabase", category: "Database", description: "PostgreSQL for 2.3M permits.", logo: "supabase" },
   { name: "Leaflet", category: "Maps", description: "Interactive permit visualization.", logo: "leaflet" },
@@ -66,7 +66,7 @@ const LOGOS: Record<string, React.ReactNode> = {
 // Origin Story milestones
 const MILESTONES = [
   { phase: "Discovery", title: "The Question", description: "What can 2.3M construction permits tell us about a city's energy future?", status: "completed" },
-  { phase: "Build", title: "GPU Pipeline", description: "RAPIDS cuDF processed millions of records in seconds on DGX Spark.", status: "completed" },
+  { phase: "Build", title: "GPU Pipeline", description: "Processed millions of records on DGX Spark for model training.", status: "completed" },
   { phase: "Build", title: "ML Clustering", description: "TF-IDF, PCA, KMeans - 8 distinct permit categories emerged from unstructured text.", status: "completed" },
   { phase: "Insight", title: "The Story", description: "7,293 generators vs 1,172 batteries. Austinites don't trust the grid.", status: "completed", highlight: true },
   { phase: "Deploy", title: "Edge-First", description: "Full stack on Jetson AGX Orin. Zero cloud. Data sovereignty.", status: "completed" },

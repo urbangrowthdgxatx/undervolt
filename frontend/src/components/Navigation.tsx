@@ -13,6 +13,7 @@ export function Navigation() {
     { href: "/explore", label: "Explore" },
     { href: "/dashboard", label: "Map" },
     { href: "/story", label: "Ask AI" },
+    { href: "/reports", label: "Reports" },
     { href: "/about", label: "About" },
   ];
 
