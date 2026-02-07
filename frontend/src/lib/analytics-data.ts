@@ -286,7 +286,7 @@ export async function getKeyInsights(): Promise<string> {
   const genLeaders = await getEnergyLeaders('generator', 3);
 
   return `
-## Austin Infrastructure Data (2019-2024)
+## Austin Infrastructure Data (2000-2026)
 
 SCALE: 2.34 million permits analyzed
 
@@ -390,7 +390,7 @@ export async function searchAnalytics(query: string): Promise<string> {
 
   // --- POOL / LUXURY / REMODEL queries ---
   if (fuzzyMatch(lowerQuery, ['pool', 'luxury', 'remodel', 'renovation', 'upgrade', 'addition', 'kitchen', 'bathroom', 'adu', 'accessory', 'money', 'investment', 'value', 'expensive'])) {
-    results.push('## Austin Luxury & Remodel Trends (2019-2024)');
+    results.push('## Austin Luxury & Remodel Trends (2000-2026)');
     results.push('- Pool Permits: 4,287 installations');
     results.push('- ADU Permits: 2,341 accessory dwelling units');
     results.push('- Luxury remodels ($100K+): Concentrated in 78704, 78701, 78746');

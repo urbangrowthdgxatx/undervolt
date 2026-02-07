@@ -207,7 +207,7 @@ Every data insight is potentially story-worthy. Default to INCLUDING a storyBloc
   "dataPoint": { "label": "generators", "value": "2,151" },
   "whyStoryWorthy": "equity-gap",
   "evidence": [
-    { "stat": "District 10 has 12x more generators", "source": "2019-2024 permit data" }
+    { "stat": "District 10 has 12x more generators", "source": "2000-2026 permit data" }
   ],
   "confidence": "high",
   "geoData": { "type": "comparison", "districts": [10, 4], "signal": "generator" }
@@ -227,7 +227,7 @@ Always include these to make curation feel earned:
 
 **evidence** - 1-2 supporting stats with source:
 - stat: The specific number or comparison
-- source: Where the data comes from (e.g., "2019-2024 permit data")
+- source: Where the data comes from (e.g., "2000-2026 permit data")
 
 **confidence** - Data quality indicator:
 - \`high\` - Direct measurement, large sample
