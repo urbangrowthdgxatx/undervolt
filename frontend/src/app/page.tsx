@@ -93,71 +93,27 @@ export default function HomePage() {
         {/* Hero Content */}
         <div className="flex-1 flex items-center justify-center px-8">
           <div className="max-w-4xl text-center">
-            <div className="flex items-center justify-center gap-6 mb-8">
-              {/* Logo Icon - Amber/Gold bolt */}
-              <svg className="w-14 h-14 md:w-20 md:h-20" viewBox="0 0 24 24" fill="none">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="url(#bolt-gradient)" />
-                <defs>
-                  <linearGradient id="bolt-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#fbbf24" />
-                    <stop offset="100%" stopColor="#f59e0b" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <h1 className="text-6xl md:text-8xl font-bold tracking-tight" style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}>
-                <span className="text-white">under</span><span className="text-amber-400">volt</span>
-              </h1>
-            </div>
-            <p className="text-xl md:text-2xl text-white/60 mb-4">
-              Analyzing <span className="text-white font-medium">2.34M Austin construction permits</span>
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+              Urban infrastructure intelligence
+            </h1>
+            <p className="text-lg md:text-xl text-white/50 mb-8 max-w-2xl mx-auto">
+              GPU-accelerated analysis of 2.34M Austin construction permits. Discover energy trends, grid gaps, and infrastructure patterns.
             </p>
-            {/* Tech Stack */}
-            <div className="flex items-center justify-center gap-8 mb-10">
-              {/* NVIDIA */}
-              <a href="https://nvidia.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
-                <img src="https://www.nvidia.com/favicon.ico" alt="NVIDIA" className="w-6 h-6" />
-                <span className="text-[10px] text-white/50">NVIDIA</span>
-              </a>
-              {/* Ollama */}
-              <a href="https://ollama.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
-                <img src="https://ollama.com/public/ollama.png" alt="Ollama" className="w-6 h-6" />
-                <span className="text-[10px] text-white/50">Ollama</span>
-              </a>
-              {/* Supabase */}
-              <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
-                <svg className="w-6 h-6" viewBox="0 0 109 113" fill="none"><path d="M63.7076 110.284C60.8481 113.885 55.0502 111.912 54.9813 107.314L53.9738 40.0627L99.1935 40.0627C107.384 40.0627 111.952 49.5228 106.859 55.9374L63.7076 110.284Z" fill="url(#paint0_linear)"/><path d="M63.7076 110.284C60.8481 113.885 55.0502 111.912 54.9813 107.314L53.9738 40.0627L99.1935 40.0627C107.384 40.0627 111.952 49.5228 106.859 55.9374L63.7076 110.284Z" fill="url(#paint1_linear)" fillOpacity="0.2"/><path d="M45.317 2.07103C48.1765 -1.53037 53.9745 0.442937 54.0434 5.041L54.4849 72.2922H9.83113C1.64038 72.2922 -2.92775 62.8321 2.1655 56.4175L45.317 2.07103Z" fill="#3ECF8E"/><defs><linearGradient id="paint0_linear" x1="53.9738" y1="54.974" x2="94.1635" y2="71.8295" gradientUnits="userSpaceOnUse"><stop stopColor="#249361"/><stop offset="1" stopColor="#3ECF8E"/></linearGradient><linearGradient id="paint1_linear" x1="36.1558" y1="30.578" x2="54.4844" y2="65.0806" gradientUnits="userSpaceOnUse"><stop/><stop offset="1" stopOpacity="0"/></linearGradient></defs></svg>
-                <span className="text-[10px] text-white/50">Supabase</span>
-              </a>
-              {/* Vercel */}
-              <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="white"><path d="M12 2L2 19.5h20L12 2z"/></svg>
-                <span className="text-[10px] text-white/50">Vercel</span>
-              </a>
-            </div>
-
-            <div className="flex items-center justify-center gap-3 mb-8 mt-4">
+            <div className="flex items-center justify-center gap-4">
               <Link
                 href="/explore"
-                className="flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-black rounded-lg font-medium transition-colors"
+                className="px-6 py-3 bg-white text-black rounded-lg font-medium hover:bg-white/90 transition-colors"
               >
-                <Map className="w-4 h-4" />
-                Explore
-              </Link>
-              <Link
-                href="/story"
-                className="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 border border-white/30 rounded-lg font-medium transition-colors"
-              >
-                <Zap className="w-4 h-4" />
-                Ask AI
+                Get Started
               </Link>
               <a
                 href="https://github.com/urbangrowthdgxatx/undervolt"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center w-11 h-11 bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg transition-colors"
-                title="View on GitHub"
+                className="flex items-center gap-2 px-6 py-3 text-white/70 hover:text-white transition-colors"
               >
-                <Github className="w-4 h-4" />
+                <Github className="w-5 h-5" />
+                <span>GitHub</span>
               </a>
             </div>
 
