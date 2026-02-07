@@ -10,6 +10,7 @@ export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const links = [
+    { href: "/", label: "Home" },
     { href: "/explore", label: "Explore" },
     { href: "/dashboard", label: "Map" },
     { href: "/story", label: "Ask AI" },
