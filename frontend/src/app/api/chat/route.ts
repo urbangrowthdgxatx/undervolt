@@ -352,7 +352,7 @@ INSTRUCTIONS:
           answer: responseObject,
           storyline: null,
           updated_at: new Date().toISOString(),
-        }).then(() => {}).catch(() => {});
+        })
 
         // Send final response
         sendEvent(controller, 'response', responseObject);
