@@ -111,31 +111,31 @@ export default function HomePage() {
             <p className="text-xl md:text-2xl text-white/60 mb-4">
               Analyzing <span className="text-white font-medium">2.34M Austin construction permits</span>
             </p>
-            {/* Tech Stack - Icons with labels */}
-            <div className="flex items-center justify-center gap-6 mb-6">
+            {/* Tech Stack */}
+            <div className="flex items-center justify-center gap-8 mb-10">
               {/* NVIDIA */}
-              <div className="flex flex-col items-center gap-1">
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#76B900"><path d="M8.948 8.798v-1.43a6.7 6.7 0 0 1 .424-.018c3.922-.124 6.493 3.374 6.493 3.374s-2.774 3.851-5.75 3.851c-.412 0-.807-.063-1.167-.18v-4.475c1.224.164 1.472.768 2.209 2.063l1.722-1.465s-1.373-1.842-3.506-1.842c-.147 0-.287.009-.425.023v-.001zm0-4.762v2.06l.424-.036c5.136-.189 8.508 4.256 8.508 4.256s-3.898 4.823-7.283 4.823a5.5 5.5 0 0 1-1.649-.251v1.345a6.9 6.9 0 0 0 1.423.153c4.834 0 8.291-2.867 10.579-4.971.306.262 1.561 1.064 1.818 1.393-2.163 1.78-7.239 4.853-12.319 4.853a9.3 9.3 0 0 1-1.501-.122v1.453h14.039V4.036H8.948zm0 10.327v1.146a5.5 5.5 0 0 1-1.167-.251V8.632c.377-.095.774-.153 1.167-.169v.335c-2.052.163-3.478 2.159-3.478 2.159s1.18 2.406 3.478 3.406z"/></svg>
-                <span className="text-[10px] text-white/40">NVIDIA</span>
-              </div>
+              <a href="https://nvidia.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+                <img src="https://www.nvidia.com/favicon.ico" alt="NVIDIA" className="w-6 h-6" />
+                <span className="text-[10px] text-white/50">NVIDIA</span>
+              </a>
               {/* Ollama */}
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-2xl">🦙</span>
-                <span className="text-[10px] text-white/40">Ollama</span>
-              </div>
-              {/* Nemotron */}
-              <div className="flex flex-col items-center gap-1">
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#76B900"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
-                <span className="text-[10px] text-white/40">Nemotron</span>
-              </div>
-              {/* Jetson */}
-              <div className="flex flex-col items-center gap-1">
-                <Cpu className="w-8 h-8 text-[#76B900]" />
-                <span className="text-[10px] text-white/40">Jetson</span>
-              </div>
+              <a href="https://ollama.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+                <img src="https://ollama.com/public/ollama.png" alt="Ollama" className="w-6 h-6" />
+                <span className="text-[10px] text-white/50">Ollama</span>
+              </a>
+              {/* Supabase */}
+              <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+                <svg className="w-6 h-6" viewBox="0 0 109 113" fill="none"><path d="M63.7076 110.284C60.8481 113.885 55.0502 111.912 54.9813 107.314L53.9738 40.0627L99.1935 40.0627C107.384 40.0627 111.952 49.5228 106.859 55.9374L63.7076 110.284Z" fill="url(#paint0_linear)"/><path d="M63.7076 110.284C60.8481 113.885 55.0502 111.912 54.9813 107.314L53.9738 40.0627L99.1935 40.0627C107.384 40.0627 111.952 49.5228 106.859 55.9374L63.7076 110.284Z" fill="url(#paint1_linear)" fillOpacity="0.2"/><path d="M45.317 2.07103C48.1765 -1.53037 53.9745 0.442937 54.0434 5.041L54.4849 72.2922H9.83113C1.64038 72.2922 -2.92775 62.8321 2.1655 56.4175L45.317 2.07103Z" fill="#3ECF8E"/><defs><linearGradient id="paint0_linear" x1="53.9738" y1="54.974" x2="94.1635" y2="71.8295" gradientUnits="userSpaceOnUse"><stop stopColor="#249361"/><stop offset="1" stopColor="#3ECF8E"/></linearGradient><linearGradient id="paint1_linear" x1="36.1558" y1="30.578" x2="54.4844" y2="65.0806" gradientUnits="userSpaceOnUse"><stop/><stop offset="1" stopOpacity="0"/></linearGradient></defs></svg>
+                <span className="text-[10px] text-white/50">Supabase</span>
+              </a>
+              {/* Vercel */}
+              <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="white"><path d="M12 2L2 19.5h20L12 2z"/></svg>
+                <span className="text-[10px] text-white/50">Vercel</span>
+              </a>
             </div>
 
-            <div className="flex items-center justify-center gap-3 mb-8">
+            <div className="flex items-center justify-center gap-3 mb-8 mt-4">
               <Link
                 href="/explore"
                 className="flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-black rounded-lg font-medium transition-colors"
@@ -161,15 +161,14 @@ export default function HomePage() {
               </a>
             </div>
 
+            {/* Origin */}
+            <p className="text-white/30 text-xs mt-8 text-center">
+              🏆 1st Place at <a href="https://lu.ma/aitx-dgx-hackathon" target="_blank" rel="noopener noreferrer" className="underline hover:text-white/50">NVIDIA DGX AITX Hackathon</a> · Now powered by Jetson AGX Orin
+            </p>
+
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="flex items-center justify-between px-8 py-6 text-sm text-white/40">
-          <span>• Live on Jetson AGX Orin</span>
-          <span>• NVIDIA RAPIDS Accelerated</span>
-          <span>© 2025 Undervolt Project</span>
-        </div>
       </section>
 
       {/* Divider */}
@@ -460,13 +459,13 @@ export default function HomePage() {
       {/* Divider */}
       <div className="h-px bg-white/10" />
 
-      {/* Cloud to Edge - Black */}
+      {/* DGX to Jetson - Black */}
       <section className="py-24 px-8 bg-black">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">The Journey</span>
-            <h2 className="text-4xl font-bold mt-4 mb-4">From Cloud to Edge</h2>
-            <p className="text-white/50">Trained on datacenter hardware, deployed to edge devices</p>
+            <h2 className="text-4xl font-bold mt-4 mb-4">DGX Spark to Jetson</h2>
+            <p className="text-white/50">GPU-accelerated from development to production</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -618,7 +617,7 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto text-center">
           <h3 className="text-2xl font-semibold mb-4">Open Source</h3>
           <p className="text-white/50 mb-6">
-            Built for the community. MIT Licensed.
+            Open and extensible. Adapt the pipeline to any dataset. MIT Licensed.
           </p>
 
           <div className="flex items-center justify-center gap-6 mb-8">
