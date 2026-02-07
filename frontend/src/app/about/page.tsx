@@ -264,13 +264,28 @@ function OriginStory() {
 
       {/* Origin banner */}
       <div className="p-6 rounded-xl bg-gradient-to-r from-amber-500/10 to-purple-500/10 border border-white/10">
-        <div className="flex items-center gap-3 mb-2">
+        <div className="flex items-center gap-3 mb-3">
           <Zap className="w-5 h-5 text-amber-400" />
           <span className="font-semibold">How It Started</span>
         </div>
-        <p className="text-white/50 text-sm">
-          Austin, Texas. A team of 4 engineers asked: what can construction permits tell us about a city's energy future?
+        <p className="text-white/70 text-sm mb-3">
+          At the NVIDIA DGX Spark Frontier Hackathon in Austin, our team set out to answer one question: <em className="text-white">What could cities learn if their massive open datasets were finally explorable in real time?</em>
         </p>
+        <p className="text-white/50 text-sm mb-3">
+          With the same data and constraints as everyone else, we focused on building something meaningfully different. Using Austin&apos;s 2.2M construction permits, we built Undervolt — transforming messy, unstructured public data into real-time Urban Growth Intelligence.
+        </p>
+        <p className="text-white/50 text-sm mb-4">
+          Cities struggle with slow, fragmented datasets that hide critical signals: grid stress, storage gaps, growth corridors, solar adoption. These signals already exist inside permit text — the challenge is extracting them at scale.
+        </p>
+        <a
+          href="https://www.linkedin.com/posts/jravinder_excited-to-share-that-our-project-undervolt-activity-7283559414626160641-IQWZ"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 text-sm text-amber-400 hover:text-amber-300 transition-colors"
+        >
+          Read the full story on LinkedIn
+          <ArrowRight className="w-4 h-4" />
+        </a>
       </div>
 
       {/* Milestones */}

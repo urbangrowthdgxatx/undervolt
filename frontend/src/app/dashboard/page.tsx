@@ -98,6 +98,7 @@ function DashboardContent() {
   const [selectedCluster, setSelectedCluster] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showZipDropdown, setShowZipDropdown] = useState(false);
+  const [showZipDropdown, setShowZipDropdown] = useState(false);
   const [highlightZip, setHighlightZip] = useState<string | null>(null);
   const [showEnergyOnly, setShowEnergyOnly] = useState(false);
   const [selectedEnergyType, setSelectedEnergyType] = useState<string | null>(null);
@@ -120,6 +121,7 @@ function DashboardContent() {
   const [showChat, setShowChat] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatLoading, setChatLoading] = useState(false);
+  const [askedQuestions, setAskedQuestions] = useState<Set<string>>(new Set());
   const [askedQuestions, setAskedQuestions] = useState<Set<string>>(new Set());
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
