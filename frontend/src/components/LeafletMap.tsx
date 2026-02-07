@@ -128,7 +128,7 @@ export function LeafletMap({
   const [selectedPermit, setSelectedPermit] = useState<PermitLocation | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [zoom, setZoom] = useState(13);
-  const center: LatLngExpression = [30.2672, -97.7431]; // Austin center
+  const center: LatLngExpression = [30.32, -97.7431]; // Austin center
 
   // Multi-level zoom thresholds
   const CLUSTER_ZOOM = 13;      // Zoom 10-13: Show ML cluster polygons
