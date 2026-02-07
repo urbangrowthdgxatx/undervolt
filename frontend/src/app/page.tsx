@@ -18,19 +18,49 @@ export default function HomePage() {
       .catch(() => {});
   }, []);
 
+  const techStack = [
+    { name: "NVIDIA Jetson", logo: "https://developer.nvidia.com/favicon.ico", url: "https://developer.nvidia.com/embedded/jetson-agx-orin" },
+    { name: "Ollama", logo: "https://ollama.com/public/ollama.png", url: "https://ollama.com" },
+    { name: "Supabase", logo: "https://supabase.com/favicon/favicon-32x32.png", url: "https://supabase.com" },
+    { name: "Next.js", logo: "https://nextjs.org/favicon.ico", url: "https://nextjs.org" },
+    { name: "Vercel", logo: "https://vercel.com/favicon.ico", url: "https://vercel.com" },
+  ];
+
+  const categories = [
+    "Solar",
+    "Battery Storage",
+    "EV Chargers",
+    "Generators",
+    "Grid Infrastructure",
+    "Renovations",
+  ];
+
   return (
     <div className="min-h-screen bg-black text-white pt-16">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col">
+      <section className="relative min-h-[80vh] flex flex-col">
         <div className="flex-1 flex items-center justify-center px-8">
           <div className="max-w-4xl text-center">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
               Urban infrastructure intelligence
             </h1>
-            <p className="text-lg md:text-xl text-white/50 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-white/50 mb-6 max-w-2xl mx-auto">
               GPU-accelerated analysis of 2.34M Austin construction permits. Discover energy trends, grid gaps, and infrastructure patterns.
             </p>
-            <div className="flex items-center justify-center gap-4">
+
+            {/* Categories */}
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+              {categories.map((cat) => (
+                <span
+                  key={cat}
+                  className="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10 text-white/60"
+                >
+                  {cat}
+                </span>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-center gap-4 mb-16">
               <Link
                 href="/explore"
                 className="px-6 py-3 bg-white text-black rounded-lg font-medium hover:bg-white/90 transition-colors"
@@ -46,6 +76,22 @@ export default function HomePage() {
                 <Github className="w-5 h-5" />
                 <span>GitHub</span>
               </a>
+            </div>
+
+            {/* Tech Stack Carousel */}
+            <div className="flex items-center justify-center gap-8 md:gap-12">
+              {techStack.map((tech) => (
+                <a
+                  key={tech.name}
+                  href={tech.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity"
+                >
+                  <img src={tech.logo} alt={tech.name} className="w-8 h-8 md:w-10 md:h-10" />
+                  <span className="text-xs text-white/50">{tech.name}</span>
+                </a>
+              ))}
             </div>
           </div>
         </div>
