@@ -64,7 +64,7 @@ const MILESTONES = [
 
 // Team
 const TEAM = [
-  { name: "Ravinder Jilkapally", role: "Founder & Lead", focus: "Architecture, GPU pipelines, edge deployment", linkedin: "https://linkedin.com/in/jravinder", lead: true },
+  { name: "Ravinder Jilkapally", role: "Lead", focus: "Architecture, GPU pipelines, edge deployment", linkedin: "https://linkedin.com/in/jravinder", lead: true },
 ];
 
 const HACKATHON_TEAM = [
