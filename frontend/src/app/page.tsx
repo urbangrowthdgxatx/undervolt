@@ -293,7 +293,7 @@ export default function HomePage() {
       <div className="h-px bg-white/10" />
 
       {/* Reports Callout */}
-      <section className="py-24 px-8 bg-gradient-to-br from-amber-500/5 via-neutral-900 to-red-500/5">
+      <section className="py-24 px-8 bg-black">
         <div className="max-w-4xl mx-auto text-center">
           <span className="text-amber-400 text-sm font-medium tracking-wide uppercase">Infrastructure Analysis</span>
           <h2 className="text-4xl font-bold mt-4 mb-4">Austin is Changing Fast</h2>
@@ -330,7 +330,7 @@ export default function HomePage() {
       <div className="h-px bg-white/10" />
 
       {/* Architecture Callout */}
-      <section className="py-20 px-8 bg-black">
+      <section className="py-20 px-8 bg-neutral-900">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col md:flex-row items-center gap-8 p-8 rounded-2xl bg-gradient-to-r from-emerald-500/5 to-transparent border border-emerald-500/20">
             <div className="flex-1">
