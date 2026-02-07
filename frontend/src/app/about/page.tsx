@@ -69,9 +69,9 @@ const TEAM = [
 ];
 
 const HACKATHON_TEAM = [
-  { name: "Tyrone Avnit", role: "Full Stack", linkedin: "https://linkedin.com/in/tyroneavnit" },
-  { name: "Avanish Joshi", role: "Data Science", linkedin: "https://linkedin.com/in/avanishj" },
-  { name: "Siddharth Gargava", role: "ML Engineer", linkedin: "https://linkedin.com/in/siddharthgargava" },
+  { name: "Tyrone Avnit", role: "Full Stack", linkedin: "https://linkedin.com/in/tyroneavnit", avatar: "https://www.gravatar.com/avatar/2d91bf6a5069a39550bb7def3908500d?s=100" },
+  { name: "Avanish Joshi", role: "Data Science", linkedin: "https://linkedin.com/in/avanishj", avatar: "https://www.gravatar.com/avatar/e86d5d8cf4f6bddaf0615a45ec2dbde5?s=100" },
+  { name: "Siddharth Gargava", role: "ML Engineer", linkedin: "https://linkedin.com/in/siddharthgargava", avatar: "https://www.gravatar.com/avatar/909de212a76ee4102373f34ba14ab4f5?s=100" },
 ];
 
 export default function AboutPage() {
@@ -438,10 +438,15 @@ function Team() {
               href={member.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors group"
+              className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors group"
             >
-              <h4 className="text-white font-medium text-sm">{member.name}</h4>
-              <p className="text-white/60 text-xs">{member.role}</p>
+              {member.avatar && (
+                <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full" />
+              )}
+              <div>
+                <h4 className="text-white font-medium text-sm">{member.name}</h4>
+                <p className="text-white/60 text-xs">{member.role}</p>
+              </div>
             </a>
           ))}
         </div>
