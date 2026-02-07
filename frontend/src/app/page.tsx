@@ -262,7 +262,7 @@ export default function HomePage() {
       <div className="h-px bg-white/10" />
 
       {/* Built For Section */}
-      <section className="py-20 px-8 bg-black">
+      <section className="py-20 px-8 bg-neutral-900">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">Who is this for</span>
@@ -330,7 +330,7 @@ export default function HomePage() {
       <div className="h-px bg-white/10" />
 
       {/* Architecture Callout */}
-      <section className="py-20 px-8 bg-black">
+      <section className="py-20 px-8 bg-neutral-900">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col md:flex-row items-center gap-8 p-8 rounded-2xl bg-gradient-to-r from-emerald-500/5 to-transparent border border-emerald-500/20">
             <div className="flex-1">
