@@ -130,7 +130,7 @@ function HowItWorks() {
           ))}
         </div>
       </div>
-
+    </div>
   );
 }
 
