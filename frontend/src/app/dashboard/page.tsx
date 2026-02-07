@@ -629,19 +629,6 @@ function DashboardContent() {
             </div>
 
             
-            {/* Zip Search */}
-            <div className="pt-4 border-t border-white/10">
-              <label className="text-[10px] font-medium text-white/40 uppercase tracking-wider mb-2 block">
-                Search by Zip
-              </label>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Enter zip code..."
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30"
-              />
-            </div>
           </div>
         </div>
 
