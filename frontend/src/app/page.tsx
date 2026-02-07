@@ -348,6 +348,34 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Why Edge Deployment */}
+      <section className="py-20 px-8 bg-neutral-900">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="text-amber-400 text-sm font-medium tracking-wide uppercase">Why Edge?</span>
+            <h2 className="text-3xl font-bold mt-2">Edge Deployment Benefits</h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+              <h3 className="text-white font-semibold mb-2">Data Sovereignty</h3>
+              <p className="text-white/40 text-sm">Permit data stays local. No cloud transmission.</p>
+            </div>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+              <h3 className="text-white font-semibold mb-2">Zero Latency</h3>
+              <p className="text-white/40 text-sm">On-device inference. No network round-trips.</p>
+            </div>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+              <h3 className="text-white font-semibold mb-2">Cost Efficient</h3>
+              <p className="text-white/40 text-sm">One-time hardware cost vs recurring cloud fees.</p>
+            </div>
+            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+              <h3 className="text-white font-semibold mb-2">Offline Capable</h3>
+              <p className="text-white/40 text-sm">Works without internet connectivity.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Divider */}
       <div className="h-px bg-white/10" />
 
