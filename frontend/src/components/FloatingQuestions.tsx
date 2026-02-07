@@ -18,12 +18,12 @@ interface FloatingQuestionsProps {
 // 32 unique positions arranged in concentric rings - closer to center, more questions
 const FLOAT_POSITIONS = [
   // Inner ring (near) - 8 positions, amber - closest to center
-  { x: -22, y: -18, delay: 0, depth: 'near' },
-  { x: 22, y: -18, delay: 0.4, depth: 'near' },
-  { x: -25, y: 8, delay: 0.8, depth: 'near' },
-  { x: 25, y: 8, delay: 1.2, depth: 'near' },
-  { x: -18, y: 22, delay: 1.6, depth: 'near' },
-  { x: 18, y: 22, delay: 2.0, depth: 'near' },
+  { x: -25, y: -32, delay: 0, depth: "near" },
+  { x: 25, y: -30, delay: 0.4, depth: "near" },
+  { x: -28, y: 28, delay: 0.8, depth: "near" },
+  { x: 28, y: 30, delay: 1.2, depth: "near" },
+  { x: -15, y: 32, delay: 1.6, depth: "near" },
+  { x: 15, y: -35, delay: 2.0, depth: "near" },
   { x: -10, y: -22, delay: 2.4, depth: 'near' },
   { x: 10, y: -22, delay: 2.8, depth: 'near' },
 

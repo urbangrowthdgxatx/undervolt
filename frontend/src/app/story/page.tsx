@@ -624,17 +624,19 @@ function ExplorationPageContent() {
           </section>
         )}
 
-      {/* Signup Modal for Custom Queries */}
+      {/* Signup Modal */}
       {showSignupModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-          <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 max-w-md w-full">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-5 h-5 text-emerald-400" />
-              <h3 className="text-xl font-semibold text-white">Unlock Custom Queries</h3>
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[100] p-4" onClick={() => setShowSignupModal(false)}>
+          <div className="bg-gradient-to-b from-zinc-900 to-black border border-white/10 rounded-2xl p-8 max-w-sm w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-500/20 to-amber-500/20 flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-amber-400" />
+              </div>
+              <h3 className="text-lg font-medium text-white mb-2">Ask Your Own Questions</h3>
+              <p className="text-white/50 text-sm">
+                Get personalized insights from 2.34M Austin permits
+              </p>
             </div>
-            <p className="text-white/60 text-sm mb-4">
-              Sign up to ask your own questions, powered by local AI on NVIDIA Jetson.
-            </p>
             <form onSubmit={async (e) => {
               e.preventDefault();
               const email = (e.target as HTMLFormElement).email.value;
@@ -645,35 +647,33 @@ function ExplorationPageContent() {
                     process.env.NEXT_PUBLIC_SUPABASE_URL || "",
                     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
                   );
-                  await supabase.from("waitlist").upsert([{ email, source: "story_custom_query" }], { onConflict: "email" });
+                  await supabase.from("waitlist").upsert([{ email, source: "story" }], { onConflict: "email" });
                 } catch {}
                 handleSignup(email);
               }
-            }} className="space-y-4">
+            }} className="space-y-3">
               <input
                 name="email"
                 type="email"
-                placeholder="Enter your email"
-                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50"
+                placeholder="your@email.com"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-center placeholder:text-white/30 focus:outline-none focus:border-white/30 focus:bg-white/10 transition-all"
                 required
               />
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowSignupModal(false)}
-                  className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg text-white/60 transition-colors"
-                >
-                  Use Suggested
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-black font-medium rounded-lg transition-colors"
-                >
-                  Sign Up Free
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="w-full px-4 py-3 bg-white text-black font-medium rounded-xl hover:bg-white/90 transition-colors"
+              >
+                Continue
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowSignupModal(false)}
+                className="w-full px-4 py-2 text-white/40 hover:text-white/60 text-sm transition-colors"
+              >
+                Maybe later
+              </button>
             </form>
-            <p className="text-white/30 text-xs mt-4 text-center">Local inference only</p>
+            <p className="text-white/20 text-[10px] mt-4 text-center">Powered by NVIDIA Jetson AGX Orin</p>
           </div>
         </div>
       )}
