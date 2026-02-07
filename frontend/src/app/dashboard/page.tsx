@@ -528,7 +528,7 @@ function DashboardContent() {
 
       <div className="flex-1 flex overflow-hidden relative">
         {/* Left Sidebar - Stats (hidden on mobile) */}
-        <div className="hidden md:block w-80 border-r border-white/5 bg-black overflow-y-auto">
+        <div className="hidden md:block w-64 border-r border-white/5 bg-black/80 overflow-y-auto">
           <div className="p-5 space-y-5">
             {/* Header */}
             <div className="pb-4 border-b border-white/10">
@@ -920,9 +920,9 @@ function DashboardContent() {
           </button>
         </div>
 
-        {/* Chat Panel */}
+        {/* Chat Panel - Floating Overlay */}
         {showChat && (
-          <div className="hidden md:flex w-96 border-l border-white/10 bg-black/80 backdrop-blur-md flex-col">
+          <div className="hidden md:flex absolute right-4 top-4 bottom-4 w-80 bg-black/95 backdrop-blur-md rounded-2xl border border-white/10 flex-col z-50 shadow-2xl">
             {/* Chat Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
               <h3 className="text-sm font-medium text-white">Ask about Austin permits</h3>
