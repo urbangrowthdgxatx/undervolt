@@ -511,18 +511,6 @@ function DashboardContent() {
               </button>
             )}
           </div>
-          {/* Energy Only Toggle */}
-          <button
-            onClick={() => setShowEnergyOnly(!showEnergyOnly)}
-            className={`px-3 md:px-4 py-2 md:py-3 rounded-full text-xs md:text-sm font-medium whitespace-nowrap transition-all ${
-              showEnergyOnly
-                ? 'bg-green-500/20 border border-green-500/40 text-green-400'
-                : 'bg-white/10 border border-white/20 text-white/60 hover:text-white hover:bg-white/15'
-            }`}
-          >
-            {showEnergyOnly ? '⚡' : 'All'}
-            <span className="hidden md:inline"> {showEnergyOnly ? 'Energy' : 'Permits'}</span>
-          </button>
         </div>
       </div>
 
@@ -542,87 +530,65 @@ function DashboardContent() {
             </div>
 
             {/* Quick Stats */}
+            {/* Energy Infrastructure */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-[10px] font-medium text-white/40 uppercase tracking-wider">Filter by Type</h3>
+                <h3 className="text-[10px] font-medium text-white/40 uppercase tracking-wider">Energy</h3>
                 {selectedEnergyType && (
-                  <button
-                    onClick={() => setSelectedEnergyType(null)}
-                    className="text-[10px] text-white/50 hover:text-white"
-                  >
-                    Clear
-                  </button>
+                  <button onClick={() => setSelectedEnergyType(null)} className="text-[10px] text-white/50 hover:text-white">Clear</button>
                 )}
               </div>
-              <div className="grid grid-cols-3 gap-2">
-              <button
-                onClick={() => setSelectedEnergyType(selectedEnergyType === 'solar' ? null : 'solar')}
-                className={`rounded-lg p-2 text-center transition-all ${
-                  selectedEnergyType === 'solar'
-                    ? 'bg-amber-500/30 border-2 border-amber-500 ring-2 ring-amber-500/30'
-                    : 'bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 hover:border-amber-500/40'
-                }`}
-              >
-                <p className="text-sm font-semibold text-amber-400">{stats.energyStats.solar.toLocaleString()}</p>
-                <p className="text-[10px] text-white/50">Solar</p>
-              </button>
-              <button
-                onClick={() => setSelectedEnergyType(selectedEnergyType === 'battery' ? null : 'battery')}
-                className={`rounded-lg p-2 text-center transition-all ${
-                  selectedEnergyType === 'battery'
-                    ? 'bg-blue-500/30 border-2 border-blue-500 ring-2 ring-blue-500/30'
-                    : 'bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 hover:border-blue-500/40'
-                }`}
-              >
-                <p className="text-sm font-semibold text-blue-400">{stats.energyStats.battery.toLocaleString()}</p>
-                <p className="text-[10px] text-white/50">Battery</p>
-              </button>
-              <button
-                onClick={() => setSelectedEnergyType(selectedEnergyType === 'ev_charger' ? null : 'ev_charger')}
-                className={`rounded-lg p-2 text-center transition-all ${
-                  selectedEnergyType === 'ev_charger'
-                    ? 'bg-indigo-500/30 border-2 border-indigo-500 ring-2 ring-indigo-500/30'
-                    : 'bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 hover:border-indigo-500/40'
-                }`}
-              >
-                <p className="text-sm font-semibold text-indigo-400">{stats.energyStats.evCharger.toLocaleString()}</p>
-                <p className="text-[10px] text-white/50">EV</p>
-              </button>
+              <div className="grid grid-cols-3 gap-1.5">
+                {[
+                  { key: 'solar', label: 'Solar', count: stats.energyStats.solar, color: 'amber' },
+                  { key: 'battery', label: 'Battery', count: stats.energyStats.battery, color: 'blue' },
+                  { key: 'ev_charger', label: 'EV', count: stats.energyStats.evCharger, color: 'indigo' },
+                  { key: 'generator', label: 'Generator', count: stats.energyStats.generator, color: 'orange' },
+                  { key: 'panel_upgrade', label: 'Panel', count: stats.energyStats.panelUpgrade, color: 'purple' },
+                  { key: 'hvac', label: 'HVAC', count: stats.energyStats.hvac, color: 'cyan' },
+                ].map(({ key, label, count, color }) => (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedEnergyType(selectedEnergyType === key ? null : key)}
+                    className={`rounded-lg p-1.5 text-center transition-all ${
+                      selectedEnergyType === key
+                        ? `bg-${color}-500/30 border border-${color}-500`
+                        : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                    }`}
+                  >
+                    <p className={`text-xs font-semibold ${selectedEnergyType === key ? `text-${color}-400` : 'text-white/70'}`}>{count.toLocaleString()}</p>
+                    <p className="text-[9px] text-white/40">{label}</p>
+                  </button>
+                ))}
               </div>
-              <div className="grid grid-cols-3 gap-2 mt-2">
-              <button
-                onClick={() => setSelectedEnergyType(selectedEnergyType === 'hvac' ? null : 'hvac')}
-                className={`rounded-lg p-2 text-center transition-all ${
-                  selectedEnergyType === 'hvac'
-                    ? 'bg-white/20 border-2 border-white/60 ring-2 ring-white/20'
-                    : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
-                }`}
-              >
-                <p className="text-sm font-semibold text-white/80">{stats.energyStats.hvac.toLocaleString()}</p>
-                <p className="text-[10px] text-white/40">HVAC</p>
-              </button>
-              <button
-                onClick={() => setSelectedEnergyType(selectedEnergyType === 'panel_upgrade' ? null : 'panel_upgrade')}
-                className={`rounded-lg p-2 text-center transition-all ${
-                  selectedEnergyType === 'panel_upgrade'
-                    ? 'bg-white/20 border-2 border-white/60 ring-2 ring-white/20'
-                    : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
-                }`}
-              >
-                <p className="text-sm font-semibold text-white/80">{stats.energyStats.panelUpgrade.toLocaleString()}</p>
-                <p className="text-[10px] text-white/40">Panel</p>
-              </button>
-              <button
-                onClick={() => setSelectedEnergyType(selectedEnergyType === 'generator' ? null : 'generator')}
-                className={`rounded-lg p-2 text-center transition-all ${
-                  selectedEnergyType === 'generator'
-                    ? 'bg-white/20 border-2 border-white/60 ring-2 ring-white/20'
-                    : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
-                }`}
-              >
-                <p className="text-sm font-semibold text-white/80">{stats.energyStats.generator.toLocaleString()}</p>
-                <p className="text-[10px] text-white/40">Generator</p>
-              </button>
+            </div>
+
+            {/* Construction Types */}
+            <div className="pt-4 border-t border-white/10">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-[10px] font-medium text-white/40 uppercase tracking-wider">Construction</h3>
+                {selectedCluster !== null && (
+                  <button onClick={() => setSelectedCluster(null)} className="text-[10px] text-white/50 hover:text-white">Clear</button>
+                )}
+              </div>
+              <div className="space-y-1">
+                {stats.clusterDistribution.slice(0, 6).map((cluster) => {
+                  const colors: Record<number, string> = { 0: '#10b981', 1: '#ec4899', 2: '#f59e0b', 4: '#3b82f6', 6: '#a855f7', 7: '#6366f1' };
+                  const color = colors[cluster.id] || '#6b7280';
+                  return (
+                    <button
+                      key={cluster.id}
+                      onClick={() => setSelectedCluster(selectedCluster === cluster.id ? null : cluster.id)}
+                      className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left transition-all ${
+                        selectedCluster === cluster.id ? 'bg-white/15 border border-white/30' : 'hover:bg-white/5'
+                      }`}
+                    >
+                      <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+                      <span className="text-[11px] text-white/70 flex-1 truncate">{cluster.name}</span>
+                      <span className="text-[10px] text-white/40">{cluster.percentage.toFixed(0)}%</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
