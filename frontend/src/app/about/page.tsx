@@ -215,18 +215,6 @@ function TechStack() {
         </div>
       </div>
 
-      {/* Partners */}
-      <div>
-        <h2 className="text-xl font-semibold mb-6">Hackathon Sponsors</h2>
-        <div className="flex flex-wrap items-center justify-center gap-8 py-8 px-6 rounded-xl bg-white/[0.02] border border-white/5">
-          <span className="text-white/40 font-medium">NVIDIA</span>
-          <span className="text-white/40 font-medium">AITX Community</span>
-          <span className="text-white/40 font-medium">ASUS</span>
-          <span className="text-white/40 font-medium">Arm</span>
-          <span className="text-white/40 font-medium">Antler</span>
-        </div>
-      </div>
-    </div>
   );
 }
 
