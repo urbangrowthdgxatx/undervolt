@@ -119,6 +119,14 @@ function DashboardContent() {
   const [showChat, setShowChat] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatLoading, setChatLoading] = useState(false);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  // Check if user is signed in
+  useEffect(() => {
+    const email = localStorage.getItem("undervolt_user_email");
+    if (email) setUserEmail(email);
+  }, []);
 
   // Map energy filter values to signal types for LeafletMap
   const getSignalType = (energyType: string | null): string => {
@@ -929,17 +937,21 @@ function DashboardContent() {
                 <div className="text-center py-8">
                   <MessageCircle size={32} className="mx-auto text-white/20 mb-3" />
                   <p className="text-sm text-white/40 mb-4">Ask questions about the permit data</p>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {chatSuggestions.map((s, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handleChatSubmit(s)}
-                        className="px-3 py-1.5 text-xs text-white/50 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 hover:text-white/70 transition-colors"
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
+                </div>
+              )}
+
+              {/* Always show suggestions */}
+              {!chatLoading && (
+                <div className="flex flex-wrap gap-2">
+                  {chatSuggestions.map((s, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleChatSubmit(s)}
+                      className="px-3 py-1.5 text-xs text-white/50 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 hover:text-white/70 transition-colors"
+                    >
+                      {s}
+                    </button>
+                  ))}
                 </div>
               )}
 
@@ -974,8 +986,10 @@ function DashboardContent() {
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatSubmit(chatInput); } }}
-                  placeholder="Ask about permits..."
+                  onFocus={() => { if (!userEmail) setShowSignInPrompt(true); }}
+                  placeholder={userEmail ? "Ask about permits..." : "Sign in for custom queries..."}
                   className="flex-1 bg-transparent outline-none text-sm text-white placeholder-white/30"
+                  readOnly={!userEmail}
                 />
                 <button
                   onClick={() => handleChatSubmit(chatInput)}
@@ -1117,6 +1131,30 @@ function DashboardContent() {
           </div>
         )}
 
+        {/* Sign In Prompt */}
+        {showSignInPrompt && (
+          <div className="fixed inset-0 z-[70] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 max-w-sm w-full">
+              <h3 className="text-lg font-semibold text-white mb-2">Custom Queries</h3>
+              <p className="text-sm text-white/60 mb-4">Sign in to ask custom questions about Austin permit data.</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowSignInPrompt(false)}
+                  className="flex-1 px-4 py-2 text-sm text-white/60 border border-white/20 rounded-lg hover:bg-white/5"
+                >
+                  Cancel
+                </button>
+                <a
+                  href="/"
+                  className="flex-1 px-4 py-2 text-sm text-black bg-white rounded-lg hover:bg-white/90 text-center font-medium"
+                >
+                  Sign In
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Mobile Chat Overlay */}
         {showChat && (
           <div className="md:hidden fixed inset-0 z-[60] bg-black/95 flex flex-col">
@@ -1132,17 +1170,21 @@ function DashboardContent() {
                 <div className="text-center py-8">
                   <MessageCircle size={32} className="mx-auto text-white/20 mb-3" />
                   <p className="text-sm text-white/40 mb-4">Ask questions about the permit data</p>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {chatSuggestions.map((s, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handleChatSubmit(s)}
-                        className="px-3 py-1.5 text-xs text-white/50 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 hover:text-white/70 transition-colors"
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
+                </div>
+              )}
+
+              {/* Always show suggestions */}
+              {!chatLoading && (
+                <div className="flex flex-wrap gap-2">
+                  {chatSuggestions.map((s, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleChatSubmit(s)}
+                      className="px-3 py-1.5 text-xs text-white/50 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 hover:text-white/70 transition-colors"
+                    >
+                      {s}
+                    </button>
+                  ))}
                 </div>
               )}
 
@@ -1175,8 +1217,10 @@ function DashboardContent() {
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatSubmit(chatInput); } }}
-                  placeholder="Ask about permits..."
+                  onFocus={() => { if (!userEmail) setShowSignInPrompt(true); }}
+                  placeholder={userEmail ? "Ask about permits..." : "Sign in for custom queries..."}
                   className="flex-1 bg-transparent outline-none text-sm text-white placeholder-white/30"
+                  readOnly={!userEmail}
                 />
                 <button
                   onClick={() => handleChatSubmit(chatInput)}
