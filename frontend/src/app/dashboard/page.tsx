@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Layers, Search, MessageCircle, X, Send, Loader2, Zap } from "lucide-react";
 import dynamicImport from 'next/dynamic';
 import { clusterMapping } from '@/config/dashboard';
+import { CATEGORY_QUESTIONS } from '@/lib/modes';
 import type { SignalType } from '@/components/LeafletMap';
 
 // Dynamically import Leaflet map (better performance on Jetson - no WebGL required)
@@ -124,12 +125,10 @@ function DashboardContent() {
   const [chatInput, setChatInput] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const chatSuggestions = [
-    "Where's the 340% generator surge?",
-    "Why only 1 battery for every 22 solar?",
-    "Which ZIPs are blackout-proof?",
-    "Pool permits: Austin's luxury map?",
-  ];
+  const chatSuggestions = CATEGORY_QUESTIONS.generators.slice(0, 1)
+    .concat(CATEGORY_QUESTIONS.battery.slice(0, 1))
+    .concat(CATEGORY_QUESTIONS.resilience.slice(0, 1))
+    .concat(CATEGORY_QUESTIONS.pools.slice(0, 1));
 
   const formatDateRange = (dateRange: { earliest: string; latest: string } | null | undefined) => {
     if (!dateRange) return null;

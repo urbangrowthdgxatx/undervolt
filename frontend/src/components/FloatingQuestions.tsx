@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RefreshCw, Send } from "lucide-react";
+import { RefreshCw, Send, Lock } from "lucide-react";
 
 interface FloatingQuestionsProps {
   questions: string[];
@@ -11,6 +11,8 @@ interface FloatingQuestionsProps {
   isRefreshing: boolean;
   storylineTitle?: string;
   collapsed?: boolean;
+  userEmail?: string | null;
+  onSignupClick?: () => void;
 }
 
 // 32 unique positions arranged in concentric rings - closer to center, more questions
@@ -104,6 +106,8 @@ export function FloatingQuestions({
   isRefreshing,
   storylineTitle,
   collapsed = false,
+  userEmail,
+  onSignupClick,
 }: FloatingQuestionsProps) {
   const [clickedIndex, setClickedIndex] = useState<number | null>(null);
   const [customQuestion, setCustomQuestion] = useState("");
@@ -115,10 +119,14 @@ export function FloatingQuestions({
 
   const handleCustomSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (customQuestion.trim()) {
-      onQuestionClick(customQuestion.trim());
-      setCustomQuestion("");
+    if (!customQuestion.trim()) return;
+    // Require signup for custom questions
+    if (!userEmail) {
+      onSignupClick?.();
+      return;
     }
+    onQuestionClick(customQuestion.trim());
+    setCustomQuestion("");
   };
 
   // Collapsed mode - horizontal scrollable row
@@ -130,7 +138,7 @@ export function FloatingQuestions({
           className="flex gap-3 overflow-x-auto py-3 px-4 scrollbar-hide"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {questions.slice(0, 8).map((question, index) => {
+          {questions.slice(0, 6).map((question, index) => {
             const depthIndex = index % 3;
             const depth = depthIndex === 0 ? 'near' : depthIndex === 1 ? 'mid' : 'far';
             const styles = getDepthStyles(depth);
@@ -199,16 +207,21 @@ export function FloatingQuestions({
               type="text"
               value={customQuestion}
               onChange={(e) => setCustomQuestion(e.target.value)}
-              placeholder="Ask anything about Austin permits..."
+              placeholder={userEmail ? "Ask anything about Austin permits..." : "Sign up to ask custom questions..."}
               disabled={isLoading}
-              className="w-full px-5 py-3 pr-12 rounded-full bg-white/5 border border-white/20 text-white placeholder-white/30 text-sm focus:outline-none focus:border-white/40 focus:bg-white/10 transition-all disabled:opacity-50"
+              className={`w-full px-5 py-3 pr-12 rounded-full border text-white text-sm focus:outline-none transition-all disabled:opacity-50 ${
+                userEmail
+                  ? "bg-white/5 border-white/20 placeholder-white/30 focus:border-white/40 focus:bg-white/10"
+                  : "bg-white/[0.02] border-white/10 placeholder-white/20 cursor-pointer"
+              }`}
+              onClick={() => !userEmail && onSignupClick?.()}
             />
             <button
               type="submit"
               disabled={isLoading || !customQuestion.trim()}
               className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-white/40 hover:text-white disabled:opacity-30 transition-colors"
             >
-              <Send size={16} />
+              {userEmail ? <Send size={16} /> : <Lock size={16} />}
             </button>
           </div>
         </form>
@@ -233,7 +246,7 @@ export function FloatingQuestions({
       </div>
 
       {/* Floating questions with 3D depth and color */}
-      {questions.slice(0, 8).map((question, index) => {
+      {questions.slice(0, 6).map((question, index) => {
         const pos = FLOAT_POSITIONS[index % FLOAT_POSITIONS.length];
         const depthStyles = getDepthStyles(pos.depth);
         const isClicked = clickedIndex === index;

@@ -1,154 +1,176 @@
-export type Mode = 'scout' | 'investigator' | 'editor';
+// 12 topic-based categories
+export type Category =
+  | 'solar'
+  | 'battery'
+  | 'generators'
+  | 'ev'
+  | 'resilience'
+  | 'growth'
+  | 'equity'
+  | 'districts'
+  | 'pools'
+  | 'adu'
+  | 'demolition'
+  | 'eastwest';
 
-export interface ModeConfig {
+export interface CategoryConfig {
   label: string;
   description: string;
-  icon: string;
-  promptModifier: string;
-  questionStyle: 'broad' | 'focused' | 'narrative';
   color: string;
 }
 
-export const MODE_CONFIG: Record<Mode, ModeConfig> = {
-  scout: {
-    label: 'Scout',
-    description: 'Surface anomalies and patterns',
-    icon: 'Compass',
-    promptModifier: `You are in SCOUT mode. Your job is to surface surprising patterns and anomalies.
-- Cast a wide net - look for outliers, unexpected correlations
-- Highlight what's "weird" or counterintuitive
-- Generate broad follow-up questions that open new directions
-- Use phrases like "Interesting..." "What's surprising is..." "Against expectations..."`,
-    questionStyle: 'broad',
-    color: 'emerald',
-  },
-  investigator: {
-    label: 'Investigator',
-    description: 'Test hypotheses and compare',
-    icon: 'Search',
-    promptModifier: `You are in INVESTIGATOR mode. Your job is to test hypotheses and explain causation.
-- Focus on "why" questions - what drives the pattern?
-- Compare cohorts: rich vs poor, east vs west, before vs after
-- Be careful with causal language - show evidence, acknowledge uncertainty
-- Generate focused follow-up questions that drill deeper`,
-    questionStyle: 'focused',
-    color: 'blue',
-  },
-  editor: {
-    label: 'Editor',
-    description: 'Shape the narrative',
-    icon: 'PenTool',
-    promptModifier: `You are in EDITOR mode. Your job is to help structure findings into a compelling narrative.
-- Frame insights as story elements: setup, tension, resolution
-- Suggest headlines, chapter structures, "what changed / why it matters / what to do"
-- Connect disparate findings into a coherent arc
-- Generate questions that help complete the story`,
-    questionStyle: 'narrative',
-    color: 'purple',
-  },
+export const CATEGORY_CONFIG: Record<Category, CategoryConfig> = {
+  solar: { label: 'Solar', description: 'Solar panel installations across Austin', color: 'amber' },
+  battery: { label: 'Battery Storage', description: 'Battery and energy storage systems', color: 'blue' },
+  generators: { label: 'Generators', description: 'Backup generator installations', color: 'red' },
+  ev: { label: 'EV Chargers', description: 'Electric vehicle charging infrastructure', color: 'green' },
+  resilience: { label: 'Resilience', description: 'Grid preparedness and backup power', color: 'orange' },
+  growth: { label: 'Growth Trends', description: 'Construction growth from 2000-2026', color: 'emerald' },
+  equity: { label: 'Equity', description: 'Income and access disparities', color: 'purple' },
+  districts: { label: 'Districts', description: 'Council district comparisons', color: 'cyan' },
+  pools: { label: 'Pools & Luxury', description: 'High-end construction and amenities', color: 'pink' },
+  adu: { label: 'ADUs', description: 'Accessory dwelling units and density', color: 'indigo' },
+  demolition: { label: 'Demolition', description: 'Teardowns and redevelopment', color: 'rose' },
+  eastwest: { label: 'East vs West', description: 'Geographic divide in Austin', color: 'teal' },
 };
 
-// Guardrails that apply to ALL modes
+// Legacy mode type for backward compatibility
+export type Mode = 'scout' | 'investigator' | 'editor';
+
+export const MODE_CONFIG: Record<Mode, { label: string; description: string; icon: string; promptModifier: string; questionStyle: string; color: string }> = {
+  scout: { label: 'Scout', description: 'Surface anomalies', icon: 'Compass', promptModifier: '', questionStyle: 'broad', color: 'emerald' },
+  investigator: { label: 'Investigator', description: 'Test hypotheses', icon: 'Search', promptModifier: '', questionStyle: 'focused', color: 'blue' },
+  editor: { label: 'Editor', description: 'Shape narrative', icon: 'PenTool', promptModifier: '', questionStyle: 'narrative', color: 'purple' },
+};
+
 export const GUARDRAILS = `
 ## Guardrails (Always Apply)
-
-1. **Evidence-first**: Every insight must cite specific data (counts, percentages, comparisons)
-2. **No mind-reading**: If user intent is unclear, offer 2-3 possible angles to explore
-3. **Bias transparency**: Label when applying a lens ("Equity lens", "Cost lens", "Resilience lens")
-4. **Actionable curiosity**: Always suggest what to explore next
-5. **Humility**: Acknowledge data limitations and what we can't know from permits alone
+1. **Evidence-first**: Every insight must cite specific data
+2. **No mind-reading**: If user intent is unclear, offer angles to explore
+3. **Humility**: Acknowledge data limitations
 `;
 
-// Default questions for each mode when no story exists yet (28 per mode)
+// 12 categories × 6 questions = 72 pre-cached questions
+// Questions cover Austin permit data from 2000-2026
+export const CATEGORY_QUESTIONS: Record<Category, string[]> = {
+  solar: [
+    "How has solar adoption grown since 2000?",
+    "Which ZIP codes lead in solar installations?",
+    "Why did solar permits peak in 2023 then decline?",
+    "What's the average solar system size in Austin?",
+    "How much total solar capacity has Austin installed?",
+    "Where are the solar deserts in Austin?",
+  ],
+  battery: [
+    "Why is there only 1 battery for every 22 solar installs?",
+    "Which neighborhoods lead in battery storage?",
+    "How has battery adoption changed since 2020?",
+    "Where's the biggest solar-to-battery gap?",
+    "What's driving battery storage growth in Austin?",
+    "Which ZIPs pair solar with battery storage?",
+  ],
+  generators: [
+    "How did generator permits spike after the 2021 freeze?",
+    "Which ZIP codes have the most generators?",
+    "How have generator permits trended from 2000 to 2026?",
+    "Why does Westlake have 5x more generators than East Austin?",
+    "What's the total number of backup generators in Austin?",
+    "Did generator demand stay elevated after 2021?",
+  ],
+  ev: [
+    "Where are EV chargers being installed in Austin?",
+    "How has EV charger growth changed since 2020?",
+    "Which areas are EV charging deserts?",
+    "How do EV charger installs compare east vs west?",
+    "What's the EV charger trend from 2015 to 2026?",
+    "Which ZIP has the most EV infrastructure?",
+  ],
+  resilience: [
+    "Which districts are most prepared for grid failure?",
+    "How did Winter Storm Uri change Austin's infrastructure?",
+    "What's the backup power divide in Austin?",
+    "How has resilience investment grown since 2000?",
+    "Which neighborhoods are most grid-vulnerable?",
+    "How does income predict grid preparedness?",
+  ],
+  growth: [
+    "How has total construction changed from 2000 to 2026?",
+    "Which permit categories are growing fastest?",
+    "What's the demolition growth rate since 2015?",
+    "Where is new construction concentrated in Austin?",
+    "How did COVID affect Austin construction permits?",
+    "What are the biggest construction trends in 2024-2026?",
+  ],
+  equity: [
+    "How does income correlate with energy infrastructure?",
+    "Is there an energy equity gap in Austin?",
+    "Which communities have the least resilience investment?",
+    "How does the wealth divide show up in permits?",
+    "What's the solar access gap between rich and poor ZIPs?",
+    "Where are gentrification signals strongest?",
+  ],
+  districts: [
+    "How does District 10 compare to District 1 in permits?",
+    "Which council district has the most energy permits?",
+    "What are the biggest disparities between districts?",
+    "How has each district's construction changed since 2000?",
+    "Which district leads in renewable energy adoption?",
+    "What's the permit activity ranking by district?",
+  ],
+  pools: [
+    "Where are pool permits concentrated in Austin?",
+    "How has luxury construction trended since 2000?",
+    "Which ZIPs have the most high-value renovations?",
+    "What's the pool permit trend from 2010 to 2026?",
+    "Where is renovation spending highest in Austin?",
+    "How do pool permits map to income levels?",
+  ],
+  adu: [
+    "How have ADU permits grown since zoning changes?",
+    "Which neighborhoods lead in ADU construction?",
+    "What's the ADU growth rate from 2018 to 2026?",
+    "Where are ADUs concentrated in Austin?",
+    "How did policy changes affect ADU construction?",
+    "Which ZIPs have the most ADU activity?",
+  ],
+  demolition: [
+    "Why has demolition grown 547% in Austin?",
+    "Which areas are seeing the most teardowns?",
+    "How has demolition trended from 2000 to 2026?",
+    "Where are teardowns replacing old homes?",
+    "What's driving the demolition boom since 2015?",
+    "Which ZIPs lead in demolition permits?",
+  ],
+  eastwest: [
+    "How does East Austin compare to West Austin in permits?",
+    "What's the energy infrastructure divide east vs west?",
+    "How has the east-west gap changed since 2000?",
+    "Where does East Austin lead in construction activity?",
+    "What's driving the north-south construction divide?",
+    "How do east and west compare in solar adoption?",
+  ],
+};
+
+// Flat list of all questions for caching
+export function getAllQuestions(): string[] {
+  return Object.values(CATEGORY_QUESTIONS).flat();
+}
+
+// Legacy DEFAULT_QUESTIONS for backward compatibility
 export const DEFAULT_QUESTIONS: Record<Mode, string[]> = {
   scout: [
-    "What's the strangest pattern?",
-    "Where is Austin changing fastest?",
-    "What permits are exploding?",
-    "Which neighborhoods are outliers?",
-    "Who's building pools?",
-    "Where are solar panels going?",
-    "What's happening in East Austin?",
-    "Which ZIP has most activity?",
-    "Where's construction slowing?",
-    "What's the newest trend?",
-    "Which areas are over-building?",
-    "What's weird about downtown?",
-    "Where are ADUs popping up?",
-    "What changed in 2023?",
-    "Which permits are declining?",
-    "Where's the renovation boom?",
-    "What's happening in 78702?",
-    "Where are the generators?",
-    "What's District 6 building?",
-    "Where's the luxury construction?",
-    "What permits spike in summer?",
-    "Where are EV chargers going?",
-    "What's the Westlake story?",
-    "Where's growth concentrated?",
-    "What's the panel upgrade trend?",
-    "Where are the Powerwalls?",
-    "What's happening south of river?",
-    "Which ZIP is transforming?",
+    ...CATEGORY_QUESTIONS.solar.slice(0, 2),
+    ...CATEGORY_QUESTIONS.generators.slice(0, 2),
+    ...CATEGORY_QUESTIONS.growth.slice(0, 2),
   ],
   investigator: [
-    "Why does D10 have generators?",
-    "What changed after 2021 freeze?",
-    "How do wealthy vs poor compare?",
-    "Is solar tied to income?",
-    "Why do some areas have ADUs?",
-    "What drives pool construction?",
-    "How does east vs west differ?",
-    "Which district is resilient?",
-    "What's causing panel upgrades?",
-    "Is there a gentrification signal?",
-    "Why are some ZIPs booming?",
-    "What explains the EV gap?",
-    "Does density affect solar?",
-    "Why the generator disparity?",
-    "What predicts renovation?",
-    "How does age affect permits?",
-    "Is there a climate pattern?",
-    "What correlates with pools?",
-    "Why the north-south divide?",
-    "Does zoning affect patterns?",
-    "What's the income threshold?",
-    "Why 78746 vs 78744?",
-    "Is backup power predictable?",
-    "What drives the differences?",
-    "How did COVID change things?",
-    "Is there seasonal bias?",
-    "What's the policy effect?",
-    "Why the permit gap?",
+    ...CATEGORY_QUESTIONS.resilience.slice(0, 2),
+    ...CATEGORY_QUESTIONS.equity.slice(0, 2),
+    ...CATEGORY_QUESTIONS.eastwest.slice(0, 2),
   ],
   editor: [
-    "What's the headline?",
-    "Where's the tension?",
-    "What surprises readers?",
-    "How does this story end?",
-    "What's the before and after?",
-    "Who wins, who loses?",
-    "What's the human angle?",
-    "Where's inequality showing?",
-    "What should leaders know?",
-    "What's the turning point?",
-    "How do these connect?",
-    "What's the untold story?",
-    "What's the lead paragraph?",
-    "Where's the conflict?",
-    "What's the resolution?",
-    "Who's the protagonist?",
-    "What's the setting?",
-    "Where's the drama?",
-    "What's the takeaway?",
-    "How do we end strong?",
-    "What visual tells it best?",
-    "What's the nut graf?",
-    "Where's the irony?",
-    "What needs explaining?",
-    "What's the call to action?",
-    "How do we hook readers?",
-    "What's the lasting image?",
-    "Where's the hope?",
+    ...CATEGORY_QUESTIONS.demolition.slice(0, 2),
+    ...CATEGORY_QUESTIONS.ev.slice(0, 2),
+    ...CATEGORY_QUESTIONS.pools.slice(0, 2),
   ],
 };

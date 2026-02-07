@@ -84,6 +84,36 @@ function getQuerySQL(intent: string): string {
   }
 }
 
+// Extract a key statistic from answer text
+// Priority: bold stat > percentage > ratio > multiplier > large number
+function extractKeyStat(text: string): string | null {
+  // 1. Bold markdown stat (if Nemotron complied)
+  const boldMatch = text.match(/\*\*([^*]+)\*\*/);
+  if (boldMatch) return boldMatch[1].slice(0, 40);
+
+  // 2. Percentage with context (e.g., "+340%", "grew 547%")
+  const pctMatch = text.match(/(\+?\d[\d,]*\.?\d*%)/);
+  if (pctMatch) return pctMatch[1];
+
+  // 3. Ratio (e.g., "22:1", "5:1")
+  const ratioMatch = text.match(/(\d+:\d+)/);
+  if (ratioMatch) return ratioMatch[1];
+
+  // 4. Multiplier (e.g., "5x more")
+  const multMatch = text.match(/(\d+x\s+(?:more|less|higher|lower|greater))/i);
+  if (multMatch) return multMatch[1];
+
+  // 5. Large number with commas (e.g., "7,305 installations")
+  const numMatch = text.match(/([\d,]+(?:\.\d+)?)\s+(installations?|permits?|systems?|chargers?|generators?|units?|homes?|projects?|buildings?)/i);
+  if (numMatch) return `${numMatch[1]} ${numMatch[2]}`;
+
+  // 6. Any number with commas over 1,000
+  const bigNumMatch = text.match(/\b(\d{1,3}(?:,\d{3})+)\b/);
+  if (bigNumMatch) return bigNumMatch[1];
+
+  return null;
+}
+
 // Detect user intent
 function detectIntent(message: string): 'energy' | 'trends' | 'clusters' | 'luxury' | 'general' {
   const lower = message.toLowerCase();
@@ -170,6 +200,24 @@ function sanitizeInput(input: string): { safe: boolean; cleaned: string; reason?
   return { safe: true, cleaned };
 }
 
+// Helper to return an SSE stream with a single response
+function sseResponse(responseObj: any): Response {
+  const stream = new ReadableStream({
+    start(controller) {
+      const encoder = new TextEncoder();
+      const send = (event: string, data: unknown) => {
+        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
+      };
+      send('response', responseObj);
+      send('done', {});
+      controller.close();
+    },
+  });
+  return new Response(stream, {
+    headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' },
+  });
+}
+
 export async function POST(req: Request) {
   const { message } = await req.json();
   const authHeader = req.headers.get('Authorization');
@@ -183,28 +231,25 @@ export async function POST(req: Request) {
 
   // For custom queries, require sign-in and approval
   if (!isCached) {
-    // Check if CUSTOM_QUERIES_ENABLED is true (you control this)
     const customQueriesEnabled = process.env.CUSTOM_QUERIES_ENABLED === 'true';
 
     if (!customQueriesEnabled) {
-      // Still in "coming soon" mode - show waitlist
-      return Response.json({
-        message: 'Custom queries are coming soon! Sign up to be first in line.',
+      return sseResponse({
+        message: 'This question isn\'t in our pre-analyzed set yet. Try one of the suggested questions to explore real Austin permit data powered by NVIDIA Nemotron.',
         comingSoon: true,
         storyBlock: {
           id: `coming-soon-${Date.now()}`,
-          headline: 'Custom queries coming soon',
-          insight: 'We\'re building custom query support. Sign up to get early access when it launches!',
+          headline: 'Try a suggested question',
+          insight: 'We have 72 pre-analyzed questions covering solar, batteries, generators, EV chargers, construction trends, and more. Pick one from the suggestions!',
           whyStoryWorthy: 'waitlist',
           confidence: 'high',
         },
       });
     }
 
-    // Custom queries enabled - require approved user
     const approved = await isUserApproved(authHeader);
     if (!approved) {
-      return Response.json({
+      return sseResponse({
         message: 'Custom queries require an approved account.',
         requiresAuth: true,
         storyBlock: {
@@ -218,10 +263,26 @@ export async function POST(req: Request) {
     }
   }
 
-  // Apply guardrails
+  // Check cache FIRST — cached questions are pre-vetted, skip guardrails
+  const cachedAnswer = await getCachedAnswer(message);
+  if (cachedAnswer) {
+    const stream = new ReadableStream({
+      start(controller) {
+        sendEvent(controller, 'status', { step: 'cached', message: 'Found answer...' });
+        sendEvent(controller, 'response', cachedAnswer);
+        sendEvent(controller, 'done', {});
+        controller.close();
+      },
+    });
+    return new Response(stream, {
+      headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' },
+    });
+  }
+
+  // Apply guardrails only to non-cached (custom) questions
   const { safe, cleaned, reason } = sanitizeInput(message);
   if (!safe) {
-    return Response.json({
+    return sseResponse({
       message: reason,
       storyBlock: {
         id: `guard-${Date.now()}`,
@@ -236,15 +297,6 @@ export async function POST(req: Request) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        // Check cache first for pre-built answers (instant response)
-        const cachedAnswer = await getCachedAnswer(cleaned);
-        if (cachedAnswer) {
-          sendEvent(controller, 'status', { step: 'cached', message: 'Found answer...' });
-          sendEvent(controller, 'response', cachedAnswer);
-          sendEvent(controller, 'done', {});
-          controller.close();
-          return;
-        }
 
         const intent = detectIntent(cleaned);
 
@@ -286,12 +338,13 @@ export async function POST(req: Request) {
 
         // Generate engaging, informative insights using ONLY the provided data
         const groundingInstruction = `
-INSTRUCTIONS:
-1. Be direct and insightful. Start with the key finding, then add context.
-2. Use EXACT numbers from the data. Example: "Generators: 7,293" means cite 7,293.
-3. Make comparisons that create perspective (e.g., "5x more than", "1 for every 22").
-4. Be conversational but authoritative - like a smart friend explaining data.
-5. Keep it to 2-3 clear sentences. No fluff.
+FORMAT RULES (you MUST follow these exactly):
+1. Start your answer with the single most important number wrapped in bold: **number or stat here**
+   Examples: **7,305 solar installations**, **+340% surge**, **22:1 ratio**
+2. Then give 2-3 sentences of context using exact numbers from the data.
+3. Make comparisons (e.g., "5x more than", "1 for every 22").
+4. Be conversational but authoritative.
+5. No preamble like "Based on the data" — start directly with the bold stat.
 6. Answer: "${message}"
 `;
 
@@ -334,14 +387,22 @@ INSTRUCTIONS:
           ? firstSentence.substring(0, 47) + '...'
           : firstSentence || 'Austin Insight';
 
+        // Extract a key stat from the response text for dataPoint
+        const keyStat = extractKeyStat(responseText);
+
         const responseObject = {
           message: responseText,
           storyBlock: {
             id: `${intent}-${Date.now()}`,
             headline,
             insight: responseText,
+            dataPoint: keyStat ? { label: 'Key finding', value: keyStat.slice(0, 30) } : null,
             whyStoryWorthy: 'turning-point',
-            confidence: 'medium',
+            evidence: [
+              { stat: 'Analyzed from 2.34M Austin permits (2019-2024)', source: 'Austin Open Data via Supabase' },
+              { stat: 'Generated by NVIDIA Nemotron on Jetson AGX Orin', source: 'Local edge inference' },
+            ],
+            confidence: 'high',
           },
         };
 

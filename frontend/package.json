@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^2.0.56",
     "@ai-sdk/mcp": "^0.0.12",
     "@ai-sdk/openai": "^2.0.86",
     "@fal-ai/client": "^1.7.2",

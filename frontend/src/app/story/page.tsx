@@ -353,228 +353,18 @@ function ExplorationPageContent() {
     setCards((prev) => [...prev, ...newCards]);
   };
 
-  // Fallback responses with variety
-  const fallbackResponses = [
-    {
-      keywords: ["growth", "fastest", "booming", "sprawl", "build"],
-      response: {
-        message: "Austin's growth is concentrated in the outer ZIPs...",
-        storyBlock: {
-          id: `growth-${Date.now()}`,
-          headline: "The Sprawl Signal",
-          insight:
-            "**78660** (Pflugerville) leads with **8,234** new construction permits. Central Austin sees remodels; the edges see new builds.",
-          dataPoint: { label: "new permits in 78660", value: "8,234" },
-          whyStoryWorthy: "district-disparity" as const,
-          evidence: [
-            { stat: "78660: 8,234 new construction vs 78704: 1,203", source: "2019-2024 permit data" },
-          ],
-          confidence: "high" as const,
-          chartData: {
-            type: "bar" as const,
-            title: "Permits by ZIP",
-            data: [
-              { name: "78660", value: 8234 },
-              { name: "78704", value: 1203 },
-              { name: "78745", value: 2456 },
-              { name: "78748", value: 1890 },
-            ],
-          },
-        },
-      },
-    },
-    {
-      keywords: ["generator", "backup", "power", "freeze", "outage"],
-      response: {
-        message: "Generator permits reveal a resilience divide...",
-        storyBlock: {
-          id: `generators-${Date.now()}`,
-          headline: "Resilience is Wealth",
-          insight:
-            "**District 10 (Westlake)** has **3x more generators** per capita than East Austin. The freeze revealed who can afford to stay powered.",
-          dataPoint: { label: "generators in District 10", value: "2,151" },
-          whyStoryWorthy: "equity-gap" as const,
-          evidence: [
-            { stat: "District 10: 2,151 vs District 4: 412 generators", source: "2021-2024 permit data" },
-          ],
-          confidence: "high" as const,
-          geoData: {
-            type: "district" as const,
-            districts: [10, 4],
-            signal: "generator" as const,
-          },
-        },
-      },
-    },
-    {
-      keywords: ["solar", "panel", "renewable", "clean", "green"],
-      response: {
-        message: "Solar adoption shows a clear divide...",
-        storyBlock: {
-          id: `solar-${Date.now()}`,
-          headline: "The Solar Divide",
-          insight:
-            "Solar permits peaked in **2023** with **2,097 installations**, then dropped to **1,139** in 2025. West Austin leads adoption while East Austin lags.",
-          dataPoint: { label: "solar permits in 2023", value: "2,097" },
-          whyStoryWorthy: "turning-point" as const,
-          evidence: [
-            { stat: "2023: 2,097 → 2024: 1,567 → 2025: 1,139 solar permits", source: "Permit data" },
-          ],
-          confidence: "high" as const,
-          chartData: {
-            type: "line" as const,
-            title: "Solar Permits by Year",
-            data: [
-              { name: "2021", value: 1834 },
-              { name: "2022", value: 1956 },
-              { name: "2023", value: 2097 },
-              { name: "2024", value: 1567 },
-              { name: "2025", value: 1139 },
-            ],
-          },
-        },
-      },
-    },
-    {
-      keywords: ["ev", "charger", "electric", "vehicle", "tesla"],
-      response: {
-        message: "EV infrastructure growth is slowing...",
-        storyBlock: {
-          id: `ev-${Date.now()}`,
-          headline: "EV Momentum Stalls",
-          insight:
-            "EV charger permits dropped from **652** in 2023 to **484** in 2025. Affluent areas dominate while charging deserts persist in East Austin.",
-          dataPoint: { label: "EV charger permits in 2023", value: "652" },
-          whyStoryWorthy: "equity-gap" as const,
-          evidence: [
-            { stat: "District 10: 312 vs District 1: 47 EV chargers", source: "2022-2025 permit data" },
-          ],
-          confidence: "high" as const,
-          geoData: {
-            type: "district" as const,
-            districts: [10, 1],
-            signal: "ev" as const,
-          },
-        },
-      },
-    },
-    {
-      keywords: ["adu", "accessory", "duplex", "housing", "density"],
-      response: {
-        message: "ADUs are reshaping Austin neighborhoods...",
-        storyBlock: {
-          id: `adu-${Date.now()}`,
-          headline: "The ADU Boom",
-          insight:
-            "**78704** (South Austin) has the highest ADU concentration with **423** permits since 2020. Zoning changes are accelerating backyard builds.",
-          dataPoint: { label: "ADUs in 78704", value: "423" },
-          whyStoryWorthy: "turning-point" as const,
-          evidence: [
-            { stat: "ADU permits: 2020: 156 → 2024: 892 citywide", source: "Permit data" },
-          ],
-          confidence: "high" as const,
-        },
-      },
-    },
-    {
-      keywords: ["invest", "where", "buy", "opportunity", "market"],
-      response: {
-        message: "Investment patterns are shifting...",
-        storyBlock: {
-          id: `invest-${Date.now()}`,
-          headline: "Follow the Permits",
-          insight:
-            "Construction permits signal where growth is heading. **78660** and **78748** lead in new builds while **78704** dominates remodels.",
-          dataPoint: { label: "new construction 2024", value: "10,194" },
-          whyStoryWorthy: "outlier" as const,
-          evidence: [
-            { stat: "New builds: 78660 (8,234) vs 78704 (1,203)", source: "2019-2024 permit data" },
-          ],
-          confidence: "high" as const,
-        },
-      },
-    },
-  ];
-
-  // Generic fallbacks for when no keywords match
-  const genericFallbacks = [
-    {
-      message: "Let me explore that...",
-      storyBlock: {
-        id: `explore-${Date.now()}-1`,
-        headline: "Permit Pulse",
-        insight:
-          "Austin issued **10,194 new construction permits** in 2024. The data reveals where the city is growing and what's being built.",
-        dataPoint: { label: "permits in 2024", value: "10,194" },
-        whyStoryWorthy: "turning-point" as const,
-        evidence: [{ stat: "10,194 new construction permits in 2024", source: "Austin Open Data" }],
-        confidence: "high" as const,
-      },
-    },
-    {
-      message: "Interesting question...",
-      storyBlock: {
-        id: `explore-${Date.now()}-2`,
-        headline: "The District Gap",
-        insight:
-          "Council District **10** has **5x more energy permits** than District **1**. Wealth predicts resilience in Austin's grid.",
-        dataPoint: { label: "energy permits ratio", value: "5:1" },
-        whyStoryWorthy: "equity-gap" as const,
-        evidence: [{ stat: "District 10 vs District 1 energy permits", source: "2021-2024 data" }],
-        confidence: "high" as const,
-        geoData: {
-          type: "district" as const,
-          districts: [10, 1],
-          signal: "all" as const,
-        },
-      },
-    },
-    {
-      message: "Here's what the data shows...",
-      storyBlock: {
-        id: `explore-${Date.now()}-3`,
-        headline: "Post-Freeze Surge",
-        insight:
-          "After Winter Storm Uri, generator permits spiked **340%** in 2021. The trauma reshaped how Austin prepares for outages.",
-        dataPoint: { label: "generator spike", value: "+340%" },
-        whyStoryWorthy: "post-freeze-shift" as const,
-        evidence: [{ stat: "Generator permits: 2020: 312 → 2021: 1,373", source: "Permit data" }],
-        confidence: "high" as const,
-      },
-    },
-  ];
-
   const useFallback = (question: string) => {
-    const lower = question.toLowerCase();
-
-    // Find a matching fallback based on keywords
-    const match = fallbackResponses.find((f) =>
-      f.keywords.some((kw) => lower.includes(kw))
-    );
-
-    if (match) {
-      // Make ID unique for this specific call
-      const response = {
-        ...match.response,
-        storyBlock: {
-          ...match.response.storyBlock,
-          id: `${match.response.storyBlock.id.split("-")[0]}-${Date.now()}`,
-        },
-      };
-      handleResponse(response);
-    } else {
-      // Use a random generic fallback
-      const randomIndex = Math.floor(Math.random() * genericFallbacks.length);
-      const fallback = genericFallbacks[randomIndex];
-      const response = {
-        ...fallback,
-        storyBlock: {
-          ...fallback.storyBlock,
-          id: `explore-${Date.now()}`,
-        },
-      };
-      handleResponse(response);
-    }
+    // Show error card instead of fake data
+    handleResponse({
+      message: "This question doesn't have a cached answer yet. Try one of the suggested questions above.",
+      storyBlock: {
+        id: `unavailable-${Date.now()}`,
+        headline: "Answer Unavailable",
+        insight: "This question hasn't been pre-analyzed yet. Select one of the suggested questions to explore real Austin permit data powered by NVIDIA Nemotron.",
+        whyStoryWorthy: "info",
+        confidence: "low" as const,
+      },
+    });
   };
 
   // Toggle card selection
@@ -709,6 +499,8 @@ function ExplorationPageContent() {
               isLoading={isLoading}
               isRefreshing={isRefreshing}
               storylineTitle={activeStoryline.title}
+              userEmail={userEmail}
+              onSignupClick={() => setShowSignupModal(true)}
             />
           </section>
         ) : (
