@@ -632,9 +632,9 @@ function ExplorationPageContent() {
               <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-500/20 to-amber-500/20 flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-amber-400" />
               </div>
-              <h3 className="text-lg font-medium text-white mb-2">Ask Your Own Questions</h3>
+              <h3 className="text-lg font-medium text-white mb-2">Join the Waitlist</h3>
               <p className="text-white/50 text-sm">
-                Get personalized insights from 2.34M Austin permits
+                Get early access to custom AI queries
               </p>
             </div>
             <form onSubmit={async (e) => {
@@ -661,7 +661,7 @@ function ExplorationPageContent() {
               />
               <button
                 type="submit"
-                className="w-full px-4 py-3 bg-white text-black font-medium rounded-xl hover:bg-white/90 transition-colors"
+                className="w-full px-4 py-3 bg-amber-500 text-black font-medium rounded-xl hover:bg-amber-400 transition-colors"
               >
                 Continue
               </button>
@@ -673,7 +673,7 @@ function ExplorationPageContent() {
                 Maybe later
               </button>
             </form>
-            <p className="text-white/20 text-[10px] mt-4 text-center">Powered by NVIDIA Jetson AGX Orin</p>
+            <p className="text-white/30 text-xs mt-4 text-center">We will notify you when approved</p>
           </div>
         </div>
       )}
