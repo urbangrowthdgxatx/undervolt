@@ -270,19 +270,19 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10">
-              <div className="text-2xl mb-3">🏛️</div>
-              <h3 className="font-semibold text-lg mb-2">City Planners</h3>
+            <div className="p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 hover:scale-[1.02] transition-transform">
+              <div className="text-4xl mb-4">🏛️</div>
+              <h3 className="font-semibold text-lg mb-2 text-blue-100">City Planners</h3>
               <p className="text-white/50 text-sm">Identify infrastructure gaps, track permit trends, and make data-driven zoning decisions.</p>
             </div>
-            <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10">
-              <div className="text-2xl mb-3">⚡</div>
-              <h3 className="font-semibold text-lg mb-2">Energy Companies</h3>
+            <div className="p-6 rounded-xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 hover:scale-[1.02] transition-transform">
+              <div className="text-4xl mb-4">⚡</div>
+              <h3 className="font-semibold text-lg mb-2 text-amber-100">Energy Companies</h3>
               <p className="text-white/50 text-sm">Find underserved areas for solar, battery, and EV infrastructure investments.</p>
             </div>
-            <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10">
-              <div className="text-2xl mb-3">🔬</div>
-              <h3 className="font-semibold text-lg mb-2">Researchers</h3>
+            <div className="p-6 rounded-xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 hover:scale-[1.02] transition-transform">
+              <div className="text-4xl mb-4">🔬</div>
+              <h3 className="font-semibold text-lg mb-2 text-purple-100">Researchers</h3>
               <p className="text-white/50 text-sm">Analyze urban growth patterns, climate resilience, and infrastructure equity.</p>
             </div>
           </div>
@@ -293,7 +293,7 @@ export default function HomePage() {
       <div className="h-px bg-white/10" />
 
       {/* Reports Callout */}
-      <section className="py-24 px-8 bg-neutral-900">
+      <section className="py-24 px-8 bg-gradient-to-br from-amber-500/5 via-neutral-900 to-red-500/5">
         <div className="max-w-4xl mx-auto text-center">
           <span className="text-amber-400 text-sm font-medium tracking-wide uppercase">Infrastructure Analysis</span>
           <h2 className="text-4xl font-bold mt-4 mb-4">Austin is Changing Fast</h2>
@@ -303,15 +303,15 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10 text-center">
-              <div className="text-3xl font-bold text-amber-400 mb-2">22:1</div>
+              <div className="text-5xl font-bold text-amber-400 mb-2">22:1</div>
               <p className="text-white/50 text-sm">Solar to battery ratio</p>
             </div>
             <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10 text-center">
-              <div className="text-3xl font-bold text-red-400 mb-2">+246%</div>
+              <div className="text-5xl font-bold text-red-400 mb-2">+246%</div>
               <p className="text-white/50 text-sm">Generator surge post-2021</p>
             </div>
             <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10 text-center">
-              <div className="text-3xl font-bold text-emerald-400 mb-2">25,982</div>
+              <div className="text-5xl font-bold text-emerald-400 mb-2">25,982</div>
               <p className="text-white/50 text-sm">Solar installations</p>
             </div>
           </div>
@@ -332,7 +332,7 @@ export default function HomePage() {
       {/* Architecture Callout */}
       <section className="py-20 px-8 bg-black">
         <div className="max-w-4xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center gap-8 p-8 rounded-2xl bg-white/[0.02] border border-white/10">
+          <div className="flex flex-col md:flex-row items-center gap-8 p-8 rounded-2xl bg-gradient-to-r from-emerald-500/5 to-transparent border border-emerald-500/20">
             <div className="flex-1">
               <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">Architecture</span>
               <h3 className="text-2xl font-bold mt-2 mb-3">GPU-Accelerated Pipeline</h3>
@@ -352,28 +352,32 @@ export default function HomePage() {
       </section>
 
       {/* Why Edge Deployment */}
-      <section className="py-20 px-8 bg-neutral-900">
+      <section className="py-20 px-8 bg-gradient-to-b from-neutral-900 to-black">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <span className="text-amber-400 text-sm font-medium tracking-wide uppercase">Why Edge?</span>
+            <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase">Why Edge?</span>
             <h2 className="text-3xl font-bold mt-2">Edge Deployment Benefits</h2>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="p-6 rounded-xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20">
+              <div className="text-2xl mb-3">🔒</div>
               <h3 className="text-white font-semibold mb-2">Data Sovereignty</h3>
-              <p className="text-white/40 text-sm">Permit data stays local. No cloud transmission.</p>
+              <p className="text-white/50 text-sm">Permit data stays local. No cloud transmission.</p>
             </div>
-            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+            <div className="p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20">
+              <div className="text-2xl mb-3">⚡</div>
               <h3 className="text-white font-semibold mb-2">Zero Latency</h3>
-              <p className="text-white/40 text-sm">On-device inference. No network round-trips.</p>
+              <p className="text-white/50 text-sm">On-device inference. No network round-trips.</p>
             </div>
-            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+            <div className="p-6 rounded-xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20">
+              <div className="text-2xl mb-3">💰</div>
               <h3 className="text-white font-semibold mb-2">Cost Efficient</h3>
-              <p className="text-white/40 text-sm">One-time hardware cost vs recurring cloud fees.</p>
+              <p className="text-white/50 text-sm">One-time hardware cost vs recurring cloud fees.</p>
             </div>
-            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/10">
+            <div className="p-6 rounded-xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20">
+              <div className="text-2xl mb-3">📡</div>
               <h3 className="text-white font-semibold mb-2">Offline Capable</h3>
-              <p className="text-white/40 text-sm">Works without internet connectivity.</p>
+              <p className="text-white/50 text-sm">Works without internet connectivity.</p>
             </div>
           </div>
         </div>
