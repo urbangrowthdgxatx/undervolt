@@ -68,8 +68,8 @@ const TEAM = [
 ];
 
 const HACKATHON_TEAM = [
-  { name: "Avanish Joshi", role: "Data Science", linkedin: "https://linkedin.com/in/avanishj" },
   { name: "Tyrone Avnit", role: "Full Stack", linkedin: "https://linkedin.com/in/tyroneavnit" },
+  { name: "Avanish Joshi", role: "Data Science", linkedin: "https://linkedin.com/in/avanishj" },
   { name: "Siddharth Gargava", role: "ML Engineer", linkedin: "https://linkedin.com/in/siddharthgargava" },
 ];
 
