@@ -74,16 +74,16 @@ export default function HomePage() {
             <div className="flex items-center justify-center gap-10 md:gap-14">
               {/* NVIDIA */}
               <a href="https://developer.nvidia.com/embedded/jetson-agx-orin" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity">
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8.948 8.798v-1.43a6.7 6.7 0 0 1 .424-.018c3.922-.124 6.493 3.374 6.493 3.374s-2.774 3.851-5.75 3.851c-.453 0-.9-.063-1.167-.124v-4.42a.75.75 0 0 0-.75-.75z"/>
-                  <path d="M8.948 5.968v1.4c.141-.02.283-.035.424-.04 5.094-.164 8.44 4.458 8.44 4.458s-3.836 5.006-7.93 5.006a6.5 6.5 0 0 1-.934-.067v1.446c.278.025.567.04.86.04 5.647 0 9.677-4.684 9.677-4.684S15.06 7.467 9.81 7.467c-.295 0-.578.017-.862.05v-1.55z"/>
+                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#76B900">
+                  <path d="M11.058 12.824c-.05-.7-.15-1.4-.35-2.05-.2-.65-.5-1.25-.9-1.8-.4-.55-.9-1-1.45-1.35-.55-.35-1.2-.6-1.9-.7v2.1c.45.1.85.3 1.2.55.35.25.65.55.9.9.25.35.45.75.55 1.15.1.4.15.85.1 1.3-.05.4-.15.8-.35 1.15-.2.35-.45.65-.75.9-.3.25-.65.45-1.05.55-.4.1-.8.15-1.25.1v2.1c.7-.1 1.35-.35 1.9-.7.55-.35 1.05-.8 1.45-1.35.4-.55.7-1.15.9-1.8.2-.65.3-1.3.35-2v-.05z"/>
+                  <path d="M6.058 5.824v2.1c1.1.15 2.1.55 2.95 1.15.85.6 1.55 1.4 2.05 2.35.5.95.8 2 .85 3.15.05 1.15-.15 2.25-.55 3.25-.4 1-.95 1.9-1.7 2.65-.75.75-1.6 1.35-2.6 1.75-1 .4-2.05.6-3.15.55v2.1c1.45 0 2.8-.3 4.05-.85 1.25-.55 2.35-1.3 3.25-2.25.9-.95 1.6-2.05 2.1-3.3.5-1.25.75-2.6.7-4-.05-1.4-.35-2.75-.9-4-.55-1.25-1.3-2.35-2.25-3.3-.95-.95-2.05-1.7-3.3-2.2-1.25-.5-2.6-.8-4.05-.85v.1-.05z"/>
                 </svg>
                 <span className="text-xs text-white/40">NVIDIA</span>
               </a>
 
               {/* Ollama */}
               <a href="https://ollama.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity">
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-lg">🦙</div>
+                <img src="https://ollama.com/public/ollama.png" alt="Ollama" className="w-8 h-8" />
                 <span className="text-xs text-white/40">Ollama</span>
               </a>
 
