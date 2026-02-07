@@ -1,0 +1,154 @@
+{
+  "0": {
+    "name": "New Residential Construction",
+    "size": 23100,
+    "percentage": 23.1,
+    "top_keywords": [
+      {
+        "keyword": "new",
+        "prevalence": 94.7
+      },
+      {
+        "keyword": "residential",
+        "prevalence": 19.7
+      },
+      {
+        "keyword": "single-family",
+        "prevalence": 6.5
+      }
+    ]
+  },
+  "1": {
+    "name": "General Construction & Repairs",
+    "size": 21506,
+    "percentage": 21.5,
+    "top_keywords": [
+      {
+        "keyword": "new",
+        "prevalence": 24.0
+      },
+      {
+        "keyword": "repair",
+        "prevalence": 6.1
+      },
+      {
+        "keyword": "remodel",
+        "prevalence": 4.3
+      }
+    ]
+  },
+  "2": {
+    "name": "Electrical & Roofing Work",
+    "size": 22328,
+    "percentage": 22.3,
+    "top_keywords": [
+      {
+        "keyword": "new",
+        "prevalence": 24.8
+      },
+      {
+        "keyword": "electrical",
+        "prevalence": 8.0
+      },
+      {
+        "keyword": "roof",
+        "prevalence": 7.4
+      }
+    ]
+  },
+  "3": {
+    "name": "Major Residential Remodels",
+    "size": 11654,
+    "percentage": 11.7,
+    "top_keywords": [
+      {
+        "keyword": "remodel",
+        "prevalence": 47.3
+      },
+      {
+        "keyword": "new",
+        "prevalence": 16.2
+      },
+      {
+        "keyword": "roof",
+        "prevalence": 9.4
+      }
+    ]
+  },
+  "4": {
+    "name": "HVAC Installations",
+    "size": 12357,
+    "percentage": 12.4,
+    "top_keywords": [
+      {
+        "keyword": "new",
+        "prevalence": 7.8
+      },
+      {
+        "keyword": "hvac",
+        "prevalence": 6.0
+      },
+      {
+        "keyword": "remodel",
+        "prevalence": 5.7
+      }
+    ]
+  },
+  "5": {
+    "name": "Demolition Projects",
+    "size": 1275,
+    "percentage": 1.3,
+    "top_keywords": [
+      {
+        "keyword": "demolition",
+        "prevalence": 41.8
+      },
+      {
+        "keyword": "new",
+        "prevalence": 1.7
+      },
+      {
+        "keyword": "permit",
+        "prevalence": 0.6
+      }
+    ]
+  },
+  "6": {
+    "name": "Window Installations & Multi-Trade Remodels",
+    "size": 5703,
+    "percentage": 5.7,
+    "top_keywords": [
+      {
+        "keyword": "window",
+        "prevalence": 58.4
+      },
+      {
+        "keyword": "new",
+        "prevalence": 34.0
+      },
+      {
+        "keyword": "plumbing",
+        "prevalence": 32.4
+      }
+    ]
+  },
+  "7": {
+    "name": "Foundation Repairs",
+    "size": 2077,
+    "percentage": 2.1,
+    "top_keywords": [
+      {
+        "keyword": "foundation",
+        "prevalence": 93.8
+      },
+      {
+        "keyword": "repair",
+        "prevalence": 75.3
+      },
+      {
+        "keyword": "new",
+        "prevalence": 8.0
+      }
+    ]
+  }
+}

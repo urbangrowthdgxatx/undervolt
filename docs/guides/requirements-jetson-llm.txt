@@ -1,0 +1,29 @@
+# Jetson LLM Support Requirements
+# Install with: pip install -r requirements-jetson-llm.txt
+
+# Core LLM backends (choose one)
+
+# Option 1: Ollama (Recommended for Jetson)
+# No Python package needed - just run: ollama serve
+# Then pull models: ollama pull mistral-7b
+
+# Option 2: vLLM (for quantized models on Jetson)
+vllm>=0.4.0
+# With quantization support:
+# For AWQ: pip install autoawq
+# For GPTQ: pip install auto-gptq
+# For bitsandbytes: pip install bitsandbytes
+
+# Option 3: llama.cpp (lightest, for very constrained environments)
+# llama-cpp-python>=0.2.0
+
+# Utilities
+requests>=2.31.0  # For Ollama API calls
+pandas>=1.5.0     # For DataFrame operations
+
+# Optional: GPU monitoring
+gpustat>=1.1.1
+psutil>=5.9.0
+
+# Optional: Model downloading
+huggingface_hub>=0.20.0
