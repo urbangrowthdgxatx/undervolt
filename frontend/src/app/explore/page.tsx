@@ -14,7 +14,7 @@ const stories = [
   {
     id: "intro",
     title: "Austin's Grid",
-    subtitle: "2.3 million permits tell a story",
+    subtitle: "2.34 million permits tell a story",
     stat: null,
     statLabel: null,
     color: "white",
@@ -45,7 +45,7 @@ const stories = [
     id: "generator",
     title: "Trust, Broken",
     subtitle: "After the 2021 freeze",
-    stat: "+246%",
+    stat: "+340%",
     statLabel: "generator permits",
     color: "red",
     filter: "generator",

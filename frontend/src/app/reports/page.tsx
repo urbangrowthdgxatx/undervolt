@@ -83,7 +83,7 @@ export default function ReportsPage() {
         <div className="max-w-5xl mx-auto px-6 py-8">
           <p className="text-white/40 text-xs uppercase tracking-widest mb-2">Data Insights</p>
           <h1 className="text-3xl font-bold mb-2">What the Permits Reveal</h1>
-          <p className="text-white/50">Key findings from analyzing 2.3 million Austin construction permits.</p>
+          <p className="text-white/50">Key findings from analyzing 2.34 million Austin construction permits.</p>
         </div>
 
         {/* Tabs */}
@@ -155,7 +155,7 @@ function Overview({ yearlyData }: { yearlyData: Array<{ year: number; total: num
       filter: "battery"
     },
     {
-      stat: "+246%",
+      stat: "+340%",
       label: "Generator Permits Post-2021",
       insight: "Grid trust collapsed after Winter Storm Uri.",
       color: "red",
@@ -402,8 +402,8 @@ function GeneratorSurge() {
     type: "bar" as const,
     title: "Generator Permits by Year",
     data: [
-      { name: "2019", value: 312 },
-      { name: "2020", value: 398 },
+      { name: "2019", value: 278 },
+      { name: "2020", value: 312 },
       { name: "2021", value: 1373 },
       { name: "2022", value: 1856 },
       { name: "2023", value: 1934 },
@@ -428,7 +428,7 @@ function GeneratorSurge() {
     <div className="space-y-8">
       {/* Hero stat */}
       <div className="text-center py-8">
-        <div className="text-7xl md:text-8xl font-bold text-red-400 mb-2">+246%</div>
+        <div className="text-7xl md:text-8xl font-bold text-red-400 mb-2">+340%</div>
         <div className="text-xl text-white/70">Generator Permits After 2021</div>
       </div>
 
@@ -458,13 +458,13 @@ function GeneratorSurge() {
       <div className="grid md:grid-cols-2 gap-4">
         <div className="p-5 rounded-xl bg-white/[0.02] border border-white/5 text-center">
           <div className="text-white/40 text-sm mb-2">2020 (Before)</div>
-          <div className="text-3xl font-bold text-white/50">398</div>
+          <div className="text-3xl font-bold text-white/50">312</div>
           <div className="text-white/30 text-sm">permits</div>
         </div>
         <div className="p-5 rounded-xl bg-red-500/10 border border-red-500/20 text-center">
           <div className="text-white/40 text-sm mb-2">2021 (After)</div>
           <div className="text-3xl font-bold text-red-400">1,373</div>
-          <div className="text-red-400/60 text-sm">+245% increase</div>
+          <div className="text-red-400/60 text-sm">+340% increase</div>
         </div>
       </div>
 

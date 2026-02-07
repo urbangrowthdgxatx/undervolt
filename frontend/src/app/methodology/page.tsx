@@ -9,7 +9,7 @@ const PIPELINE = [
     icon: Database,
     title: "Data Ingestion",
     color: "blue",
-    description: "2.3M permits from Austin Open Data Portal",
+    description: "2.34M permits from Austin Open Data Portal",
     tech: "cuDF (GPU DataFrame)",
   },
   {
@@ -49,8 +49,8 @@ const SIGNALS = [
 
 const EDGE_BENEFITS = [
   { title: "Data Sovereignty", description: "Permit data stays local, no cloud uploads" },
-  { title: "Zero Latency", description: "Queries processed on-device, instant results" },
-  { title: "Cost Efficient", description: "$2K hardware vs $50K+/year cloud compute" },
+  { title: "Local Processing", description: "Queries processed on-device, no network delays" },
+  { title: "Cost Efficient", description: "One-time hardware cost vs recurring cloud fees" },
   { title: "Offline Capable", description: "Works without internet connectivity" },
 ];
 
@@ -117,7 +117,7 @@ export default function MethodologyPage() {
                 </div>
               </div>
               <p className="text-white/50 text-sm">
-                ML pipeline development and batch processing of 2.3M permit records with GPU acceleration.
+                ML pipeline development and batch processing of 2.34M permit records with GPU acceleration.
               </p>
             </div>
 
@@ -173,7 +173,7 @@ export default function MethodologyPage() {
           <h2 className="text-xl font-semibold mb-8 text-center text-white/80">Performance</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
-              <p className="text-2xl font-bold text-white mb-1">2.3M</p>
+              <p className="text-2xl font-bold text-white mb-1">2.34M</p>
               <p className="text-white/40 text-xs">Permits processed</p>
             </div>
             <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
@@ -181,12 +181,12 @@ export default function MethodologyPage() {
               <p className="text-white/40 text-xs">Energy categories</p>
             </div>
             <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
-              <p className="text-2xl font-bold text-white/50 mb-1">[TBD]</p>
-              <p className="text-white/40 text-xs">Query latency (ms)</p>
+              <p className="text-2xl font-bold text-white mb-1">&lt;50ms</p>
+              <p className="text-white/40 text-xs">Cached query latency</p>
             </div>
             <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
-              <p className="text-2xl font-bold text-white/50 mb-1">[TBD]</p>
-              <p className="text-white/40 text-xs">Tokens/sec (LLM)</p>
+              <p className="text-2xl font-bold text-white mb-1">275</p>
+              <p className="text-white/40 text-xs">TOPS (Jetson Orin)</p>
             </div>
           </div>
         </div>

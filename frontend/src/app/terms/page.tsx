@@ -65,7 +65,7 @@ export default function TermsPage() {
               <li>Responses may contain errors or inaccuracies</li>
               <li>AI features are provided "as-is" without guarantees</li>
               <li>We may modify or discontinue AI features at any time</li>
-              <li>Usage limits apply (10 example queries free, 50 custom queries for registered users)</li>
+              <li>Pre-built questions are available to all users; custom queries require sign-in and approval</li>
             </ul>
           </section>
 

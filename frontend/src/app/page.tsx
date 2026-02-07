@@ -241,7 +241,7 @@ export default function HomePage() {
               <p className="text-white/60 text-sm mb-4">Track grid resilience across Austin. Where are generators clustering? Who added solar after the freeze?</p>
               <div className="flex gap-4 text-xs">
                 <div className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50">Solar: 25,982</div>
-                <div className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50">Generators: +246%</div>
+                <div className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50">Generators: +340%</div>
                 <div className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50">EV Chargers: 3,642</div>
               </div>
             </div>
@@ -307,7 +307,7 @@ export default function HomePage() {
               <p className="text-white/50 text-sm">Solar to battery ratio</p>
             </div>
             <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10 text-center">
-              <div className="text-5xl font-bold text-red-400 mb-2">+246%</div>
+              <div className="text-5xl font-bold text-red-400 mb-2">+340%</div>
               <p className="text-white/50 text-sm">Generator surge post-2021</p>
             </div>
             <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10 text-center">

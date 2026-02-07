@@ -60,7 +60,7 @@ export const CATEGORY_QUESTIONS: Record<Category, string[]> = {
     "Is Austin's solar boom slowing down in 2025?",
     "How much total solar capacity has Austin installed?",
     "Where are the solar deserts in Austin?",
-    "How many solar panels would it take to power all of Austin?",
+    "How does Austin's solar ranking compare to other Texas cities?",
     "Which ZIP added the most solar in the last 2 years?",
   ],
   battery: [
@@ -71,7 +71,7 @@ export const CATEGORY_QUESTIONS: Record<Category, string[]> = {
     "Why aren't more solar homes adding batteries?",
     "Which ZIPs pair solar with battery storage?",
     "How does Austin's battery adoption compare to its solar growth?",
-    "What would it cost Austin to close the solar-to-battery gap?",
+    "What incentives exist for Austin battery storage adoption?",
   ],
   generators: [
     "How did generator permits spike after the 2021 freeze?",
@@ -81,7 +81,7 @@ export const CATEGORY_QUESTIONS: Record<Category, string[]> = {
     "What's the total number of backup generators in Austin?",
     "How does 2024 generator demand compare to the 2021 peak?",
     "Could batteries replace generators as the go-to backup power?",
-    "How much did Austin spend on generators after Winter Storm Uri?",
+    "What does a typical Austin generator installation cost?",
   ],
   ev: [
     "Where are EV chargers being installed in Austin?",
@@ -90,7 +90,7 @@ export const CATEGORY_QUESTIONS: Record<Category, string[]> = {
     "How do EV charger installs compare east vs west?",
     "Is Austin keeping up with EV adoption rates?",
     "Which ZIP has the most EV infrastructure?",
-    "How many EVs per charger are there in Austin?",
+    "How many registered EVs per charger are there in Austin?",
     "Where should Austin build EV chargers next?",
   ],
   resilience: [
@@ -100,7 +100,7 @@ export const CATEGORY_QUESTIONS: Record<Category, string[]> = {
     "Is Austin more grid-resilient now than it was in 2021?",
     "Which neighborhoods are most grid-vulnerable?",
     "How much has backup power investment grown from 2022 to 2025?",
-    "What would another Winter Storm Uri cost Austin today?",
+    "How has Austin Energy's grid spending changed since Uri?",
     "Which ZIP codes still have zero backup power?",
   ],
   growth: [
@@ -110,8 +110,8 @@ export const CATEGORY_QUESTIONS: Record<Category, string[]> = {
     "Where is new construction concentrated in Austin?",
     "How did COVID affect Austin construction permits?",
     "What's the hottest construction category in 2025?",
-    "How does Austin's construction boom compare to other Texas cities?",
-    "Is Austin building fast enough to keep up with population growth?",
+    "Where does Austin rank nationally in building permits?",
+    "How did Austin's 2024 permits compare to the long-term average?",
   ],
   equity: [
     "How does income correlate with energy infrastructure?",
@@ -120,8 +120,8 @@ export const CATEGORY_QUESTIONS: Record<Category, string[]> = {
     "Is the energy equity gap getting wider or narrower?",
     "What's the solar access gap between rich and poor ZIPs?",
     "How much more backup power does Westlake have than East Austin?",
-    "What would it take to close Austin's energy equity gap?",
-    "Which ZIP code has the biggest gap between income and infrastructure?",
+    "How much do low-income Texans spend on energy vs wealthy households?",
+    "Which ZIP codes show the biggest gap between income and infrastructure?",
   ],
   districts: [
     "How does District 10 compare to District 1 in permits?",
@@ -140,7 +140,7 @@ export const CATEGORY_QUESTIONS: Record<Category, string[]> = {
     "What's the pool permit trend from 2010 to 2026?",
     "How does 78746 compare to 78702 in luxury permits?",
     "How do pool permits map to income levels?",
-    "Is Austin's luxury construction growing faster than affordable housing?",
+    "How many pool permits did Austin issue in 2024?",
     "What share of Austin's total permits are luxury or high-end?",
   ],
   adu: [
@@ -151,7 +151,7 @@ export const CATEGORY_QUESTIONS: Record<Category, string[]> = {
     "Are ADUs actually increasing housing density in Austin?",
     "Which ZIPs have the most ADU activity?",
     "How do ADU permits in 2025 compare to pre-HOME Initiative levels?",
-    "Could ADUs solve Austin's housing affordability crisis?",
+    "How many HOME Initiative ADU applications have been submitted?",
   ],
   demolition: [
     "Why has demolition grown 547% in Austin?",
@@ -161,7 +161,7 @@ export const CATEGORY_QUESTIONS: Record<Category, string[]> = {
     "Is demolition accelerating in East Austin neighborhoods?",
     "Which ZIPs lead in demolition permits?",
     "Is demolition a leading indicator of gentrification in Austin?",
-    "What's the average home age in Austin's top demolition ZIP codes?",
+    "How did demolition permits change after the HOME Initiative?",
   ],
   eastwest: [
     "How does East Austin compare to West Austin in permits?",

@@ -38,7 +38,7 @@ const SOFTWARE = [
   { name: "Ollama", category: "LLM Serving", description: "Local model serving, on-device inference.", logo: "ollama" },
   { name: "Python Pipeline", category: "Data", description: "GPU data processing.", logo: "nvidia" },
   { name: "Next.js", category: "Frontend", description: "React framework with API routes.", logo: "nextjs" },
-  { name: "Supabase", category: "Database", description: "PostgreSQL for 2.3M permits.", logo: "supabase" },
+  { name: "Supabase", category: "Database", description: "PostgreSQL for 2.34M permits.", logo: "supabase" },
   { name: "Leaflet", category: "Maps", description: "Interactive permit visualization.", logo: "leaflet" },
   { name: "Vercel", category: "Hosting", description: "Edge deployment and serverless functions.", logo: "vercel" },
 ];
@@ -55,7 +55,7 @@ const LOGOS: Record<string, React.ReactNode> = {
 
 // Origin Story milestones
 const MILESTONES = [
-  { phase: "Discovery", title: "The Question", description: "What can 2.3M construction permits tell us about a city's energy future?", status: "completed" },
+  { phase: "Discovery", title: "The Question", description: "What can 2.34M construction permits tell us about a city's energy future?", status: "completed" },
   { phase: "Build", title: "GPU Pipeline", description: "Processed millions of records on DGX Cloud for GPU-accelerated analysis.", status: "completed" },
   { phase: "Build", title: "ML Clustering", description: "AI categorization of 2.34M permits into actionable insights.", status: "completed" },
   { phase: "Insight", title: "The Story", description: "7,293 generators vs 1,172 batteries. Austinites don't trust the grid.", status: "completed" },
@@ -65,7 +65,7 @@ const MILESTONES = [
 
 // Team
 const TEAM = [
-  { name: "Ravinder Jilkapally", role: "Lead", focus: "Architecture, GPU pipelines, edge deployment", linkedin: "https://linkedin.com/in/jravinder", lead: true },
+  { name: "Ravinder Jilkapally", role: "Lead", focus: "Architecture, GPU pipelines, edge deployment", linkedin: "https://linkedin.com/in/jravinder", lead: true, avatar: "https://www.gravatar.com/avatar/07e9975093e352d88e8a43b95bbf3295?s=200" },
 ];
 
 const HACKATHON_TEAM = [
@@ -272,7 +272,7 @@ function OriginStory() {
           At the NVIDIA DGX Spark Frontier Hackathon in Austin, our team set out to answer one question: <em className="text-white">What could cities learn if their massive open datasets were finally explorable in real time?</em>
         </p>
         <p className="text-white/50 text-sm mb-3">
-          With the same data and constraints as everyone else, we focused on building something meaningfully different. Using Austin&apos;s 2.2M construction permits, we built Undervolt — transforming messy, unstructured public data into real-time Urban Growth Intelligence.
+          With the same data and constraints as everyone else, we focused on building something meaningfully different. Using Austin&apos;s 2.34M construction permits, we built Undervolt — transforming messy, unstructured public data into real-time Urban Growth Intelligence.
         </p>
         <p className="text-white/50 text-sm mb-4">
           Cities struggle with slow, fragmented datasets that hide critical signals: grid stress, storage gaps, growth corridors, solar adoption. These signals already exist inside permit text — the challenge is extracting them at scale.
@@ -410,13 +410,14 @@ function Team() {
             href={member.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="block p-6 rounded-xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 hover:border-amber-500/40 transition-colors group"
+            className="flex items-start gap-4 p-6 rounded-xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 hover:border-amber-500/40 transition-colors group"
           >
             <h3 className="text-xl text-white font-semibold mb-1">{member.name}</h3>
             <p className="text-amber-400 text-sm mb-2">{member.role}</p>
             <p className="text-white/50 text-sm">{member.focus}</p>
             <div className="mt-4 flex items-center gap-1 text-white/30 text-xs group-hover:text-white/50 transition-colors">
               LinkedIn <ArrowRight className="w-3 h-3" />
+            </div>
             </div>
           </a>
         ))}
