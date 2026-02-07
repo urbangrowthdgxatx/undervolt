@@ -366,8 +366,8 @@ export default function HomePage() {
             </div>
             <div className="p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20">
               <div className="text-2xl mb-3">⚡</div>
-              <h3 className="text-white font-semibold mb-2">Low Latency</h3>
-              <p className="text-white/50 text-sm">On-device inference. No network round-trips.</p>
+              <h3 className="text-white font-semibold mb-2">Local Processing</h3>
+              <p className="text-white/50 text-sm">On-device inference. No network delays.</p>
             </div>
             <div className="p-6 rounded-xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20">
               <div className="text-2xl mb-3">💰</div>
