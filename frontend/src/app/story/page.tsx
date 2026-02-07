@@ -361,7 +361,7 @@ function ExplorationPageContent() {
         id: `unavailable-${Date.now()}`,
         headline: "Answer Unavailable",
         insight: "This question hasn't been pre-analyzed yet. Select one of the suggested questions to explore real Austin permit data powered by NVIDIA Nemotron.",
-        whyStoryWorthy: "info",
+        whyStoryWorthy: "turning-point",
         confidence: "low" as const,
       },
     });
