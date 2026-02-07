@@ -75,7 +75,7 @@ export default function HomePage() {
               <div className="flex animate-marquee gap-14 whitespace-nowrap">
               {/* NVIDIA */}
               <a href="https://developer.nvidia.com/embedded/jetson-agx-orin" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
-                <svg className="w-8 h-8" viewBox="0 0 351 227" fill="#76B900">
+                <svg className="w-10 h-10" viewBox="0 0 351 227" fill="#76B900">
                   <path d="M132.733 45.445v-17.29C134.567 28.017 136.417 27.9 138.283 27.9c38.267-.85 70.117 28.217 72.817 65.617.167 2.15.25 4.317.25 6.5 0 37.417-29.333 68.433-66.383 70.633-1.683.1-3.383.167-5.083.2v-17.283c1.5.033 2.983-.017 4.467-.117 28.3-2.033 50.683-25.783 50.683-54.783 0-30.367-24.467-55.033-54.65-55.55-.567-.017-1.15-.017-1.75-.017-2.117 0-4.217.133-6.3.35h.4zM132.733 45.445v17.283c-20.75 2.617-36.833 20.283-36.833 41.767 0 23.233 18.85 42.083 42.083 42.083 1.667 0 3.317-.1 4.95-.3v17.283c-1.65.1-3.317.167-5 .2-32.85 0-59.533-26.683-59.533-59.533 0-31.567 24.617-57.4 55.633-59.35.233-.017.467-.033.7-.033v.6zM132.733 80.078v24.683c-.017 0-.033-.017-.05-.017-6.917-.85-12.267-6.75-12.267-13.883 0-5.3 2.95-9.917 7.3-12.267a15.31 15.31 0 0 1 5.017-1.517v3.001z"/>
                 </svg>
                 <span className="text-xs text-white/40">NVIDIA</span>

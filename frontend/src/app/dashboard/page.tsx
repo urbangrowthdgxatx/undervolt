@@ -119,6 +119,7 @@ function DashboardContent() {
   const [showChat, setShowChat] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatLoading, setChatLoading] = useState(false);
+  const [askedQuestions, setAskedQuestions] = useState<Set<string>>(new Set());
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
@@ -144,10 +145,11 @@ function DashboardContent() {
   const [chatInput, setChatInput] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const chatSuggestions = CATEGORY_QUESTIONS.generators.slice(0, 1)
-    .concat(CATEGORY_QUESTIONS.battery.slice(0, 1))
-    .concat(CATEGORY_QUESTIONS.resilience.slice(0, 1))
-    .concat(CATEGORY_QUESTIONS.pools.slice(0, 1));
+  const allSuggestions = CATEGORY_QUESTIONS.generators.slice(0, 2)
+    .concat(CATEGORY_QUESTIONS.battery.slice(0, 2))
+    .concat(CATEGORY_QUESTIONS.resilience.slice(0, 2))
+    .concat(CATEGORY_QUESTIONS.pools.slice(0, 2));
+  const chatSuggestions = allSuggestions.filter(q => !askedQuestions.has(q)).slice(0, 4);
 
   const formatDateRange = (dateRange: { earliest: string; latest: string } | null | undefined) => {
     if (!dateRange) return null;
@@ -160,6 +162,7 @@ function DashboardContent() {
 
   const handleChatSubmit = async (message: string) => {
     if (!message.trim() || chatLoading) return;
+    setAskedQuestions(prev => new Set([...prev, message]));
     setChatMessages(prev => [...prev, { role: 'user', text: message }]);
     setChatInput("");
     setChatLoading(true);
