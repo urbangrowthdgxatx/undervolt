@@ -83,7 +83,7 @@ export default function HomePage() {
 
               {/* Ollama */}
               <a href="https://ollama.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity">
-                <img src="https://ollama.com/public/ollama.png" alt="Ollama" className="w-8 h-8" />
+                <div className="w-8 h-8 flex items-center justify-center text-2xl">🦙</div>
                 <span className="text-xs text-white/40">Ollama</span>
               </a>
 
