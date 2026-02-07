@@ -559,70 +559,70 @@ function DashboardContent() {
               <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => setSelectedEnergyType(selectedEnergyType === 'solar' ? null : 'solar')}
-                className={`rounded-lg p-3 text-center transition-all ${
+                className={`rounded-lg p-2 text-center transition-all ${
                   selectedEnergyType === 'solar'
                     ? 'bg-amber-500/30 border-2 border-amber-500 ring-2 ring-amber-500/30'
                     : 'bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 hover:border-amber-500/40'
                 }`}
               >
-                <p className="text-lg font-semibold text-amber-400">{stats.energyStats.solar.toLocaleString()}</p>
+                <p className="text-sm font-semibold text-amber-400">{stats.energyStats.solar.toLocaleString()}</p>
                 <p className="text-[10px] text-white/50">Solar</p>
               </button>
               <button
                 onClick={() => setSelectedEnergyType(selectedEnergyType === 'battery' ? null : 'battery')}
-                className={`rounded-lg p-3 text-center transition-all ${
+                className={`rounded-lg p-2 text-center transition-all ${
                   selectedEnergyType === 'battery'
                     ? 'bg-blue-500/30 border-2 border-blue-500 ring-2 ring-blue-500/30'
                     : 'bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 hover:border-blue-500/40'
                 }`}
               >
-                <p className="text-lg font-semibold text-blue-400">{stats.energyStats.battery.toLocaleString()}</p>
+                <p className="text-sm font-semibold text-blue-400">{stats.energyStats.battery.toLocaleString()}</p>
                 <p className="text-[10px] text-white/50">Battery</p>
               </button>
               <button
                 onClick={() => setSelectedEnergyType(selectedEnergyType === 'ev_charger' ? null : 'ev_charger')}
-                className={`rounded-lg p-3 text-center transition-all ${
+                className={`rounded-lg p-2 text-center transition-all ${
                   selectedEnergyType === 'ev_charger'
                     ? 'bg-indigo-500/30 border-2 border-indigo-500 ring-2 ring-indigo-500/30'
                     : 'bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 hover:border-indigo-500/40'
                 }`}
               >
-                <p className="text-lg font-semibold text-indigo-400">{stats.energyStats.evCharger.toLocaleString()}</p>
+                <p className="text-sm font-semibold text-indigo-400">{stats.energyStats.evCharger.toLocaleString()}</p>
                 <p className="text-[10px] text-white/50">EV</p>
               </button>
               </div>
               <div className="grid grid-cols-3 gap-2 mt-2">
               <button
                 onClick={() => setSelectedEnergyType(selectedEnergyType === 'hvac' ? null : 'hvac')}
-                className={`rounded-lg p-3 text-center transition-all ${
+                className={`rounded-lg p-2 text-center transition-all ${
                   selectedEnergyType === 'hvac'
                     ? 'bg-white/20 border-2 border-white/60 ring-2 ring-white/20'
                     : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
                 }`}
               >
-                <p className="text-lg font-semibold text-white/80">{stats.energyStats.hvac.toLocaleString()}</p>
+                <p className="text-sm font-semibold text-white/80">{stats.energyStats.hvac.toLocaleString()}</p>
                 <p className="text-[10px] text-white/40">HVAC</p>
               </button>
               <button
                 onClick={() => setSelectedEnergyType(selectedEnergyType === 'panel_upgrade' ? null : 'panel_upgrade')}
-                className={`rounded-lg p-3 text-center transition-all ${
+                className={`rounded-lg p-2 text-center transition-all ${
                   selectedEnergyType === 'panel_upgrade'
                     ? 'bg-white/20 border-2 border-white/60 ring-2 ring-white/20'
                     : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
                 }`}
               >
-                <p className="text-lg font-semibold text-white/80">{stats.energyStats.panelUpgrade.toLocaleString()}</p>
+                <p className="text-sm font-semibold text-white/80">{stats.energyStats.panelUpgrade.toLocaleString()}</p>
                 <p className="text-[10px] text-white/40">Panel</p>
               </button>
               <button
                 onClick={() => setSelectedEnergyType(selectedEnergyType === 'generator' ? null : 'generator')}
-                className={`rounded-lg p-3 text-center transition-all ${
+                className={`rounded-lg p-2 text-center transition-all ${
                   selectedEnergyType === 'generator'
                     ? 'bg-white/20 border-2 border-white/60 ring-2 ring-white/20'
                     : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
                 }`}
               >
-                <p className="text-lg font-semibold text-white/80">{stats.energyStats.generator.toLocaleString()}</p>
+                <p className="text-sm font-semibold text-white/80">{stats.energyStats.generator.toLocaleString()}</p>
                 <p className="text-[10px] text-white/40">Generator</p>
               </button>
               </div>
