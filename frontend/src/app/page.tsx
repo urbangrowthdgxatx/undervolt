@@ -36,12 +36,12 @@ export default function HomePage() {
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
               Urban infrastructure intelligence
             </h1>
-            <p className="text-lg md:text-xl text-white/50 mb-6 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-white/50 mb-6 max-w-md mx-auto">
               GPU-accelerated analysis of 2.34M Austin construction permits. Discover energy trends, grid gaps, and infrastructure patterns.
             </p>
 
             {/* Categories */}
-            <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
               {categories.map((cat) => (
                 <span
                   key={cat}
@@ -52,7 +52,7 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="flex items-center justify-center gap-4 mb-20">
+            <div className="flex items-center justify-center gap-4 mb-24">
               <Link
                 href="/explore"
                 className="px-6 py-3 bg-white text-black rounded-lg font-medium hover:bg-white/90 transition-colors"
@@ -70,9 +70,8 @@ export default function HomePage() {
               </a>
             </div>
 
-            {/* Tech Stack - Animated marquee */}
-            <div className="relative overflow-hidden w-full max-w-2xl mx-auto">
-              <div className="flex animate-marquee gap-16">
+            {/* Tech Stack */}
+            <div className="flex items-center justify-center gap-10">
               {/* NVIDIA */}
               <a href="https://developer.nvidia.com/embedded/jetson-agx-orin" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="#76B900">
@@ -113,44 +112,7 @@ export default function HomePage() {
                 </svg>
                 <span className="text-xs text-white/40">Vercel</span>
               </a>
-              {/* Duplicate for seamless loop */}
-              {/* NVIDIA */}
-              <a href="https://developer.nvidia.com/embedded/jetson-agx-orin" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
-                <div className="w-8 h-8 flex items-center justify-center">
-                  <span className="text-[#76B900] font-bold text-xs">NVIDIA</span>
-                </div>
-                <span className="text-xs text-white/40">Jetson</span>
-              </a>
-              {/* Ollama */}
-              <a href="https://ollama.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
-                <div className="w-8 h-8 flex items-center justify-center text-2xl">🦙</div>
-                <span className="text-xs text-white/40">Ollama</span>
-              </a>
-              {/* Supabase */}
-              <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
-                <svg className="w-8 h-8" viewBox="0 0 109 113" fill="none">
-                  <path d="M63.7076 110.284C60.8481 113.885 55.0502 111.912 54.9813 107.314L53.9738 40.0627L99.1935 40.0627C107.384 40.0627 111.952 49.5228 106.859 55.9374L63.7076 110.284Z" fill="url(#sb2)"/>
-                  <path d="M45.317 2.07103C48.1765 -1.53037 53.9745 0.442937 54.0434 5.041L54.4849 72.2922H9.83113C1.64038 72.2922 -2.92775 62.8321 2.1655 56.4175L45.317 2.07103Z" fill="#3ECF8E"/>
-                  <defs><linearGradient id="sb2" x1="53.9738" y1="54.974" x2="94.1635" y2="71.8295" gradientUnits="userSpaceOnUse"><stop stopColor="#249361"/><stop offset="1" stopColor="#3ECF8E"/></linearGradient></defs>
-                </svg>
-                <span className="text-xs text-white/40">Supabase</span>
-              </a>
-              {/* Next.js */}
-              <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M11.572 0c-.176 0-.31.001-.358.007a19.76 19.76 0 0 1-.364.033C7.443.346 4.25 2.185 2.228 5.012a11.875 11.875 0 0 0-2.119 5.243c-.096.659-.108.854-.108 1.747s.012 1.089.108 1.748c.652 4.506 3.86 8.292 8.209 9.695.779.251 1.6.422 2.534.525.363.04 1.935.04 2.299 0 1.611-.178 2.977-.577 4.323-1.264.207-.106.247-.134.219-.158-.02-.013-.9-1.193-1.955-2.62l-1.919-2.592-2.404-3.558a338.739 338.739 0 0 0-2.422-3.556c-.009-.002-.018 1.579-.023 3.51-.007 3.38-.01 3.515-.052 3.595a.426.426 0 0 1-.206.214c-.075.037-.14.044-.495.044H7.81l-.108-.068a.438.438 0 0 1-.157-.171l-.05-.106.006-4.703.007-4.705.072-.092a.645.645 0 0 1 .174-.143c.096-.047.134-.051.54-.051.478 0 .558.018.682.154.035.038 1.337 1.999 2.895 4.361a10760.433 10760.433 0 0 0 4.735 7.17l1.9 2.879.096-.063a12.317 12.317 0 0 0 2.466-2.163 11.944 11.944 0 0 0 2.824-6.134c.096-.66.108-.854.108-1.748 0-.893-.012-1.088-.108-1.747-.652-4.506-3.859-8.292-8.208-9.695a12.597 12.597 0 0 0-2.499-.523A33.119 33.119 0 0 0 11.572 0zm4.069 7.217c.347 0 .408.005.486.047a.473.473 0 0 1 .237.277c.018.06.023 1.365.018 4.304l-.006 4.218-.744-1.14-.746-1.14v-3.066c0-1.982.01-3.097.023-3.15a.478.478 0 0 1 .233-.296c.096-.05.13-.054.5-.054z"/>
-                </svg>
-                <span className="text-xs text-white/40">Next.js</span>
-              </a>
-              {/* Vercel */}
-              <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-40 hover:opacity-80 transition-opacity flex-shrink-0">
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L2 19.5h20L12 2z"/>
-                </svg>
-                <span className="text-xs text-white/40">Vercel</span>
-              </a>
               </div>
-            </div>
           </div>
         </div>
       </section>
@@ -161,7 +123,7 @@ export default function HomePage() {
       {/* Problem Section */}
       <section className="py-24 px-8 bg-neutral-900">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <span className="text-emerald-400 text-sm font-medium tracking-wide uppercase mb-4 block">The Problem</span>
               <h2 className="text-4xl md:text-5xl font-bold leading-tight">
@@ -330,11 +292,11 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto text-center">
           <span className="text-amber-400 text-sm font-medium tracking-wide uppercase">Infrastructure Analysis</span>
           <h2 className="text-4xl font-bold mt-4 mb-4">Austin is Changing Fast</h2>
-          <p className="text-white/50 text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-white/50 text-lg mb-8 max-w-md mx-auto">
             Solar installations, EV chargers, generators, and grid infrastructure patterns revealed through permit data analysis.
           </p>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-10">
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
             <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10 text-center">
               <div className="text-3xl font-bold text-amber-400 mb-2">22:1</div>
               <p className="text-white/50 text-sm">Solar to battery ratio</p>
@@ -394,7 +356,7 @@ export default function HomePage() {
           <p className="text-white/50 mb-8 text-lg">
             Extensible data pipeline. Adapt it for any city, any dataset. MIT Licensed.
           </p>
-          <div className="flex items-center justify-center gap-4 mb-10">
+          <div className="flex items-center justify-center gap-4 mb-12">
             <a
               href="https://github.com/urbangrowthdgxatx/undervolt"
               target="_blank"
