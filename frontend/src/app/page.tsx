@@ -75,7 +75,7 @@ export default function HomePage() {
               <div className="flex animate-marquee gap-14 whitespace-nowrap">
               {/* NVIDIA */}
               <a href="https://developer.nvidia.com/embedded/jetson-agx-orin" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 opacity-80 hover:opacity-100 transition-opacity flex-shrink-0">
-                <img src="/nvidia-logo.png" alt="NVIDIA" className="w-8 h-8 object-contain rounded" />
+                <img src="/nvidia-logo.png" alt="NVIDIA" className="w-14 h-8 object-contain rounded" />
                 <span className="text-xs text-white/70">NVIDIA</span>
               </a>
 
