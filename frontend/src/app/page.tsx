@@ -220,8 +220,8 @@ export default function HomePage() {
             </a>
           </div>
 
-          <div className="text-white/30 text-sm">
-            Data: <a href="https://data.austintexas.gov/Building-and-Development/Issued-Construction-Permits/3syk-w9eu" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white underline underline-offset-2">City of Austin Open Data</a>{dataDate && <span> • Updated {dataDate}</span>}
+          <div className="text-white/50 text-sm">
+            Data: <a href="https://data.austintexas.gov/Building-and-Development/Issued-Construction-Permits/3syk-w9eu" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-white underline underline-offset-2">City of Austin Open Data</a>{dataDate && <span> • Updated {dataDate}</span>}
           </div>
         </div>
       </section>
