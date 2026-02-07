@@ -678,7 +678,7 @@ function DashboardContent() {
 
         {/* Chat Panel - Floating Overlay */}
         {showChat && (
-          <div className="hidden md:flex absolute right-4 top-4 bottom-4 w-80 bg-black/95 backdrop-blur-md rounded-2xl border border-white/10 flex-col z-50 shadow-2xl">
+          <div className="hidden md:flex fixed right-4 top-20 bottom-4 w-80 bg-black/95 backdrop-blur-md rounded-2xl border border-white/10 flex-col z-50 shadow-2xl">
             {/* Chat Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
               <h3 className="text-sm font-medium text-white">Ask about Austin permits</h3>
@@ -693,21 +693,6 @@ function DashboardContent() {
                 <div className="text-center py-8">
                   <MessageCircle size={32} className="mx-auto text-white/20 mb-3" />
                   <p className="text-sm text-white/40 mb-4">Ask questions about the permit data</p>
-                </div>
-              )}
-
-              {/* Always show suggestions */}
-              {!chatLoading && (
-                <div className="flex flex-wrap gap-2">
-                  {chatSuggestions.map((s, i) => (
-                    <button
-                      key={i}
-                      onClick={() => handleChatSubmit(s)}
-                      className="px-3 py-1.5 text-xs text-white/50 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 hover:text-white/70 transition-colors"
-                    >
-                      {s}
-                    </button>
-                  ))}
                 </div>
               )}
 
@@ -729,6 +714,35 @@ function DashboardContent() {
                     <Loader2 size={14} className="animate-spin text-emerald-400" />
                     <span className="text-[10px] text-white/40">Running on Jetson AGX Orin...</span>
                   </div>
+                </div>
+              )}
+              {/* Suggestions after response */}
+              {!chatLoading && chatMessages.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {chatSuggestions.map((s, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleChatSubmit(s)}
+                      className="px-3 py-1.5 text-xs text-white/50 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 hover:text-white/70 transition-colors"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Initial suggestions when no messages */}
+              {!chatLoading && chatMessages.length === 0 && (
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {chatSuggestions.map((s, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleChatSubmit(s)}
+                      className="px-3 py-1.5 text-xs text-white/50 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 hover:text-white/70 transition-colors"
+                    >
+                      {s}
+                    </button>
+                  ))}
                 </div>
               )}
               <div ref={chatEndRef} />
@@ -926,21 +940,6 @@ function DashboardContent() {
                 <div className="text-center py-8">
                   <MessageCircle size={32} className="mx-auto text-white/20 mb-3" />
                   <p className="text-sm text-white/40 mb-4">Ask questions about the permit data</p>
-                </div>
-              )}
-
-              {/* Always show suggestions */}
-              {!chatLoading && (
-                <div className="flex flex-wrap gap-2">
-                  {chatSuggestions.map((s, i) => (
-                    <button
-                      key={i}
-                      onClick={() => handleChatSubmit(s)}
-                      className="px-3 py-1.5 text-xs text-white/50 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 hover:text-white/70 transition-colors"
-                    >
-                      {s}
-                    </button>
-                  ))}
                 </div>
               )}
 
