@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Fragment } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Circle, Polygon, useMap, useMapEvents, CircleMarker } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Circle, Polygon, useMap, useMapEvents, CircleMarker, ZoomControl } from "react-leaflet";
 import type { LatLngExpression, DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -128,7 +128,7 @@ export function LeafletMap({
   const [selectedPermit, setSelectedPermit] = useState<PermitLocation | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [zoom, setZoom] = useState(13);
-  const center: LatLngExpression = [30.32, -97.7431]; // Austin center
+  const center: LatLngExpression = [30.29, -97.7431]; // Austin center
 
   // Multi-level zoom thresholds
   const CLUSTER_ZOOM = 13;      // Zoom 10-13: Show ML cluster polygons
@@ -420,6 +420,7 @@ export function LeafletMap({
         center={center}
         zoom={13}
         scrollWheelZoom={true}
+        zoomControl={false}
         style={{ width: "100%", height: "100%" }}
         className="z-0"
       >
@@ -431,6 +432,7 @@ export function LeafletMap({
         />
 
         <RecenterMap center={center} />
+        <ZoomControl position="topright" />
         <ZoomTracker onZoomChange={setZoom} />
         <ZipZoom zip={highlightZip} permits={individualPermits} />
 

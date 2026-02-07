@@ -528,7 +528,7 @@ function DashboardContent() {
 
       <div className="flex-1 flex overflow-hidden relative">
         {/* Left Sidebar - Stats (hidden on mobile) */}
-        <div className="hidden md:block w-64 border-r border-white/5 bg-black/80 overflow-hidden">
+        <div className="hidden md:block w-64 border-r border-white/5 bg-black/80 overflow-y-auto">
           <div className="p-5 space-y-5">
             {/* Header */}
             <div className="pb-4 border-b border-white/10">
