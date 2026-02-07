@@ -645,6 +645,22 @@ function ExplorationPageContent() {
   // Handle custom question submit
   const handleCustomSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!customQuestion.trim()) return;
+    
+    // Require signup for custom queries
+    if (!userEmail) {
+      setShowSignupModal(true);
+      return;
+    }
+    
+    handleQuestionClick(customQuestion.trim());
+    setCustomQuestion("");
+  };
+  
+  const handleSignup = (email: string) => {
+    localStorage.setItem("undervolt_email", email);
+    setUserEmail(email);
+    setShowSignupModal(false);
     if (customQuestion.trim()) {
       handleQuestionClick(customQuestion.trim());
       setCustomQuestion("");
@@ -815,6 +831,61 @@ function ExplorationPageContent() {
             </div>
           </section>
         )}
+
+      {/* Signup Modal for Custom Queries */}
+      {showSignupModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+          <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 max-w-md w-full">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="w-5 h-5 text-emerald-400" />
+              <h3 className="text-xl font-semibold text-white">Unlock Custom Queries</h3>
+            </div>
+            <p className="text-white/60 text-sm mb-4">
+              Sign up to ask your own questions, powered by local AI on NVIDIA Jetson.
+            </p>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const email = (e.target as HTMLFormElement).email.value;
+              if (email) {
+                try {
+                  const { createClient } = await import("@supabase/supabase-js");
+                  const supabase = createClient(
+                    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+                    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
+                  );
+                  await supabase.from("waitlist").upsert([{ email, source: "story_custom_query" }], { onConflict: "email" });
+                } catch {}
+                handleSignup(email);
+              }
+            }} className="space-y-4">
+              <input
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50"
+                required
+              />
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowSignupModal(false)}
+                  className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg text-white/60 transition-colors"
+                >
+                  Use Suggested
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-black font-medium rounded-lg transition-colors"
+                >
+                  Sign Up Free
+                </button>
+              </div>
+            </form>
+            <p className="text-white/30 text-xs mt-4 text-center">Local inference only</p>
+          </div>
+        </div>
+      )}
+
       </main>
     </div>
   );
