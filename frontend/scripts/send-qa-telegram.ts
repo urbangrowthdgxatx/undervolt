@@ -13,67 +13,67 @@ function hashQuestion(q: string): string {
   return crypto.createHash("md5").update(q.toLowerCase().trim()).digest("hex");
 }
 
-// External validation sources by category
+// External validation sources by category (researched Feb 2026)
 const VALIDATION_SOURCES: Record<Category, string[]> = {
   solar: [
-    "SEIA Texas Solar Fact Sheet — https://www.seia.org/state-solar-policy/texas-solar",
-    "Austin Energy Solar Programs — https://austinenergy.com/green-power/a-background-on-solar-energy",
-    "EIA Texas Solar Generation Data — https://www.eia.gov/state/?sid=TX#tabs-4",
+    "SEIA Texas Solar Fact Sheet (34,907 MW installed Q2 2024) — https://seia.org/state-solar-policy/texas-solar/",
+    "Austin Energy: Record 18.8 MW Local Solar Added in 2024 (749 projects, 15K+ customers total) — https://austinenergy.com/about/news/news-releases/2025/austin-energy-adds-record-18mw-of-local-solar-to-the-grid",
+    "Austin Energy Solar for All: $31.5M EPA Grant for Low-Income Solar — https://austinenergy.com/about/news/news-releases/2024/solar",
   ],
   battery: [
-    "SEIA Texas Solar + Storage — https://www.seia.org/state-solar-policy/texas-solar",
-    "Texas Battery Storage Boom (Utility Dive) — https://www.utilitydive.com/topic/energy-storage/",
-    "Austin Energy Battery Incentives — https://austinenergy.com/green-power",
+    "TX Comptroller: Battery Storage +4,100% (2020-2024), 5,707 MW — https://comptroller.texas.gov/economy/fiscal-notes/infrastructure/2024/battery-store/",
+    "Canary Media: TX Added 4,374 MW Battery in 2024, 8.6 GW Total — https://www.canarymedia.com/articles/energy-storage/how-texas-became-the-hottest-battery-market-in-the-country-energy-storage",
+    "Austin Energy: 100 MW Battery Deal w/ Jupiter Power (largest ever) — https://austinenergy.com/about/news/news-releases/2025/austin-energy-signs-battery-storage-deal",
   ],
   generators: [
-    "Winter Storm Uri Impact (Texas Tribune) — https://www.texastribune.org/series/winter-storm-power-outage/",
-    "FEMA Winter Storm Uri Disaster Declaration — https://www.fema.gov/disaster/4586",
-    "Austin American-Statesman Uri Coverage — https://www.statesman.com/",
+    "KXAN: Generator Permits 43(2020) to 303(first 8mo 2021), ~1200% increase — https://www.kxan.com/investigations/austin-home-generator-sales-skyrocket-installations-backlogged-after-winter-storm/",
+    "Austin Bulldog: Post-Uri Generator Rush, $11-13K avg install — https://theaustinbulldog.org/backup-plan-part-1-unreliable-electric-system-creates-rush-to-backup-generators/",
+    "TX Comptroller: Winter Storm Uri Economic Impact — https://comptroller.texas.gov/economy/fiscal-notes/archive/2021/oct/winter-storm-impact.php",
   ],
   ev: [
-    "DOE Alternative Fuels Station Locator — https://afdc.energy.gov/stations",
-    "Austin Climate Equity Plan — https://www.austintexas.gov/page/austin-climate-equity-plan",
-    "Texas EV Registration Data (TxDOT) — https://www.txdot.gov/",
+    "PLOS ONE: EV Charger Access Disparities in Austin (peer-reviewed) — https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0309302",
+    "Axios: 2%+ of Travis County vehicles are EVs, AE operates ~1,500 L2 ports — https://www.axios.com/local/austin/2025/01/28/ev-charging-stations-texas",
+    "Austin Energy: $15M+$3.75M Grant for EV Charging Expansion — https://austinenergy.com/about/news/news-releases/2025/austin-energy-secures-$15-million-grant-to-expand-electric-vehicle-charging-infrastructure",
   ],
   resilience: [
-    "ERCOT Grid Status — https://www.ercot.com/gridmktinfo/dashboards",
-    "Austin Energy Storm Preparedness — https://austinenergy.com/outages-and-safety/power-outages",
-    "Texas Winter Storm Uri After-Action (FERC/NERC) — https://www.ferc.gov/media/february-2021-cold-weather-grid-operations",
+    "Austin Energy: 10-Year $735M Grid Resiliency Plan (ESRP) — https://austinenergy.com/about/news/news-releases/2025/austin-energy-announces-targeted-plan-to-build-an-even-stronger-smarter-more-reliable-grid",
+    "TX Tribune: ERCOT Inspected 4,000+ Facilities Post-Uri — https://www.texastribune.org/2026/01/29/texas-winter-storm-uri-anniversary-power-grid-ercot/",
+    "TPPF: TX Grid Still Vulnerable Despite Improvements — https://www.texaspolicy.com/fool-me-twice-why-the-texas-grid-is-still-vulnerable-to-winter-storms/",
   ],
   growth: [
-    "Austin Open Data Portal (Permits) — https://data.austintexas.gov/",
-    "Austin Chamber Economic Report — https://www.austinchamber.com/economic-development",
-    "U.S. Census Bureau Building Permits — https://www.census.gov/construction/bps/",
+    "Team Price: 32,294 New Units in Austin Metro 2024, #2 Nationally — https://teamprice.com/articles/austin-building-permits-surge-2024-data",
+    "CultureMap: Austin #6 Metro for New Home Building — https://austin.culturemap.com/news/real-estate/new-home-construction-austin-ranking/",
+    "City of Austin Open Data: Annual Building Permits — https://data.austintexas.gov/Building-and-Development/Annual-Number-of-Building-Permits-Issued/i6ug-2wu7",
   ],
   equity: [
-    "Austin Climate Equity Plan — https://www.austintexas.gov/page/austin-climate-equity-plan",
-    "Austin Community Climate Plan — https://www.austintexas.gov/page/community-climate-plan",
-    "Austin Displacement Mitigation — https://www.austintexas.gov/department/displacement-mitigation",
+    "Austin Climate Equity Plan: Disproportionate Burden on Communities of Color — https://www.austintexas.gov/page/austin-climate-equity-plan",
+    "Utility Dive: Low-Income Households Spend 8.3% of Income on Energy — https://www.utilitydive.com/news/low-income-energy-burden-report-american-council-for-energy-efficient-economy/727012/",
+    "PLOS ONE: Race/Income Predict EV Charger Access in Austin — https://pmc.ncbi.nlm.nih.gov/articles/PMC11376518/",
   ],
   districts: [
-    "Austin Council District Map — https://www.austintexas.gov/department/city-council",
-    "Austin Demographics by District — https://www.austintexas.gov/demographics",
-    "Austin Open Data Portal — https://data.austintexas.gov/",
+    "City of Austin FY 2024-25 Budget: $5.9B Total — https://www.austintexas.gov/news/austin-city-council-approves-fiscal-year-2024-2025-budget",
+    "Open Data: Demolition Permits by Zip/Type — https://data.austintexas.gov/Building-and-Development/Demolition-Permits-Summary-by-Zipcode-and-Type/yiii-tj7t",
+    "Open Data: Demolition Permits Since FY2010 (w/ council district) — https://data.austintexas.gov/Building-and-Development/Demolition-Permits-Issued-since-FY2010/pws3-a5fj",
   ],
   pools: [
-    "Austin Permit Data (Open Data) — https://data.austintexas.gov/",
-    "Austin Business Journal Real Estate — https://www.bizjournals.com/austin/news/real-estate",
-    "Zillow Austin Housing Market — https://www.zillow.com/austin-tx/home-values/",
+    "Axios: 18K Pool Permits Since 1978, Quarter Issued in Last 3.5 Years — https://www.axios.com/local/austin/2023/07/26/austin-pool-construction",
+    "HBWeekly: Austin 1,215 Pool Permits in 2024 (12% YoY decrease) — https://blog.hbweekly.com/texas-swimming-pool-construction-annual-review-2024/",
+    "HBWeekly: Austin 1,375 Pool Permits in 2023 (32% YoY decrease) — https://blog.hbweekly.com/texas-annual-report-swimming-pool-construction-2023/",
   ],
   adu: [
-    "Austin HOME Initiative — https://www.austintexas.gov/department/housing-and-planning/home",
-    "Austin Monitor ADU Coverage — https://www.austinmonitor.com/",
-    "Austin Land Development Code — https://www.austintexas.gov/department/development-services",
+    "KXAN: 264 HOME Initiative Applications, Permits +86% — https://www.kxan.com/news/local/austin/what-are-we-getting-we-pulled-the-data-from-264-home-initiative-applications/",
+    "Maxable: HOME Initiative ADU Regulation Changes 2024 — https://maxablespace.com/austins-home-initiative-shakes-up-adu-regulations-in-2024/",
+    "Community Impact: 436 Housing Units in 1st Year of HOME — https://communityimpact.com/austin/north-central-austin/government/2025/11/19/austins-home-policy-spurs-hundreds-of-housing-units-in-1st-year-cost-displacement-trends-unclear/",
   ],
   demolition: [
-    "Austin Historic Preservation — https://www.austintexas.gov/department/historic-preservation",
-    "Austin Open Data (Demolition Permits) — https://data.austintexas.gov/",
-    "Austin American-Statesman Gentrification — https://www.statesman.com/",
+    "City of Austin: Demolitions Dashboard (78702, 78704 top ZIPs) — https://data.austintexas.gov/stories/s/Demolitions-in-Austin/i2tv-k59a/",
+    "YES! Magazine: Upzoning Leads to Luxury in Working-Class Areas — https://www.yesmagazine.org/opinion/2024/07/11/city-texas-green-gentrification",
+    "Open Data: Demolition Sq Feet by Zip (Central +40% in 2 years) — https://data.austintexas.gov/Building-and-Development/New-Demolition-Sq-Feet-by-Zip-Codes/gvve-575h",
   ],
   eastwest: [
-    "Austin Uprooted (UT Gentrification Study) — https://sites.utexas.edu/gentrificationproject/",
-    "Austin Climate Equity Plan — https://www.austintexas.gov/page/austin-climate-equity-plan",
-    "KUT Austin East Side Coverage — https://www.kut.org/",
+    "KUT: East Austin Real Estate Explosion from 1928 Segregation — https://www.kut.org/austin/2023-06-22/two-paragraphs-forced-black-residents-to-east-austin-exploding-real-estate-prices-forced-them-out",
+    "Axios: $1.12M Grant to Study I-35 Divide (78% vs 22% tree canopy) — https://www.axios.com/local/austin/2023/03/20/austin-awarded-112m-study-i-35-divide",
+    "Urban Displacement: Austin Gentrification Map (78702 +74.3% income) — https://www.urbandisplacement.org/maps/austin-gentrification-and-displacement/",
   ],
 };
 
