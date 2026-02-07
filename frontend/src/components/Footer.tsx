@@ -5,7 +5,7 @@ import { Github } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/5 bg-black">
+    <footer className="mt-auto border-t border-white/5 bg-black">
       <div className="max-w-6xl mx-auto px-6 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Product */}

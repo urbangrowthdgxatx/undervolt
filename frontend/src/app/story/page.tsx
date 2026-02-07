@@ -668,7 +668,7 @@ function ExplorationPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white story-bg">
+    <div className="min-h-screen bg-black text-white story-bg flex flex-col">
       {/* Tool calls debug panel */}
       <ToolCallsPanel
         calls={toolCalls}
@@ -693,7 +693,7 @@ function ExplorationPageContent() {
       )}
 
       {/* Main content */}
-      <main className={activeStoryline ? "pt-28 pb-24 min-h-screen" : "pt-16 pb-24 min-h-screen"}>
+      <main className={activeStoryline ? "pt-28 pb-24 flex-1" : "pt-16 pb-24 flex-1"}>
         {!activeStoryline ? (
           /* Homepage - storyline selection */
           <section className="max-w-5xl mx-auto px-6 py-16">
