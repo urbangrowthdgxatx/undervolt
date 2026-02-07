@@ -125,10 +125,10 @@ function DashboardContent() {
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const chatSuggestions = [
-    "Tell me about solar adoption",
-    "Which ZIP has the most permits?",
-    "What energy trends do you see?",
-    "Compare battery vs solar",
+    "Where's the 340% generator surge?",
+    "Why only 1 battery for every 22 solar?",
+    "Which ZIPs are blackout-proof?",
+    "Pool permits: Austin's luxury map?",
   ];
 
   const formatDateRange = (dateRange: { earliest: string; latest: string } | null | undefined) => {
