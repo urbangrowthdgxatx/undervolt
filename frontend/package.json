@@ -18,6 +18,7 @@
     "@supabase/supabase-js": "^2.93.1",
     "@types/leaflet": "^1.9.21",
     "@types/papaparse": "^5.5.2",
+    "@vercel/analytics": "^1.5.0",
     "ai": "^5.0.113",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.1",
@@ -33,7 +34,6 @@
     "react-map-gl": "^8.1.0",
     "recharts": "^3.5.1",
     "tailwind-merge": "^3.4.0",
-    "@vercel/analytics": "^1.5.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
@@ -41,6 +41,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "baseline-browser-mapping": "^2.9.19",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "tailwindcss": "^4",
