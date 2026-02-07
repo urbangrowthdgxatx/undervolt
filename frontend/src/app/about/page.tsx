@@ -27,13 +27,6 @@ const PIPELINE = [
 // Hardware
 const HARDWARE = [
   {
-    name: "NVIDIA DGX Spark",
-    role: "Training & Development",
-    description: "GPU-accelerated ML pipeline. GPU-accelerated development and ML training.",
-    color: "purple",
-    icon: Cloud,
-  },
-  {
     name: "NVIDIA Jetson AGX Orin 64GB",
     role: "Production Deployment",
     description: "Edge inference with 275 TOPS. Full stack runs locally with zero cloud dependency.",
@@ -66,7 +59,7 @@ const LOGOS: Record<string, React.ReactNode> = {
 // Origin Story milestones
 const MILESTONES = [
   { phase: "Discovery", title: "The Question", description: "What can 2.3M construction permits tell us about a city's energy future?", status: "completed" },
-  { phase: "Build", title: "GPU Pipeline", description: "Processed millions of records on DGX Spark for model training.", status: "completed" },
+  { phase: "Build", title: "GPU Pipeline", description: "Processed millions of records on Jetson for GPU-accelerated analysis.", status: "completed" },
   { phase: "Build", title: "ML Clustering", description: "TF-IDF, PCA, KMeans - 8 distinct permit categories emerged from unstructured text.", status: "completed" },
   { phase: "Insight", title: "The Story", description: "7,293 generators vs 1,172 batteries. Austinites don't trust the grid.", status: "completed", highlight: true },
   { phase: "Deploy", title: "Edge-First", description: "Full stack on Jetson AGX Orin. Zero cloud. Data sovereignty.", status: "completed" },
