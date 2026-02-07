@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
-// Your notification settings
-const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL || 'signup-undervolt@aisoft.us';
+// All emails from environment variables - no hardcoded values
+const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://undervolt-atx.vercel.app';
 
 async function sendTelegramNotification(message: string) {
   if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-    console.log('Telegram not configured, skipping notification');
+    console.log('Telegram not configured');
     return;
   }
 
@@ -27,71 +29,78 @@ async function sendTelegramNotification(message: string) {
   }
 }
 
-async function sendEmailNotification(email: string, userId: string) {
-  // Using Supabase's built-in email or you can integrate Resend/SendGrid
-  // For now, we'll log and rely on Telegram
-  console.log(`New signup: ${email} (${userId})`);
-
-  // If you have Resend API key:
+async function sendEmailNotification(email: string, approveToken: string) {
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
-  if (RESEND_API_KEY) {
-    try {
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: process.env.EMAIL_FROM || 'Undervolt <noreply@aisoft.us>',
-          to: NOTIFY_EMAIL,
-          subject: `New Undervolt Signup: ${email}`,
-          html: `
-            <h2>New User Signup</h2>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>User ID:</strong> ${userId}</p>
-            <p><strong>Time:</strong> ${new Date().toISOString()}</p>
-          `,
-        }),
-      });
-    } catch (error) {
-      console.error('Email notification failed:', error);
-    }
+  const EMAIL_FROM = process.env.EMAIL_FROM;
+
+  if (!RESEND_API_KEY || !EMAIL_FROM || !NOTIFY_EMAIL) {
+    console.log('Email not configured - missing RESEND_API_KEY, EMAIL_FROM, or NOTIFY_EMAIL env vars');
+    return;
+  }
+
+  const approveUrl = `${APP_URL}/api/approve?token=${approveToken}&email=${encodeURIComponent(email)}`;
+
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: EMAIL_FROM,
+        to: NOTIFY_EMAIL,
+        subject: `[Undervolt] New signup: ${email}`,
+        html: `
+          <h2>New Waitlist Signup</h2>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Time:</strong> ${new Date().toISOString()}</p>
+          <br/>
+          <p><a href="${approveUrl}" style="background:#f59e0b;color:black;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Approve User</a></p>
+          <br/>
+          <p style="color:#666;font-size:12px;">Or copy this link: ${approveUrl}</p>
+        `,
+      }),
+    });
+  } catch (error) {
+    console.error('Email notification failed:', error);
   }
 }
 
 export async function POST(req: Request) {
   try {
-    const { email, userId, reason } = await req.json();
+    const { email, reason } = await req.json();
 
     if (!email) {
       return NextResponse.json({ error: 'Email required' }, { status: 400 });
     }
 
-    const isWaitlist = userId === 'waitlist';
+    // Generate a simple approval token
+    const approveToken = Buffer.from(`${email}:${Date.now()}`).toString('base64');
 
-    // Send Telegram notification
-    const telegramMessage = isWaitlist
-      ? `
-🔔 <b>New Waitlist Signup!</b>
+    // Store token in database for verification
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+    );
 
-📧 Email: ${email}
-💭 Reason: ${reason || 'Not provided'}
-⏰ Time: ${new Date().toLocaleString()}
-      `.trim()
-      : `
-🎉 <b>New Undervolt Signup!</b>
+    await supabase.from('waitlist').update({ approve_token: approveToken }).eq('email', email);
 
-📧 Email: ${email}
-🆔 User ID: ${userId}
-⏰ Time: ${new Date().toLocaleString()}
+    // Send Telegram notification with approve link
+    const approveUrl = `${APP_URL}/api/approve?token=${approveToken}&email=${encodeURIComponent(email)}`;
+    const telegramMessage = `
+🔔 <b>New Waitlist Signup</b>
 
-<a href="https://supabase.com/dashboard">View in Supabase</a>
-      `.trim();
+📧 ${email}
+💭 ${reason || 'Custom queries'}
+⏰ ${new Date().toLocaleString()}
+
+<a href="${approveUrl}">Click to Approve</a>
+    `.trim();
 
     await Promise.all([
       sendTelegramNotification(telegramMessage),
-      sendEmailNotification(email, userId),
+      sendEmailNotification(email, approveToken),
     ]);
 
     return NextResponse.json({ success: true });

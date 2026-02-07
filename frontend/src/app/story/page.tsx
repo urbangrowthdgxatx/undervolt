@@ -649,7 +649,7 @@ function ExplorationPageContent() {
                   );
                   await supabase.from("waitlist").upsert([{ email, source: "story" }], { onConflict: "email" });
                 } catch {}
-                handleSignup(email);
+                
               }
             }} className="space-y-3">
               <input

@@ -164,7 +164,7 @@ export function Navigation() {
               </div>
               <h3 className="text-lg font-medium text-white mb-2">Join the Waitlist</h3>
               <p className="text-white/50 text-sm">
-                Get early access to custom AI queries
+                Request access to custom AI queries
               </p>
             </div>
             <form onSubmit={async (e) => {
@@ -179,9 +179,17 @@ export function Navigation() {
                     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
                   );
                   await supabase.from("waitlist").upsert([{ email, source: "nav_signin" }], { onConflict: "email" });
-                  localStorage.setItem("undervolt_email", email);
-                  setUserEmail(email);
-                  setShowSignIn(false);
+                  // Notify admin
+                  await fetch("/api/notify-signup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, userId: "waitlist", reason: "Custom AI queries" })
+                  });
+                  // Show success - they are on waitlist, not signed in yet
+                  const btn = form.querySelector("button[type=submit]") as HTMLButtonElement;
+                  btn.textContent = "You are on the waitlist!";
+                  btn.disabled = true;
+                  setTimeout(() => setShowSignIn(false), 2000);
                 } catch (err) {
                   console.error(err);
                 }
