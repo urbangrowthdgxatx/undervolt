@@ -130,7 +130,7 @@ export function FloatingQuestions({
           className="flex gap-2 overflow-x-auto py-3 px-4 scrollbar-hide"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {questions.slice(0, 20).map((question, index) => {
+          {questions.slice(0, 8).map((question, index) => {
             const depthIndex = index % 3;
             const depth = depthIndex === 0 ? 'near' : depthIndex === 1 ? 'mid' : 'far';
             const styles = getDepthStyles(depth);
@@ -233,7 +233,7 @@ export function FloatingQuestions({
       </div>
 
       {/* Floating questions with 3D depth and color */}
-      {questions.slice(0, 32).map((question, index) => {
+      {questions.slice(0, 8).map((question, index) => {
         const pos = FLOAT_POSITIONS[index % FLOAT_POSITIONS.length];
         const depthStyles = getDepthStyles(pos.depth);
         const isClicked = clickedIndex === index;
