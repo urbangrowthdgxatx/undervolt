@@ -14,16 +14,12 @@ const TABS: { id: Tab; label: string; icon: typeof Brain }[] = [
   { id: "team", label: "Team", icon: Users },
 ];
 
-// Pipeline steps
+// Pipeline steps - simplified
 const PIPELINE = [
-  { step: "01", label: "Ingest", description: "Austin Open Data API" },
-  { step: "02", label: "Clean", description: "cuDF normalization" },
-  { step: "03", label: "Extract", description: "TF-IDF vectorization" },
-  { step: "04", label: "Reduce", description: "PCA to 50 components" },
-  { step: "05", label: "Cluster", description: "KMeans into 8 categories" },
-  { step: "06", label: "Serve", description: "API + LLM + Maps" },
+  { step: "01", label: "Data", description: "2.34M Austin permits via Open Data API" },
+  { step: "02", label: "AI", description: "GPU-accelerated analysis on Jetson" },
+  { step: "03", label: "Insights", description: "Interactive maps, chat & reports" },
 ];
-
 // Hardware
 const HARDWARE = [
   {
@@ -60,7 +56,7 @@ const LOGOS: Record<string, React.ReactNode> = {
 const MILESTONES = [
   { phase: "Discovery", title: "The Question", description: "What can 2.3M construction permits tell us about a city's energy future?", status: "completed" },
   { phase: "Build", title: "GPU Pipeline", description: "Processed millions of records on Jetson for GPU-accelerated analysis.", status: "completed" },
-  { phase: "Build", title: "ML Clustering", description: "TF-IDF, PCA, KMeans - 8 distinct permit categories emerged from unstructured text.", status: "completed" },
+  { phase: "Build", title: "ML Clustering", description: "AI categorization of 2.34M permits into actionable insights.", status: "completed" },
   { phase: "Insight", title: "The Story", description: "7,293 generators vs 1,172 batteries. Austinites don't trust the grid.", status: "completed", highlight: true },
   { phase: "Deploy", title: "Edge-First", description: "Full stack on Jetson AGX Orin. Zero cloud. Data sovereignty.", status: "completed" },
 ];
@@ -123,7 +119,7 @@ function HowItWorks() {
     <div className="space-y-12">
       {/* Pipeline */}
       <div>
-        <h2 className="text-xl font-semibold mb-6">ML Pipeline</h2>
+        <h2 className="text-xl font-semibold mb-6">How It Works</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {PIPELINE.map((item) => (
             <div key={item.step} className="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
@@ -135,25 +131,6 @@ function HowItWorks() {
         </div>
       </div>
 
-      {/* Why Edge */}
-      <div>
-        <h2 className="text-xl font-semibold mb-6">Why Edge Deployment?</h2>
-        <div className="grid md:grid-cols-2 gap-4">
-          {[
-            { title: "Data Sovereignty", desc: "Permit data stays local. No cloud transmission." },
-            { title: "Zero Latency", desc: "On-device inference. No network round-trips." },
-            { title: "Cost Efficient", desc: "One-time hardware cost vs recurring cloud fees." },
-            { title: "Offline Capable", desc: "Works without internet connectivity." },
-          ].map((item) => (
-            <div key={item.title} className="p-4 rounded-lg bg-white/[0.02] border border-white/5">
-              <h3 className="text-white font-medium mb-1">{item.title}</h3>
-              <p className="text-white/40 text-sm">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-    </div>
   );
 }
 
@@ -259,7 +236,7 @@ function Roadmap() {
   ];
 
   const inProgress = [
-    { title: "cuML GPU Clustering", desc: "NVIDIA Jetson cuML for GPU-accelerated KMeans" },
+    { title: "GPU Analytics", desc: "NVIDIA Jetson for real-time pattern detection" },
     { title: "NeMo Integration", desc: "NVIDIA NeMo for permit classification" },
     { title: "Multi-city Expansion", desc: "Preparing pipeline for additional cities" },
   ];
