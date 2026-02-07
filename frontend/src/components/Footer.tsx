@@ -60,6 +60,9 @@ export function Footer() {
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#fbbf24" />
             </svg>
             <span className="text-sm">Undervolt</span>
+            <span className="text-white/30 text-[10px] font-mono">
+              {(process.env.NEXT_PUBLIC_COMMIT || "dev").slice(0, 7)}
+            </span>
           </div>
           <p className="text-white/50 text-xs">
             Open source under MIT License
