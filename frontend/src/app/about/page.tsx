@@ -410,17 +410,20 @@ function Team() {
             href={member.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-start gap-4 p-6 rounded-xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 hover:border-amber-500/40 transition-colors group"
+            className="flex items-center gap-6 p-8 rounded-2xl bg-gradient-to-br from-amber-500/10 via-transparent to-purple-500/5 border border-amber-500/20 hover:border-amber-500/40 transition-all hover:scale-[1.01] group"
           >
             {member.avatar && (
-              <img src={member.avatar} alt={member.name} className="w-16 h-16 rounded-full border-2 border-amber-500/30 flex-shrink-0" />
+              <div className="relative">
+                <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-xl" />
+                <img src={member.avatar} alt={member.name} className="relative w-24 h-24 rounded-full border-3 border-amber-500/40 flex-shrink-0" />
+              </div>
             )}
-            <div>
-              <h3 className="text-xl text-white font-semibold mb-1">{member.name}</h3>
-              <p className="text-amber-400 text-sm mb-2">{member.role}</p>
-              <p className="text-white/50 text-sm">{member.focus}</p>
-              <div className="mt-4 flex items-center gap-1 text-white/30 text-xs group-hover:text-white/50 transition-colors">
-                LinkedIn <ArrowRight className="w-3 h-3" />
+            <div className="flex-1">
+              <h3 className="text-2xl text-white font-semibold mb-1">{member.name}</h3>
+              <p className="text-amber-400 font-medium mb-3">{member.role}</p>
+              <p className="text-white/60 text-sm">{member.focus}</p>
+              <div className="mt-4 inline-flex items-center gap-2 text-white/40 text-sm group-hover:text-amber-400 transition-colors">
+                View LinkedIn <ArrowRight className="w-4 h-4" />
               </div>
             </div>
           </a>
