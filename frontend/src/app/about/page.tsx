@@ -165,7 +165,7 @@ function HowItWorks() {
           <div className="text-xs text-white/50">Nemotron Params</div>
         </div>
         <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20">
-          <div className="text-2xl font-bold text-blue-400">26</div>
+          <div className="text-2xl font-bold text-blue-400">45+</div>
           <div className="text-xs text-white/50">Years of Data</div>
         </div>
       </div>
