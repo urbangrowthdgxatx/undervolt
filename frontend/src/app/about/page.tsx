@@ -56,7 +56,7 @@ const LOGOS: Record<string, React.ReactNode> = {
 // Origin Story milestones
 const MILESTONES = [
   { phase: "Discovery", title: "The Question", description: "What can 2.34M construction permits tell us about a city's energy future?", status: "completed" },
-  { phase: "Build", title: "GPU Pipeline", description: "Processed millions of records on DGX Cloud for GPU-accelerated analysis.", status: "completed" },
+  { phase: "Build", title: "GPU Pipeline", description: "Processed millions of records on NVIDIA DGX for GPU-accelerated analysis.", status: "completed" },
   { phase: "Build", title: "ML Clustering", description: "AI categorization of 2.34M permits into actionable insights.", status: "completed" },
   { phase: "Insight", title: "The Story", description: "7,293 generators vs 1,172 batteries. Austinites don't trust the grid.", status: "completed" },
   { phase: "Award", title: "1st Place", description: "Won NVIDIA AITX Hackathon. Recognition for innovative use of GPU acceleration.", status: "completed", highlight: true },
@@ -190,7 +190,7 @@ function HowItWorks() {
           <div className="text-3xl">⚡</div>
           <div>
             <h3 className="text-lg font-semibold text-white mb-2">Run Anywhere</h3>
-            <p className="text-white/60 text-sm">Pipeline designed to run on any hardware: DGX Cloud, Jetson Edge, or standard CPU. Currently deployed on NVIDIA Jetson AGX Orin 64GB for local inference with full data sovereignty.</p>
+            <p className="text-white/60 text-sm">Pipeline designed to run on any hardware: NVIDIA DGX, Jetson Edge, or standard CPU. Currently deployed on NVIDIA Jetson AGX Orin 64GB for local inference with full data sovereignty.</p>
           </div>
         </div>
       </div>
@@ -326,7 +326,7 @@ function Roadmap() {
       phase: "Hackathon", 
       color: "emerald",
       items: [
-        "Built on NVIDIA DGX Cloud",
+        "Built on NVIDIA NVIDIA DGX",
         "2.34M Austin permits processed",
         "GPU-accelerated ML pipeline",
         "1st Place - NVIDIA AITX",
