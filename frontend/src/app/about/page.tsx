@@ -69,7 +69,7 @@ const TEAM = [
     name: "Ravinder Jilkapally", 
     role: "AI Product & Platform Leader", 
     tagline: "Scaling AI at Xpanse",
-    focus: "Builder. 18+ years shipping AI products & platforms. Startup advisor. Hands-on with local LLMs, data systems, and world-class teams.", 
+    focus: "Product, Platform, and Engineering leader with 18+ years building large scale AI/ML platforms, GenAI products, and cloud native data systems. 0→1 execution, multi-tenant AI architecture, scaling teams from prototype to production.", 
     linkedin: "https://linkedin.com/in/jravinder", 
     lead: true, 
     avatar: "https://www.gravatar.com/avatar/07e9975093e352d88e8a43b95bbf3295?s=200" 
@@ -413,12 +413,9 @@ function Team() {
       <div>
         <h3 className="text-sm text-white/60 uppercase tracking-wider mb-4">Project Lead</h3>
         {TEAM.map((member) => (
-          <a
+          <div
             key={member.name}
-            href={member.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-6 p-8 rounded-2xl bg-gradient-to-br from-amber-500/10 via-transparent to-purple-500/5 border border-amber-500/20 hover:border-amber-500/40 transition-all hover:scale-[1.01] group"
+            className="flex items-center gap-6 p-8 rounded-2xl bg-gradient-to-br from-amber-500/10 via-transparent to-purple-500/5 border border-amber-500/20"
           >
             {member.avatar && (
               <div className="relative">
@@ -431,11 +428,16 @@ function Team() {
               <p className="text-amber-400 font-medium">{member.role}</p>
               {member.tagline && <p className="text-white/40 text-sm mb-3">{member.tagline}</p>}
               <p className="text-white/60 text-sm">{member.focus}</p>
-              <div className="mt-4 inline-flex items-center gap-2 text-white/40 text-sm group-hover:text-amber-400 transition-colors">
+              <a 
+                href={member.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-2 text-white/40 text-sm hover:text-amber-400 transition-colors"
+              >
                 View LinkedIn <ArrowRight className="w-4 h-4" />
-              </div>
+              </a>
             </div>
-          </a>
+          </div>
         ))}
       </div>
 
