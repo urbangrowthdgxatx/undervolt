@@ -1,0 +1,228 @@
+# Undervolt LLM Eval — Multi-model comparison with golden answers
+# Runs 96 Austin permit questions against multiple models via LiteLLM
+#
+# Usage:
+#   npx promptfoo eval                    # run all evals
+#   npx promptfoo eval -p nemotron-mini   # single model
+#   npx promptfoo view                    # open comparison UI
+#   npx promptfoo eval -o results.json    # export for Supabase
+
+description: "Undervolt Austin Permits — Model Eval Suite"
+
+# --- Models under test ---
+# All route through LiteLLM gateway (Jetson or local)
+providers:
+  - id: openai:chat:nemotron-mini
+    label: "Nemotron Mini (4B, Ollama)"
+    config:
+      apiBaseUrl: http://100.117.118.119:4000/v1
+      apiKey: sk-lMwTktTpMJW_VjMpx7eJZg
+      temperature: 0.7
+
+  - id: openai:chat:llama3.1-8b
+    label: "Llama 3.1 (8B, Ollama)"
+    config:
+      apiBaseUrl: http://100.117.118.119:4000/v1
+      apiKey: sk-lMwTktTpMJW_VjMpx7eJZg
+      temperature: 0.7
+
+  - id: openai:chat:nemotron-3-nano
+    label: "Nemotron-3-Nano (30B MoE, Ollama)"
+    config:
+      apiBaseUrl: http://100.117.118.119:4000/v1
+      apiKey: sk-lMwTktTpMJW_VjMpx7eJZg
+      temperature: 0.7
+
+# --- Prompt template ---
+# Mirrors the actual Undervolt system prompt from cache-mode-questions.ts
+prompts:
+  - id: undervolt-analyst
+    raw: |
+      You are a data analyst for Austin, Texas. Answer this question using ONLY verified Austin permit data. Never invent numbers.
+
+      VERIFIED DATA:
+      - Total permits analyzed: 2.34 million (2000-2026)
+      - Solar installations: 26,075
+      - Battery systems: 2,874
+      - EV chargers: 3,714
+      - Generators: 7,459
+      - Solar-to-battery ratio: 9:1
+      - Wealth correlation with backup power: 0.78
+      - Westlake vs East Austin backup power: 5:1 ratio
+      - Post-freeze generator surge: 312 (2020) → 1,373 (2021)
+      - Demolition growth: +547% since 2015
+      - ADU permits up +86% since HOME Initiative
+      - Austin ranked #6 nationally in building permits (32,294 units, 2024)
+
+      RULES:
+      1. Start with a bold key stat: **stat here**
+      2. Give 2-3 sentences using exact numbers from the data above.
+      3. Be direct and authoritative. No preamble.
+
+      Question: "{{question}}"
+      Answer:
+
+# --- Test cases from questions.json ---
+tests: file://questions.json
+
+# Map question field to prompt variable
+transformVars: "{ question: question }"
+
+# --- Scoring dimensions ---
+# Enterprise-grade: multi-dimensional evaluation
+defaultTest:
+  assert:
+    # 1. LATENCY — must respond within 10s
+    - type: latency
+      threshold: 10000
+
+    # 2. FORMAT COMPLIANCE — must start with bold stat
+    - type: javascript
+      value: |
+        const text = output.trim();
+        const startsBold = text.startsWith('**') || text.match(/^\*\*[^*]+\*\*/);
+        return {
+          pass: !!startsBold,
+          score: startsBold ? 1.0 : 0.0,
+          reason: startsBold ? 'Starts with bold stat' : 'Missing bold stat opener — format violation'
+        };
+      metric: format_compliance
+
+    # 3. CONCISENESS — 2-3 sentences, not a wall of text
+    - type: javascript
+      value: |
+        const sentences = output.split(/[.!?]+/).filter(s => s.trim().length > 5);
+        const count = sentences.length;
+        const pass = count >= 1 && count <= 5;
+        return {
+          pass,
+          score: count >= 2 && count <= 3 ? 1.0 : count <= 5 ? 0.5 : 0.0,
+          reason: `${count} sentences (target: 2-3)`
+        };
+      metric: conciseness
+
+    # 4. CONTAINS NUMBERS — must cite specific data
+    - type: javascript
+      value: |
+        const numbers = output.match(/\d[\d,]*\.?\d*/g) || [];
+        const hasNumbers = numbers.length >= 1;
+        return {
+          pass: hasNumbers,
+          score: Math.min(numbers.length / 3, 1.0),
+          reason: hasNumbers ? `Cites ${numbers.length} numeric values` : 'No numeric data cited — hallucination risk'
+        };
+      metric: data_citation
+
+    # 5. TOPIC RELEVANCE — response matches expected topic keywords
+    - type: javascript
+      value: |
+        let topics = context.vars.expected_topics || [];
+        if (typeof topics === 'string') try { topics = JSON.parse(topics); } catch(e) { topics = [topics]; }
+        if (!Array.isArray(topics) || topics.length === 0) return { pass: true, score: 1.0, reason: 'No topic check' };
+        const lower = output.toLowerCase();
+        const matched = topics.filter(t => lower.includes(t.toLowerCase()));
+        const ratio = matched.length / topics.length;
+        return {
+          pass: ratio >= 0.3,
+          score: ratio,
+          reason: `Matched ${matched.length}/${topics.length} expected topics: ${matched.join(', ')}`
+        };
+      metric: topic_relevance
+
+    # 6. GROUND TRUTH STATS — if we know the right numbers, check they appear
+    - type: javascript
+      value: |
+        let expected = context.vars.ground_truth_stats || [];
+        if (typeof expected === 'string') try { expected = JSON.parse(expected); } catch(e) { expected = [expected]; }
+        if (!Array.isArray(expected) || expected.length === 0) return { pass: true, score: 1.0, reason: 'No ground truth to check' };
+        const found = expected.filter(stat => output.includes(stat));
+        const ratio = found.length / expected.length;
+        return {
+          pass: ratio >= 0.5,
+          score: ratio,
+          reason: ratio >= 0.5
+            ? `Found ${found.length}/${expected.length} expected stats: ${found.join(', ')}`
+            : `Missing expected stats. Found: ${found.join(', ') || 'none'}. Expected: ${expected.join(', ')}`
+        };
+      metric: factual_accuracy
+
+    # 7. NO PREAMBLE — penalize "Sure!", "Here's", "Based on", etc.
+    - type: javascript
+      value: |
+        const preambles = /^(sure|here'?s|here is|based on|according to|certainly|of course|great question|absolutely|i'?d be happy|let me)/i;
+        const hasPreamble = preambles.test(output.trim());
+        return {
+          pass: !hasPreamble,
+          score: hasPreamble ? 0.0 : 1.0,
+          reason: hasPreamble ? 'Starts with preamble — not authoritative' : 'Direct opener'
+        };
+      metric: no_preamble
+
+    # 8. HALLUCINATION GUARD — flag responses that mention data NOT in the verified set
+    - type: javascript
+      value: |
+        const redFlags = [
+          /\b(million|billion)\s+(dollar|USD|\$)/i,
+          /\b(2027|2028|2029|2030)\b/,
+          /\b(houston|dallas|san antonio)\b/i,
+          /\b(national average|nationwide)\b/i,
+        ];
+        const flagged = redFlags.filter(r => r.test(output));
+        return {
+          pass: flagged.length === 0,
+          score: flagged.length === 0 ? 1.0 : 0.0,
+          reason: flagged.length === 0
+            ? 'No hallucination signals detected'
+            : `Possible hallucination: ${flagged.map(f => f.source).join(', ')}`
+        };
+      metric: hallucination_guard
+
+    # 9. GOLDEN ANSWER SIMILARITY — compare against cached Claude answers
+    - type: javascript
+      value: |
+        const golden = context.vars.golden_answer || '';
+        if (!golden) return { pass: true, score: 1.0, reason: 'No golden answer available' };
+        const out = output.toLowerCase().trim();
+        const ref = golden.toLowerCase().trim();
+        // Extract all numbers from both
+        const outNums = new Set((out.match(/[\d,]+\.?\d*/g) || []).map(n => n.replace(/,/g, '')));
+        const refNums = (ref.match(/[\d,]+\.?\d*/g) || []).map(n => n.replace(/,/g, ''));
+        const matchedNums = refNums.filter(n => outNums.has(n));
+        const numScore = refNums.length > 0 ? matchedNums.length / refNums.length : 0.5;
+        // Extract key terms (words > 4 chars, not stopwords)
+        const stopwords = new Set(['about','after','their','there','these','those','which','where','would','could','should','being','other','under','above','between']);
+        const getTerms = (t) => [...new Set(t.match(/\b[a-z]{5,}\b/g) || [])].filter(w => !stopwords.has(w));
+        const outTerms = new Set(getTerms(out));
+        const refTerms = getTerms(ref);
+        const matchedTerms = refTerms.filter(t => outTerms.has(t));
+        const termScore = refTerms.length > 0 ? matchedTerms.length / refTerms.length : 0.5;
+        const score = numScore * 0.6 + termScore * 0.4;
+        return {
+          pass: score >= 0.3,
+          score: Math.round(score * 100) / 100,
+          reason: `Numbers: ${matchedNums.length}/${refNums.length}, Terms: ${matchedTerms.length}/${refTerms.length} — similarity ${(score * 100).toFixed(0)}%`
+        };
+      metric: golden_similarity
+
+# --- Eval settings ---
+evaluateOptions:
+  maxConcurrency: 1
+
+# --- Output ---
+outputPath:
+  - eval/results/latest.json
+  - eval/results/latest.html
+
+# --- Scoring summary ---
+scoring:
+  strategy: weighted
+  weights:
+    factual_accuracy: 3
+    hallucination_guard: 3
+    golden_similarity: 3
+    topic_relevance: 2
+    data_citation: 2
+    format_compliance: 1
+    conciseness: 1
+    no_preamble: 1
+    latency: 1

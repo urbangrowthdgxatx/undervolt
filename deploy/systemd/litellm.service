@@ -1,0 +1,16 @@
+[Unit]
+Description=LiteLLM Gateway
+After=ollama.service network-online.target
+Wants=ollama.service network-online.target
+
+[Service]
+Type=simple
+User=red
+WorkingDirectory=/home/red/Documents/github/undervolt/deploy
+ExecStart=/usr/bin/python3 -m litellm --config litellm_config.yaml --port 4000
+Restart=always
+RestartSec=5
+EnvironmentFile=/home/red/Documents/github/undervolt/deploy/.env
+
+[Install]
+WantedBy=multi-user.target

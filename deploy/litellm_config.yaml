@@ -1,0 +1,37 @@
+# LiteLLM Proxy Configuration — Jetson AGX Orin
+# Shared LLM gateway with token tracking, RBAC, multi-model routing
+#
+# Run: litellm --config litellm_config.yaml --port 4000
+
+model_list:
+  # Primary: Ollama on local Jetson
+  - model_name: nemotron-3-nano
+    litellm_params:
+      model: ollama/nemotron-3-nano
+      api_base: http://localhost:11434
+
+  - model_name: nemotron-mini
+    litellm_params:
+      model: ollama/nemotron-mini
+      api_base: http://localhost:11434
+
+  - model_name: llama3.1-8b
+    litellm_params:
+      model: ollama/llama3.1:8b
+      api_base: http://localhost:11434
+
+  # Fallback: NVIDIA NIM cloud
+  - model_name: nemotron-nano-8b-nim
+    litellm_params:
+      model: nvidia_nim/nvidia/llama-3.1-nemotron-nano-8b-v1
+      api_key: os.environ/NVIDIA_NIM_API_KEY
+      api_base: https://integrate.api.nvidia.com/v1
+
+litellm_settings:
+  drop_params: true
+  set_verbose: false
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  database_url: sqlite:///litellm.db
+  enforce_rbac: true

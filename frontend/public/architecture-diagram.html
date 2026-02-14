@@ -1,0 +1,336 @@
+<html class="dark" lang="en"><head>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/></head><body class="font-display text-slate-300 min-h-screen">```html
+
+
+
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Undervolt System Sequence Diagram</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#10b748",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#0a0a0a",
+                        "flow-blue": "#3b82f6",
+                        "flow-amber": "#f59e0b",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0a0a0a;
+            background-image: radial-gradient(circle at 2px 2px, #1a2e20 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+        .flow-line {
+            height: 2px;
+            position: relative;
+        }
+        .flow-line::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+        .line-green::after { border-left: 8px solid #10b748; }
+        .line-blue::after { border-left: 8px solid #3b82f6; }
+        .line-amber::after { border-left: 8px solid #f59e0b; }
+        
+        .line-green-rev::after { border-right: 8px solid #10b748; left: 0; right: auto; border-left: none; }
+        .line-blue-rev::after { border-right: 8px solid #3b82f6; left: 0; right: auto; border-left: none; }
+        .line-amber-rev::after { border-right: 8px solid #f59e0b; left: 0; right: auto; border-left: none; }
+    </style>
+<nav class="border-b border-primary/10 bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-background-dark font-bold">bolt</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-white uppercase">Undervolt <span class="text-primary/60 font-light">Architecture</span></h1>
+</div>
+<div class="flex items-center gap-6 text-sm">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span>Chat Flow</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-flow-blue"></span>
+<span>Dashboard Flow</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-flow-amber"></span>
+<span>Story Flow</span>
+</div>
+</div>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto p-8">
+<!-- Diagram Container -->
+<div class="grid grid-cols-3 gap-0 relative border border-primary/20 rounded-xl overflow-hidden bg-background-dark/40 backdrop-blur-sm">
+<!-- Lane 1: Frontend -->
+<div class="border-r border-primary/10 min-h-[1200px] flex flex-col pt-8">
+<div class="px-6 mb-12">
+<div class="bg-primary/10 border border-primary/30 py-3 px-6 rounded-lg text-center">
+<span class="text-primary font-bold uppercase tracking-widest text-sm">Frontend (Next.js)</span>
+</div>
+</div>
+<!-- Step 1: Chat Input -->
+<div class="relative h-32 px-6 flex items-start">
+<div class="bg-zinc-900 border border-zinc-700 p-4 rounded-lg w-full">
+<p class="text-xs text-zinc-500 mb-1 uppercase tracking-tighter">Component</p>
+<p class="text-sm font-medium text-white">ChatInput</p>
+</div>
+<!-- Flow Line: Chat Query -->
+<div class="absolute right-0 top-1/2 w-1/2 h-0.5 bg-primary flow-line line-green translate-y-4">
+<span class="absolute -top-6 right-4 text-[10px] text-primary bg-background-dark px-1">user_query</span>
+</div>
+</div>
+<!-- Step 2: Dashboard Mount -->
+<div class="relative h-48 px-6 mt-16 flex flex-col justify-center">
+<div class="bg-zinc-900 border border-zinc-700 p-4 rounded-lg w-full">
+<p class="text-xs text-zinc-500 mb-1 uppercase tracking-tighter">Hook</p>
+<p class="text-sm font-medium text-white">useDashboardData()</p>
+</div>
+<!-- Parallel arrows -->
+<div class="absolute right-0 top-1/4 w-1/2 h-0.5 bg-flow-blue flow-line line-blue"></div>
+<div class="absolute right-0 top-1/2 w-1/2 h-0.5 bg-flow-blue flow-line line-blue"></div>
+<div class="absolute right-0 top-3/4 w-1/2 h-0.5 bg-flow-blue flow-line line-blue"></div>
+<span class="absolute top-0 right-4 text-[10px] text-flow-blue bg-background-dark px-1">parallel_fetch</span>
+</div>
+<!-- Step 3: Story Mode -->
+<div class="relative h-64 px-6 mt-32 flex items-center">
+<div class="bg-zinc-900 border border-zinc-700 p-4 rounded-lg w-full">
+<p class="text-xs text-zinc-500 mb-1 uppercase tracking-tighter">View</p>
+<p class="text-sm font-medium text-white">StorylineSelector</p>
+</div>
+<div class="absolute right-0 top-1/2 w-1/2 h-0.5 bg-flow-amber flow-line line-amber">
+<span class="absolute -top-6 right-4 text-[10px] text-flow-amber bg-background-dark px-1">selection_id</span>
+</div>
+</div>
+<!-- Responses Section -->
+<div class="mt-auto px-6 pb-20 space-y-12">
+<!-- Card Render -->
+<div class="relative">
+<div class="absolute -left-4 -top-1/2 w-1/2 h-0.5 bg-primary flow-line line-green-rev"></div>
+<div class="bg-primary/5 border border-primary/20 p-3 rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm">dashboard_customize</span>
+<span class="text-xs text-primary/80 uppercase">Render Insight Card</span>
+</div>
+</div>
+<!-- Map Render -->
+<div class="relative">
+<div class="absolute -left-4 -top-1/2 w-1/2 h-0.5 bg-flow-blue flow-line line-blue-rev"></div>
+<div class="bg-flow-blue/5 border border-flow-blue/20 p-3 rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined text-flow-blue text-sm">map</span>
+<span class="text-xs text-flow-blue/80 uppercase">Render LeafletMap + Stats</span>
+</div>
+</div>
+<!-- Theme Render -->
+<div class="relative">
+<div class="absolute -left-4 -top-1/2 w-1/2 h-0.5 bg-flow-amber flow-line line-amber-rev"></div>
+<div class="bg-flow-amber/5 border border-flow-amber/20 p-3 rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined text-flow-amber text-sm">auto_awesome</span>
+<span class="text-xs text-flow-amber/80 uppercase">Theme Synthesized</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Lane 2: API Routes -->
+<div class="border-r border-primary/10 bg-zinc-900/20 flex flex-col pt-8">
+<div class="px-6 mb-12">
+<div class="bg-zinc-800 border border-zinc-700 py-3 px-6 rounded-lg text-center">
+<span class="text-zinc-400 font-bold uppercase tracking-widest text-sm">API Routes</span>
+</div>
+</div>
+<!-- Chat Logic -->
+<div class="px-6 h-48">
+<div class="bg-zinc-900 border-x border-primary/40 p-4 rounded-lg relative">
+<div class="absolute -left-4 top-1/4 w-4 h-0.5 bg-primary"></div>
+<p class="text-xs font-mono text-primary mb-2">POST /api/chat</p>
+<div class="space-y-2">
+<div class="text-[10px] bg-zinc-800 p-1.5 rounded border border-zinc-700 font-mono italic">sanitizeInput()</div>
+<div class="text-[10px] bg-zinc-800 p-1.5 rounded border border-zinc-700 font-mono italic">detectIntent()</div>
+</div>
+<!-- Line to External -->
+<div class="absolute -right-4 top-1/2 w-4 h-0.5 bg-primary flow-line line-green"></div>
+</div>
+<div class="mt-4 flex justify-start">
+<div class="text-[10px] text-primary/60 border-l-2 border-primary/40 pl-2">
+                            SSE Stream: StoryBlock
+                        </div>
+</div>
+</div>
+<!-- Data Logic -->
+<div class="px-6 mt-12 space-y-4">
+<div class="bg-zinc-900 border-x border-flow-blue/40 p-3 rounded-lg relative">
+<div class="absolute -left-4 top-1/2 w-4 h-0.5 bg-flow-blue"></div>
+<p class="text-[10px] font-mono text-flow-blue">GET /api/stats</p>
+<div class="absolute -right-4 top-1/2 w-4 h-0.5 bg-flow-blue flow-line line-blue"></div>
+</div>
+<div class="bg-zinc-900 border-x border-flow-blue/40 p-3 rounded-lg relative">
+<div class="absolute -left-4 top-1/2 w-4 h-0.5 bg-flow-blue"></div>
+<p class="text-[10px] font-mono text-flow-blue">GET /api/permits-detailed</p>
+<div class="absolute -right-4 top-1/2 w-4 h-0.5 bg-flow-blue flow-line line-blue"></div>
+</div>
+<div class="bg-zinc-900 border-x border-flow-blue/40 p-3 rounded-lg relative">
+<div class="absolute -left-4 top-1/2 w-4 h-0.5 bg-flow-blue"></div>
+<p class="text-[10px] font-mono text-flow-blue">GET /api/geojson</p>
+<div class="absolute -right-4 top-1/2 w-4 h-0.5 bg-flow-blue flow-line line-blue"></div>
+</div>
+</div>
+<!-- Story Logic -->
+<div class="px-6 mt-20 space-y-4">
+<div class="bg-zinc-900 border-x border-flow-amber/40 p-4 rounded-lg relative">
+<div class="absolute -left-4 top-1/2 w-4 h-0.5 bg-flow-amber"></div>
+<p class="text-xs font-mono text-flow-amber mb-2">POST /api/story/suggest</p>
+<div class="absolute -right-4 top-1/2 w-4 h-0.5 bg-flow-amber flow-line line-amber"></div>
+</div>
+<div class="bg-zinc-900 border-x border-flow-amber/40 p-4 rounded-lg relative mt-12">
+<div class="absolute -left-4 top-1/2 w-4 h-0.5 bg-flow-amber"></div>
+<p class="text-xs font-mono text-flow-amber mb-2">POST /api/story/synthesize</p>
+<div class="absolute -right-4 top-1/2 w-4 h-0.5 bg-flow-amber flow-line line-amber"></div>
+<div class="text-[10px] bg-zinc-800 p-1.5 rounded border border-zinc-700 font-mono italic">summarize_clusters()</div>
+</div>
+</div>
+</div>
+<!-- Lane 3: External Services -->
+<div class="flex flex-col pt-8 bg-zinc-900/40">
+<div class="px-6 mb-12">
+<div class="bg-zinc-800 border border-zinc-700 py-3 px-6 rounded-lg text-center">
+<span class="text-zinc-400 font-bold uppercase tracking-widest text-sm">External Services</span>
+</div>
+</div>
+<!-- Service Stack -->
+<div class="px-6 space-y-24">
+<!-- Supabase -->
+<div class="relative p-6 rounded-xl border border-emerald-500/30 bg-emerald-500/5 group">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-emerald-500">database</span>
+</div>
+<div>
+<h3 class="font-bold text-emerald-500 uppercase text-xs tracking-widest">Supabase</h3>
+<p class="text-[10px] text-zinc-500">PostgreSQL + Vector</p>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between text-[10px] bg-zinc-900/80 p-2 rounded border border-zinc-800">
+<span class="text-zinc-400">cached_answers</span>
+<span class="px-1.5 py-0.5 rounded bg-primary/20 text-primary">SELECT</span>
+</div>
+<div class="flex items-center justify-between text-[10px] bg-zinc-900/80 p-2 rounded border border-zinc-800">
+<span class="text-zinc-400">energy_stats_by_zip</span>
+<span class="px-1.5 py-0.5 rounded bg-flow-blue/20 text-flow-blue">FETCH</span>
+</div>
+<div class="flex items-center justify-between text-[10px] bg-zinc-900/80 p-2 rounded border border-zinc-800">
+<span class="text-zinc-400">permits_geom</span>
+<span class="px-1.5 py-0.5 rounded bg-flow-blue/20 text-flow-blue">FETCH</span>
+</div>
+</div>
+</div>
+<!-- LLM Services -->
+<div class="space-y-6">
+<!-- Ollama -->
+<div class="p-6 rounded-xl border border-zinc-700 bg-zinc-900/50 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2 opacity-10">
+<span class="material-symbols-outlined text-4xl">memory</span>
+</div>
+<div class="flex items-center gap-4 mb-4">
+<div class="w-10 h-10 bg-zinc-100 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-black">smart_toy</span>
+</div>
+<div>
+<h3 class="font-bold text-zinc-100 uppercase text-xs tracking-widest">Ollama</h3>
+<p class="text-[10px] text-zinc-500">Local Inference</p>
+</div>
+</div>
+<div class="px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-[10px] font-mono text-primary">
+                                nemotron-3-nano
+                            </div>
+</div>
+<!-- NVIDIA NIM -->
+<div class="p-6 rounded-xl border border-[#76b900]/30 bg-[#76b900]/5 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2 opacity-10">
+<span class="material-symbols-outlined text-4xl text-[#76b900]">terminal</span>
+</div>
+<div class="flex items-center gap-4 mb-4">
+<div class="w-10 h-10 bg-[#76b900]/20 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-[#76b900]">developer_board</span>
+</div>
+<div>
+<h3 class="font-bold text-[#76b900] uppercase text-xs tracking-widest">NVIDIA NIM</h3>
+<p class="text-[10px] text-zinc-500">Cloud Acceleration</p>
+</div>
+</div>
+<div class="px-3 py-1.5 bg-zinc-800 border border-zinc-700 rounded text-[10px] font-mono text-[#76b900]">
+                                nemotron-nano-8b
+                            </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Absolute Overlays for Flow Arrows (Manual positioning for complexity) -->
+<div class="absolute top-0 left-0 w-full h-full pointer-events-none">
+<!-- Return Arrows -->
+<!-- Chat Return -->
+<div class="absolute top-[350px] right-[66%] w-[33%] h-0.5 bg-primary/40 line-green-rev border-t border-dashed border-primary/20"></div>
+<!-- Data Return -->
+<div class="absolute top-[550px] right-[66%] w-[33%] h-0.5 bg-flow-blue/40 line-blue-rev border-t border-dashed border-flow-blue/20"></div>
+<!-- Story Return -->
+<div class="absolute top-[850px] right-[66%] w-[33%] h-0.5 bg-flow-amber/40 line-amber-rev border-t border-dashed border-flow-amber/20"></div>
+</div>
+</div>
+<!-- Footer / Legend -->
+<div class="mt-8 flex flex-wrap items-center justify-between gap-6 p-6 border border-zinc-800 rounded-xl bg-zinc-900/30">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded bg-primary"></div>
+<span class="text-sm font-medium">Urban Planning LLM Interaction</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded bg-flow-blue"></div>
+<span class="text-sm font-medium">Geospatial Data Pipeline</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded bg-flow-amber"></div>
+<span class="text-sm font-medium">Contextual Story Synthesis</span>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="px-3 py-1 bg-zinc-800 rounded text-[10px] text-zinc-400 uppercase tracking-tighter">v2.4.0-PROD</div>
+<div class="px-3 py-1 bg-zinc-800 rounded text-[10px] text-zinc-400 uppercase tracking-tighter">Austin, TX Node</div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-6 right-6 flex flex-col gap-2">
+<button class="w-12 h-12 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-full flex items-center justify-center text-zinc-300 transition-all">
+<span class="material-symbols-outlined">zoom_in</span>
+</button>
+<button class="w-12 h-12 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-full flex items-center justify-center text-zinc-300 transition-all">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</body></html><!-- Images metadata --><!-- No specific images required by text, but placeholders added for conceptual consistency --><!-- data-alt="Abstract emerald green and black technical grid pattern" for background depth --><!-- data-alt="Modern tech logo icon for Supabase database" for lane 3 --><!-- data-alt="NVIDIA green circuitry pattern for NIM service" for lane 3 --><!-- data-alt="Geometric minimalist robot head icon for Ollama" for lane 3 --><!-- data-location="Austin" -->

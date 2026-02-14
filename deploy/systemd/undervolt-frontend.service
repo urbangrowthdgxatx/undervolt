@@ -1,0 +1,16 @@
+[Unit]
+Description=Undervolt Frontend (Next.js)
+After=litellm.service network-online.target
+Wants=litellm.service
+
+[Service]
+Type=simple
+User=red
+WorkingDirectory=/home/red/Documents/github/undervolt/frontend
+ExecStart=/usr/bin/npx next start -p 3000
+Restart=always
+RestartSec=5
+EnvironmentFile=/home/red/Documents/github/undervolt/frontend/.env.local
+
+[Install]
+WantedBy=multi-user.target

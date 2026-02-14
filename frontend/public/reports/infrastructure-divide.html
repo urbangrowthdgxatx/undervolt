@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Infrastructure Divide | Undervolt Analysis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#000000",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .glow-text {
+            text-shadow: 0 0 30px rgba(19, 127, 236, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-white min-h-screen flex flex-col font-display selection:bg-primary/30">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between border-b border-white/10 px-10 py-5 bg-background-light dark:bg-background-dark">
+<div class="flex items-center gap-4">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold tracking-tight text-white">Undervolt</h2>
+</div>
+<div class="flex items-center gap-8">
+<nav class="hidden md:flex items-center gap-9">
+<a class="text-white/70 hover:text-white text-sm font-medium transition-colors" href="#">Analysis</a>
+<a class="text-white/70 hover:text-white text-sm font-medium transition-colors" href="#">Data Explorer</a>
+<a class="text-white/70 hover:text-white text-sm font-medium transition-colors" href="#">Case Studies</a>
+</nav>
+<button class="bg-primary hover:bg-primary/90 text-white text-sm font-bold px-4 py-2 rounded-lg transition-all">
+                Export Data
+            </button>
+</div>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center px-4 py-12 max-w-7xl mx-auto w-full">
+<!-- Page Heading -->
+<div class="text-center mb-16">
+<h1 class="text-white text-5xl md:text-6xl font-black tracking-tighter mb-4">
+                The Infrastructure Divide
+            </h1>
+<p class="text-white/50 text-lg max-w-2xl mx-auto">
+                A comparison of private generator permits across socioeconomic boundaries in Austin, TX
+            </p>
+</div>
+<!-- Comparison Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-0 w-full mb-20 border border-white/10 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-sm">
+<!-- Westlake Panel -->
+<div class="flex flex-col items-center justify-center p-16 md:p-24 border-b md:border-b-0 md:border-r border-white/10 group transition-all duration-500 hover:bg-white/5">
+<p class="text-primary text-xl font-semibold mb-6 tracking-widest uppercase">District 10 / Westlake</p>
+<div class="relative">
+<span class="text-[120px] md:text-[160px] font-black leading-none text-white glow-text tracking-tighter transition-transform group-hover:scale-105 duration-500 block">
+                        2,151
+                    </span>
+</div>
+<p class="text-white/40 text-lg mt-6 font-medium">Generators permitted since 2021</p>
+<div class="mt-8 flex items-center gap-2 text-[#0bda5b]">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="font-bold">+12% YoY</span>
+</div>
+</div>
+<!-- East Austin Panel -->
+<div class="flex flex-col items-center justify-center p-16 md:p-24 group transition-all duration-500 hover:bg-white/5">
+<p class="text-white/40 text-xl font-semibold mb-6 tracking-widest uppercase">East Austin</p>
+<div class="relative">
+<span class="text-[64px] md:text-[80px] font-black leading-none text-white/30 tracking-tighter transition-transform group-hover:scale-105 duration-500 block">
+                        175
+                    </span>
+</div>
+<p class="text-white/20 text-lg mt-6 font-medium">Generators permitted since 2021</p>
+<div class="mt-8 flex items-center gap-2 text-white/20">
+<span class="material-symbols-outlined">trending_flat</span>
+<span class="font-bold">Stagnant</span>
+</div>
+</div>
+</div>
+<!-- Headline Text (Pull Quote) -->
+<div class="max-w-4xl mx-auto px-4 mb-20">
+<h2 class="text-white text-3xl md:text-5xl font-light italic leading-snug text-center opacity-90">
+                "The same data that shows growth also reveals <span class="text-primary font-medium italic underline decoration-primary/30 underline-offset-8">who gets left behind.</span>"
+            </h2>
+</div>
+<!-- Action Panel -->
+<div class="w-full max-w-4xl mx-auto p-4">
+<div class="flex flex-col md:flex-row items-center justify-between gap-6 rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-md">
+<div class="flex flex-col gap-2 text-center md:text-left">
+<p class="text-white text-xl font-bold">Addressing Equity Gaps</p>
+<p class="text-white/50 text-base max-w-md">
+                        Undervolt makes infrastructure data accessible for city planners and community leaders to address structural equity gaps.
+                    </p>
+</div>
+<div class="flex gap-4">
+<button class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-primary/20">
+                        View Full Report
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="mt-auto border-t border-white/10 py-12 bg-background-light dark:bg-background-dark">
+<div class="max-w-7xl mx-auto px-10 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 text-white/40 mb-2">
+<span class="material-symbols-outlined text-sm">database</span>
+<span class="text-xs font-semibold uppercase tracking-widest">Source: Austin Permits via Undervolt Analysis</span>
+</div>
+<p class="text-white/30 text-xs">© 2024 Undervolt Infrastructure Labs. All data is sanitized and anonymized.</p>
+</div>
+<div class="flex gap-6">
+<a class="text-white/40 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">share</span>
+</a>
+<a class="text-white/40 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">description</span>
+</a>
+<a class="text-white/40 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">mail</span>
+</a>
+</div>
+</div>
+</footer>
+</body></html>

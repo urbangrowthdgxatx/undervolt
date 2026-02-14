@@ -1,0 +1,84 @@
+# Dependencies
+node_modules/
+node_modules 2/
+
+# Data files (too large for git)
+*.csv
+*.parquet
+
+# Output directory
+output/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+.venv/
+env/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Feature store outputs (regenerated)
+feature_store/
+
+# Secrets
+.env
+*.pem
+frontend/bun.lockb
+# Database
+data/undervolt.db
+data/undervolt.db-shm
+data/undervolt.db-wal
+data/permits.db
+frontend/permits.db
+*.db
+
+# Logs and progress files
+*.log
+data/*_progress.json
+
+# Temp notes
+2026-*.txt
+
+# Claude / AI tooling
+.claude/
+claude.md
+CLAUDE.md
+frontend/scripts/claude-*
+frontend/scripts/generate-claude-*
+frontend/scripts/push-claude-*
+
+# Frontend
+frontend/.next/
+frontend/node_modules/
+frontend/.env.local
+frontend/.env*.local
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vercel
+.vercel

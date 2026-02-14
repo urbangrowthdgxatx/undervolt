@@ -1,0 +1,53 @@
+# Pipeline Configuration
+# Global settings for the extraction pipeline
+
+data:
+  # Path to permit CSV (relative to project root)
+  source: "Issued_Construction_Permits_20251212.csv"  # Full 2.4M dataset
+
+  # Columns to load (cleaning step 1: select only what we need)
+  columns:
+    - "Permit Num"
+    - "Description"
+    - "Original Zip"
+    - "Latitude"
+    - "Longitude"
+    - "Calendar Year Issued"
+    - "Total Job Valuation"
+    - "Council District"
+    - "Permit Class Mapped"
+
+  # Cleaning filters
+  cleaning:
+    # Drop rows where description is null or too short
+    min_description_length: 10
+    # Only include these permit classes (optional)
+    # permit_classes: ["Residential", "Commercial"]
+
+llm:
+  # Ollama API endpoint (ASUS box)
+  endpoint: "http://172.16.11.54:11434/api/generate"
+  model: "llama3.1:8b"
+  # model: "llama3.1:70b"  # Use when available
+
+  # Generation settings
+  temperature: 0.1  # Low for consistent JSON output
+  max_tokens: 256
+
+extraction:
+  # Batch size for processing
+  batch_size: 100
+
+  # Number of parallel requests (if supported)
+  parallel: 1
+
+  # Save intermediate results every N permits
+  checkpoint_every: 500
+
+  # For testing: limit to N permits (set to null for full run)
+  limit: null  # Set to 100 for benchmark test
+
+output:
+  # Output directory
+  dir: "output"
+  format: "parquet"  # or "csv"

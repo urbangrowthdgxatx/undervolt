@@ -1,0 +1,14 @@
+[Unit]
+Description=Warmup LLM model into GPU memory
+After=litellm.service
+Requires=ollama.service
+
+[Service]
+Type=oneshot
+User=red
+ExecStartPre=/bin/sleep 5
+ExecStart=/bin/bash /home/red/Documents/github/undervolt/scripts/shell/warmup_llm.sh
+EnvironmentFile=/home/red/Documents/github/undervolt/deploy/.env
+
+[Install]
+WantedBy=multi-user.target
