@@ -1,0 +1,17 @@
+[Unit]
+Description=Undervolt Dashboard Frontend
+After=network.target
+
+[Service]
+Type=simple
+User=red
+WorkingDirectory=/home/red/Documents/github/undervolt/frontend
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=PATH=/home/red/.nvm/versions/node/v24.12.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+ExecStart=/home/red/.nvm/versions/node/v24.12.0/bin/npm run start
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

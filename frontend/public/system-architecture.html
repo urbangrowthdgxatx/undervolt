@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Undervolt Cloud Architecture Diagram V2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff9900",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#0a0a0a",
+                        "node-bg": "#f9fafb",
+                        "node-border": "#e5e7eb",
+                        "accent-blue": "#3b82f6",
+                        "accent-green": "#10b981",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .flow-line {
+            position: relative;
+        }
+        .flow-line::after {
+            content: '';
+            position: absolute;
+            background-color: #d1d5db;
+            height: 1px;
+            width: 100%;
+            top: 50%;
+            z-index: -1;
+        }
+        .arrow-right::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-left: 6px solid #d1d5db;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen p-8 lg:p-12">
+<!-- Header Section -->
+<header class="max-w-7xl mx-auto mb-12 flex justify-between items-end border-b border-primary/20 pb-6">
+<div>
+<h1 class="text-3xl font-bold tracking-tight uppercase">Undervolt <span class="text-primary">Cloud Architecture</span></h1>
+<p class="text-slate-500 dark:text-slate-400 mt-1">Austin Urban Growth Analytics Platform — V2.0.4 Documentation</p>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                STABLE RELEASE
+            </span>
+</div>
+</header>
+<!-- Main Diagram Grid -->
+<main class="max-w-7xl mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+<!-- Column 1: Web Client -->
+<div class="space-y-6">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-accent-green">browser_updated</span>
+<h2 class="font-bold text-sm uppercase tracking-widest text-slate-400">Web Client</h2>
+</div>
+<div class="bg-node-bg dark:bg-slate-800/50 border border-node-border dark:border-slate-700 rounded-lg p-5 relative">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded bg-accent-green/10 flex items-center justify-center text-accent-green">
+<span class="material-symbols-outlined">devices</span>
+</div>
+<div>
+<h3 class="font-bold text-base">Next.js 16 UI</h3>
+<p class="text-[10px] text-slate-500 uppercase">Frontend Layer</p>
+</div>
+</div>
+<ul class="space-y-2">
+<li class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+<span class="w-1 h-1 bg-accent-green rounded-full"></span>
+                            Leaflet.js Mapping
+                        </li>
+<li class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+<span class="w-1 h-1 bg-accent-green rounded-full"></span>
+                            Tailwind CSS Engine
+                        </li>
+<li class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+<span class="w-1 h-1 bg-accent-green rounded-full"></span>
+                            Client-Side Hydration
+                        </li>
+</ul>
+</div>
+</div>
+<!-- Column 2: Compute Edge -->
+<div class="space-y-6">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-accent-green">cloud_done</span>
+<h2 class="font-bold text-sm uppercase tracking-widest text-slate-400">Edge Runtime</h2>
+</div>
+<div class="bg-node-bg dark:bg-slate-800/50 border border-node-border dark:border-slate-700 rounded-lg p-5 relative">
+<div class="mb-4">
+<h3 class="font-bold text-base flex items-center gap-2">
+                            Vercel Edge Network
+                        </h3>
+<p class="text-[10px] text-slate-500 uppercase">Routing &amp; Caching</p>
+</div>
+<div class="space-y-4">
+<div class="bg-white dark:bg-slate-900 border border-node-border dark:border-slate-700 p-3 rounded">
+<p class="text-[10px] font-bold text-slate-400 uppercase mb-2">API Routes</p>
+<div class="font-mono text-[11px] space-y-1 text-accent-green">
+<div>/api/chat</div>
+<div>/api/stats</div>
+<div>/api/story/*</div>
+<div>/api/permits</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-node-border dark:border-slate-700 p-3 rounded">
+<p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Delivery</p>
+<p class="text-xs text-slate-600 dark:text-slate-300">Static Assets / ISR</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 3: AI Inference Stack -->
+<div class="space-y-6">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">memory</span>
+<h2 class="font-bold text-sm uppercase tracking-widest text-slate-400">Intelligence</h2>
+</div>
+<!-- Active Ollama Stack -->
+<div class="bg-primary/5 border-2 border-primary rounded-lg p-4">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-bold text-base">Ollama</h3>
+<p class="text-[10px] text-primary/80 uppercase font-medium">Local Runtime</p>
+</div>
+<span class="material-symbols-outlined text-primary text-xl">bolt</span>
+</div>
+<div class="space-y-2">
+<div class="bg-white dark:bg-slate-900 border border-primary/30 p-2 rounded text-[11px] font-medium text-center">
+                            Nemotron 3 Nano (4bit)
+                        </div>
+<div class="bg-white dark:bg-slate-900 border border-primary/30 p-2 rounded text-[11px] font-medium text-center">
+                            Llama 3.2 1B
+                        </div>
+<div class="bg-white dark:bg-slate-900 border border-primary/30 p-2 rounded text-[11px] font-medium text-center">
+                            Mistral 7B (Fallback)
+                        </div>
+</div>
+</div>
+<!-- NVIDIA NIM -->
+<div class="bg-node-bg dark:bg-slate-800/50 border border-node-border dark:border-slate-700 rounded-lg p-4">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="font-bold text-sm">NVIDIA NIM</h3>
+</div>
+<p class="text-[10px] text-slate-500 uppercase mb-2">Cloud API Fallback</p>
+<div class="h-1 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="w-1/3 h-full bg-primary"></div>
+</div>
+</div>
+<!-- Jetson Edge -->
+<div class="bg-node-bg dark:bg-slate-800/50 border border-node-border dark:border-slate-700 rounded-lg p-4">
+<div class="flex justify-between items-center">
+<div>
+<h3 class="font-bold text-sm">Jetson AGX Orin</h3>
+<p class="text-[10px] text-slate-500 uppercase">Edge Hardware</p>
+</div>
+<span class="material-symbols-outlined text-primary text-lg">developer_board</span>
+</div>
+<p class="text-[9px] mt-2 text-slate-500">On-device inference &middot; 275 TOPS</p>
+</div>
+</div>
+<!-- Column 4: Data Layer -->
+<div class="space-y-6">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-accent-blue">database</span>
+<h2 class="font-bold text-sm uppercase tracking-widest text-slate-400">Data Persistence</h2>
+</div>
+<div class="bg-node-bg dark:bg-slate-800/50 border border-node-border dark:border-slate-700 rounded-lg p-5">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded bg-accent-blue/10 flex items-center justify-center text-accent-blue">
+<span class="material-symbols-outlined">storage</span>
+</div>
+<div>
+<h3 class="font-bold text-base">Supabase</h3>
+<p class="text-[10px] text-slate-500 uppercase">PostgreSQL + Vector</p>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-xs">
+<span class="text-slate-500">Record Count</span>
+<span class="font-bold">2.3M Rows</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-slate-500">Avg. Latency</span>
+<span class="font-bold">14ms</span>
+</div>
+<div class="pt-3 border-t border-node-border dark:border-slate-700">
+<div class="text-[10px] font-bold text-accent-blue uppercase mb-1">External Feeds</div>
+<div class="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">link</span>
+                                Austin Open Data Portal
+                            </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Connection Arrows Placeholder Logic (Visual Representation) -->
+<div class="hidden lg:block absolute inset-0 pointer-events-none opacity-20">
+<!-- Simulated flow indicators -->
+</div>
+</main>
+</body></html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Generator Surge Data One-Pager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2930d",
+                        "accent-red": "#ef4444",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#000000",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "sans": ["Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .text-gradient {
+            background: linear-gradient(to bottom right, #ef4444, #f2930d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between border-b border-solid border-slate-200 dark:border-[#493922] px-6 md:px-20 py-4 bg-background-light dark:bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-4 text-slate-900 dark:text-white">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-tight uppercase">The Generator Surge</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8 items-center">
+<nav class="hidden md:flex items-center gap-9">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Analysis</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Grid Health</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Equity</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Map</a>
+</nav>
+<button class="flex min-w-[120px] cursor-pointer items-center justify-center rounded-lg h-10 px-5 bg-primary text-black text-sm font-bold leading-normal transition-transform active:scale-95 shadow-lg shadow-primary/20">
+<span>Analyze the Data</span>
+</button>
+</div>
+</header>
+<main class="max-w-[1100px] mx-auto px-6 md:px-10 py-12">
+<!-- Hero Section -->
+<section class="flex flex-col items-center text-center mb-16">
+<div class="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-accent-red/30 bg-accent-red/10 text-accent-red text-xs font-bold uppercase tracking-widest">
+<span class="material-symbols-outlined text-sm">warning</span>
+                Grid Vulnerability Alert
+            </div>
+<h1 class="text-7xl md:text-9xl font-bold tracking-tighter text-gradient pb-4">
+                +246%
+            </h1>
+<p class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white max-w-2xl">
+                Increase in generator permits after Winter Storm Uri 2021
+            </p>
+<p class="text-slate-600 dark:text-slate-400 text-base md:text-lg font-normal leading-relaxed mt-6 max-w-3xl">
+                The February 2021 freeze exposed Texas grid vulnerabilities. Austin residents responded by installing backup generators at record rates, seeking private solutions for public infrastructure failures.
+            </p>
+</section>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="flex flex-col gap-2 rounded-xl p-8 bg-slate-100 dark:bg-[#1a150e] border border-slate-200 dark:border-[#493922]">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Permit Volume</p>
+<p class="text-3xl font-bold">14,200+</p>
+<p class="text-accent-red text-sm font-medium">+246% vs 2020</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-8 bg-slate-100 dark:bg-[#1a150e] border border-slate-200 dark:border-[#493922]">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Grid Incidents</p>
+<p class="text-3xl font-bold">12 Major</p>
+<p class="text-primary text-sm font-medium">Post-Uri Events</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-8 bg-slate-100 dark:bg-[#1a150e] border border-slate-200 dark:border-[#493922]">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Avg. Cost</p>
+<p class="text-3xl font-bold">$12,500</p>
+<p class="text-slate-500 text-sm font-medium">Per Unit Install</p>
+</div>
+</div>
+<!-- Central Visualization: Bar Chart -->
+<section class="mb-12">
+<div class="flex flex-col gap-6 rounded-xl border border-slate-200 dark:border-[#493922] p-8 bg-white dark:bg-[#0a0805]">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h3 class="text-white text-xl font-bold leading-normal">Austin Generator Permits (2021-2024)</h3>
+<p class="text-slate-400 text-sm">The vertical spike post-Winter Storm Uri represents a massive shift to private resilience.</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-slate-400 text-sm font-normal">2021 - 2024</span>
+<span class="bg-accent-red/20 text-accent-red px-2 py-1 rounded text-xs font-bold">+246%</span>
+</div>
+</div>
+<div class="grid h-[320px] grid-flow-col gap-4 md:gap-12 grid-rows-[1fr_auto] items-end justify-items-center px-4 mt-8">
+<!-- 2020 (Baseline) -->
+<div class="group relative w-full flex flex-col items-center h-full justify-end">
+<div class="bg-slate-700 dark:bg-[#493922] w-full rounded-t-sm transition-all hover:bg-slate-500" style="height: 15%;"></div>
+</div>
+<!-- 2021 (The Event) -->
+<div class="group relative w-full flex flex-col items-center h-full justify-end">
+<div class="bg-slate-700 dark:bg-[#493922] w-full rounded-t-sm transition-all hover:bg-slate-500" style="height: 25%;"></div>
+</div>
+<!-- 2022 (The Surge) -->
+<div class="group relative w-full flex flex-col items-center h-full justify-end">
+<div class="bg-primary w-full rounded-t-sm shadow-[0_0_20px_rgba(242,147,13,0.3)]" style="height: 85%;"></div>
+<div class="absolute -top-8 text-primary font-bold text-sm">SPIKE</div>
+</div>
+<!-- 2023 -->
+<div class="group relative w-full flex flex-col items-center h-full justify-end">
+<div class="bg-primary w-full rounded-t-sm opacity-80" style="height: 100%;"></div>
+</div>
+<!-- 2024 -->
+<div class="group relative w-full flex flex-col items-center h-full justify-end">
+<div class="bg-primary w-full rounded-t-sm opacity-60" style="height: 92%;"></div>
+</div>
+<!-- Labels -->
+<p class="text-slate-500 text-[13px] font-bold mt-4">2020</p>
+<p class="text-slate-500 text-[13px] font-bold mt-4">2021</p>
+<p class="text-primary text-[13px] font-bold mt-4">2022</p>
+<p class="text-primary text-[13px] font-bold mt-4">2023</p>
+<p class="text-primary text-[13px] font-bold mt-4">2024</p>
+</div>
+</div>
+</section>
+<!-- Equity Note Section -->
+<section class="mb-12">
+<div class="rounded-xl border-2 border-accent-red p-8 bg-accent-red/5 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-8xl">balance</span>
+</div>
+<div class="flex items-start gap-4">
+<div class="p-3 bg-accent-red rounded-lg text-white">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div>
+<h4 class="text-accent-red text-xl font-bold mb-2">Equity Note: A Widening Gap</h4>
+<p class="text-slate-300 text-lg leading-relaxed max-w-3xl">
+                            Not everyone can afford private backup power. While wealthy neighborhoods reach 15%+ generator penetration, vulnerable communities remain 100% reliant on an unstable grid, leaving them at significantly higher risk during extreme weather events.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Map/Location Teaser -->
+<section class="mb-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+<div class="relative rounded-xl overflow-hidden border border-[#493922] h-64">
+<img alt="Map of Austin showing heat concentrations" class="w-full h-full object-cover grayscale opacity-50" data-alt="Topographic map of Austin with orange data highlights" data-location="Austin, Texas" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrBLbV50P6lIQEKGTuE_HfoR5ME0XhhC1MOANABUAeruBrcZKKcDUJGoFaP01orC8ZjoXKhwLD8ikeXTz66iynEoS6PyZS0QllPqTWCqsi1Dp5EDK9OWXS38BNePbh_NghFUzg_nH7Vx89rFtHAh3PrhjDS-3NMoPybj_uBzcEj-JMIac5hIwv7UNJEKNAhKD79cQUvh23JXWKRT2IDksByj47bw-AdCHfHI4Hwwj10m6n4TpoXiMzU54RAd_H1sRA-ibuEOlBtfs"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<p class="text-sm font-bold uppercase tracking-widest text-primary">Regional Map</p>
+<p class="text-white text-lg font-bold">Concentration of Permits</p>
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="text-2xl font-bold">The Geographic Divide</h3>
+<p class="text-slate-400">Analysis shows that permit density correlates 0.88 with median household income. The "Resilience Divide" is no longer just a theory; it is documented in Austin's building permits.</p>
+<button class="text-primary font-bold flex items-center gap-2 hover:underline">
+                    Explore Interactive Map <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Footer / Source -->
+<footer class="border-t border-[#493922] pt-8 pb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div class="text-slate-500 text-sm">
+<p>Source: Austin Construction Permits 2021-2024 via Undervolt</p>
+<p>© 2024 Generator Surge Data Project</p>
+</div>
+<div class="flex gap-4">
+<button class="bg-primary text-black px-8 py-3 rounded-lg font-bold hover:bg-primary/90 transition-colors shadow-xl shadow-primary/10">
+                    Download Full Report
+                </button>
+<button class="bg-slate-800 text-white px-8 py-3 rounded-lg font-bold hover:bg-slate-700 transition-colors">
+                    Get the Data
+                </button>
+</div>
+</footer>
+</main>
+</body></html>

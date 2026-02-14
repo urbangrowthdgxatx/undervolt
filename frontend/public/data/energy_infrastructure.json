@@ -1,0 +1,38 @@
+{
+  "summary": {
+    "by_type": {
+      "battery": 34,
+      "solar": 13,
+      "panel_upgrade": 12,
+      "ev_charger": 5,
+      "generator": 4,
+      "hvac": 3
+    },
+    "solar_stats": {
+      "total_permits": 13,
+      "with_capacity_data": 9,
+      "avg_capacity_kw": 7.74,
+      "total_capacity_kw": 69.65
+    }
+  },
+  "by_zip": [
+    {
+      "zip_code": "None",
+      "total_energy_permits": 71,
+      "solar": 13,
+      "ev_charger": 5,
+      "battery": 34,
+      "generator": 4,
+      "panel_upgrade": 12,
+      "hvac": 3,
+      "avg_solar_kw": 7.74
+    }
+  ],
+  "monthly_trends": [],
+  "metadata": {
+    "total_permits_analyzed": 977,
+    "total_energy_permits": 71,
+    "energy_percentage": 7.27,
+    "pipeline_timestamp": "2025-12-31 10:50:58"
+  }
+}

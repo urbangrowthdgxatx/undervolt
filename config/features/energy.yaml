@@ -1,0 +1,120 @@
+# Energy Infrastructure Features
+# These are the signals we extract from permit descriptions
+
+feature_group:
+  name: "energy"
+  description: "Energy infrastructure signals for Austin's electrification transition"
+  enabled: true
+
+# Keywords to pre-filter permits (reduces LLM calls dramatically)
+# Simple keywords for GPU-compatible regex
+keywords:
+  # Solar
+  - "solar"
+  - "photovoltaic"
+  - "pv system"
+  # EV Charging
+  - "ev charger"
+  - "electric vehicle"
+  - "charging station"
+  - "level 2"
+  # Battery Storage
+  - "tesla powerwall"
+  - "battery backup"
+  - "battery storage"
+  - "powerwall"
+  - "energy storage"
+  # Generators
+  - "generator"
+  - "generac"
+  - "kohler"
+  - "standby power"
+  # Panel Upgrades
+  - "panel upgrade"
+  - "service upgrade"
+  - "200 amp"
+  - "400 amp"
+  - "electrical service"
+  # ADU (Accessory Dwelling Units)
+  - "adu"
+  - "accessory dwelling"
+  - "secondary apartment"
+  - "guest house"
+  - "granny flat"
+
+# Features to extract - SHORT NAMES to match compact prompt
+features:
+  - name: "is_solar"
+    type: "boolean"
+    description: "Solar panel installation"
+
+  - name: "solar_kw"
+    type: "number"
+    nullable: true
+    description: "Solar system size in kW"
+
+  - name: "is_ev"
+    type: "boolean"
+    description: "EV charging station installation"
+
+  - name: "has_bat"
+    type: "boolean"
+    description: "Battery storage system (Powerwall, etc)"
+
+  - name: "has_gen"
+    type: "boolean"
+    description: "Backup generator installation"
+
+  - name: "gen_kw"
+    type: "number"
+    nullable: true
+    description: "Generator size in kW"
+
+  - name: "fuel"
+    type: "string"
+    nullable: true
+    description: "Generator fuel: ng=natural_gas, lp=propane, diesel, null"
+
+  - name: "is_adu"
+    type: "boolean"
+    description: "Accessory Dwelling Unit (ADU/guest house/granny flat)"
+
+  - name: "panel_up"
+    type: "boolean"
+    description: "Electrical panel/service upgrade"
+
+  - name: "amps"
+    type: "number"
+    nullable: true
+    description: "Panel amperage (200, 400, etc)"
+
+  - name: "units"
+    type: "number"
+    nullable: true
+    description: "Number of housing units"
+
+  - name: "type"
+    type: "string"
+    nullable: true
+    description: "sf=single_family, mf=multi_family, com=commercial, null"
+
+# LLM extraction prompt - COMPACT for speed with one example
+prompt: |
+  Ex: "Install 10kW solar with Powerwall" → {"is_solar":true,"solar_kw":10,"is_ev":false,"has_bat":true,"has_gen":false,"gen_kw":null,"fuel":null,"is_adu":false,"panel_up":false,"amps":null,"units":null,"type":null}
+  Ex: "22kW Generac natural gas generator" → {"is_solar":false,"solar_kw":null,"is_ev":false,"has_bat":false,"has_gen":true,"gen_kw":22,"fuel":"ng","is_adu":false,"panel_up":false,"amps":null,"units":null,"type":null}
+  Permit: {description}
+  JSON:
+
+# Few-shot examples for better extraction
+examples:
+  - input: "Install 8.5 kW solar PV system with Tesla Powerwall battery backup"
+    output: '{"is_solar": true, "solar_kw": 8.5, "is_ev_charger": false, "has_battery": true, "has_generator": false, "generator_kw": null, "is_adu": false, "is_panel_upgrade": false, "panel_amps": null, "units": null, "housing_type": null}'
+
+  - input: "Install new 400 AMP electrical service upgrade with (2) 200 AMP panels. Install 25KW Generac generator with automatic transfer switch"
+    output: '{"is_solar": false, "solar_kw": null, "is_ev_charger": false, "has_battery": false, "has_generator": true, "generator_kw": 25, "is_adu": false, "is_panel_upgrade": true, "panel_amps": 400, "units": null, "housing_type": null}'
+
+  - input: "Install Level 2 EV charger in garage"
+    output: '{"is_solar": false, "solar_kw": null, "is_ev_charger": true, "has_battery": false, "has_generator": false, "generator_kw": null, "is_adu": false, "is_panel_upgrade": false, "panel_amps": null, "units": null, "housing_type": "single_family"}'
+
+  - input: "New construction of accessory dwelling unit (ADU) 650 sq ft with 200 amp panel"
+    output: '{"is_solar": false, "solar_kw": null, "is_ev_charger": false, "has_battery": false, "has_generator": false, "generator_kw": null, "is_adu": true, "is_panel_upgrade": true, "panel_amps": 200, "units": 1, "housing_type": "single_family"}'

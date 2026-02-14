@@ -1,0 +1,1310 @@
+[
+  {
+    "vars": {
+      "question": "How has solar adoption grown since 2000?",
+      "category": "solar",
+      "expected_topics": [
+        "solar",
+        "growth",
+        "2000"
+      ],
+      "ground_truth_stats": [
+        "26,075"
+      ],
+      "golden_answer": "**26,075 solar installations** have been permitted across Austin since 2000, with adoption peaking at 2,097 in 2023. Growth accelerated from 1,834 in 2021 to that peak, before pulling back to 1,567 in 2024 and 1,139 in 2025 as federal incentive timelines shifted. Austin Energy remains the #1 municipal utility for solar per capita in the U.S. according to SEIA."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which ZIP codes lead in solar installations?",
+      "category": "solar",
+      "expected_topics": [
+        "solar",
+        "ZIP",
+        "lead"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Western and northwestern Austin ZIPs dominate** solar adoption, with 78746 (Westlake), 78703, and 78731 consistently among the leaders. Solar installation density correlates strongly with median household income \u2014 wealthier ZIPs have 3-4x more solar per capita than lower-income eastern neighborhoods. Austin's 26,075 total installations are heavily concentrated west of I-35."
+    }
+  },
+  {
+    "vars": {
+      "question": "How did solar installations in 2024 compare to the 2023 peak?",
+      "category": "solar",
+      "expected_topics": [
+        "solar",
+        "2024",
+        "2023",
+        "peak"
+      ],
+      "ground_truth_stats": [
+        "2,097",
+        "1,567"
+      ],
+      "golden_answer": "**1,567 solar permits in 2024** \u2014 a 25% drop from the 2,097 peak in 2023. This marked the first year-over-year decline after a steady three-year climb (1,834\u21921,956\u21922,097). The pullback reflects shifting federal incentive timelines and rising installation costs, though Austin still added substantial capacity with typical systems ranging 5-12 kW."
+    }
+  },
+  {
+    "vars": {
+      "question": "Is Austin's solar boom slowing down in 2025?",
+      "category": "solar",
+      "expected_topics": [
+        "solar",
+        "2025",
+        "slowing"
+      ],
+      "ground_truth_stats": [
+        "1,139"
+      ],
+      "golden_answer": "**1,139 solar permits through 2025** suggest a continued cooldown from the 2023 peak of 2,097. The decline from 2,097\u21921,567\u21921,139 over two years is notable, but Austin Energy still added a record 18.8 MW of rooftop solar from 749 projects in 2025. The boom isn't over \u2014 it's maturing, with fewer but larger installations."
+    }
+  },
+  {
+    "vars": {
+      "question": "How much total solar capacity has Austin installed?",
+      "category": "solar",
+      "expected_topics": [
+        "solar",
+        "total",
+        "capacity"
+      ],
+      "ground_truth_stats": [
+        "26,075"
+      ],
+      "golden_answer": "**26,075 solar installations** permitted since 2000, with systems typically ranging 5-12 kW each. Austin Energy reported adding a record 18.8 MW of new rooftop solar in 2025 alone from 749 projects. Across the full dataset, Austin has emerged as the #1 municipal utility for solar per capita nationally, a distinction recognized by SEIA."
+    }
+  },
+  {
+    "vars": {
+      "question": "Where are the solar deserts in Austin?",
+      "category": "solar",
+      "expected_topics": [
+        "solar",
+        "desert",
+        "Austin"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Eastern and southeastern Austin ZIPs have the least solar**, with installation rates 3-4x lower than wealthy western neighborhoods. The solar divide mirrors Austin's income geography \u2014 areas east of I-35 and in the southern periphery show significantly fewer installations despite equal sun exposure. With a 0.78 correlation between wealth and energy infrastructure, solar access is largely a function of income."
+    }
+  },
+  {
+    "vars": {
+      "question": "How does Austin's solar ranking compare to other Texas cities?",
+      "category": "solar",
+      "expected_topics": [
+        "solar",
+        "ranking",
+        "Texas"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Austin Energy is the #1 municipal utility for solar per capita in the U.S.** according to SEIA, with 26,075 total installations. In 2025, Austin Energy added a record 18.8 MW from 749 projects. No other Texas city's municipal utility matches this per-capita deployment, partly because Austin's long-running rebate programs and progressive climate goals created early momentum."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which ZIP added the most solar in the last 2 years?",
+      "category": "solar",
+      "expected_topics": [
+        "solar",
+        "ZIP",
+        "last 2 years"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Western Austin ZIPs dominated recent solar growth**, with 78746 (Westlake) and surrounding high-income areas consistently leading new installations. Between 2023 and 2025, Austin permitted 2,706 solar installations (1,567 + 1,139), concentrated disproportionately in neighborhoods where median incomes support the $15,000-$30,000 upfront cost. The solar-to-battery ratio remains roughly 9:1, meaning most new solar goes in without storage."
+    }
+  },
+  {
+    "vars": {
+      "question": "Why is there only 1 battery for every 9 solar installs?",
+      "category": "battery",
+      "expected_topics": [
+        "battery",
+        "solar",
+        "ratio"
+      ],
+      "ground_truth_stats": [
+        "2,874"
+      ],
+      "golden_answer": "**9:1 solar-to-battery ratio** \u2014 Austin has 26,075 solar installations but only 2,874 battery systems. The gap reflects economics: a Tesla Powerwall adds $10,000-$15,000 on top of solar costs, and Texas's retail electricity rates haven't made self-consumption compelling enough. Austin Energy is launching a residential battery incentive program and signed a 100 MW utility-scale deal with Jupiter Power to close this gap."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which neighborhoods lead in battery storage?",
+      "category": "battery",
+      "expected_topics": [
+        "battery",
+        "neighborhood",
+        "lead"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Wealthier western Austin ZIPs lead battery adoption**, mirroring the pattern seen in solar and generators. Battery installations correlate with a 0.78 wealth coefficient \u2014 the same neighborhoods with the most solar (78746, 78703, 78731) are most likely to add storage. Of Austin's 2,874 total battery systems, the vast majority are in high-income areas west of I-35."
+    }
+  },
+  {
+    "vars": {
+      "question": "Did battery adoption accelerate from 2023 to 2025?",
+      "category": "battery",
+      "expected_topics": [
+        "battery",
+        "2023",
+        "2025"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Battery installations have grown rapidly since 2020**, driven by grid reliability concerns after Winter Storm Uri. Austin's 2,874 total battery systems represent a significant acceleration, and Austin Energy's new residential incentive program is designed to push adoption further. The 100 MW utility-scale deal with Jupiter Power signals that large-scale storage is also ramping up."
+    }
+  },
+  {
+    "vars": {
+      "question": "Where's the biggest solar-to-battery gap?",
+      "category": "battery",
+      "expected_topics": [
+        "solar",
+        "battery",
+        "gap"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**The 9:1 solar-to-battery ratio is widest in middle-income neighborhoods** that adopted solar through rebate programs but couldn't justify the additional $10,000-$15,000 for a battery system. Austin has 26,075 solar installations versus just 2,874 batteries. Wealthier ZIPs like 78746 have somewhat better ratios because homeowners can afford the full solar-plus-storage package."
+    }
+  },
+  {
+    "vars": {
+      "question": "Why aren't more solar homes adding batteries?",
+      "category": "battery",
+      "expected_topics": [
+        "solar",
+        "battery",
+        "homes"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**$10,000-$15,000 per battery system** is the primary barrier. With Austin's 9:1 solar-to-battery ratio (26,075 solar vs 2,874 batteries), economics are the clear blocker. Texas's retail electricity rates and net metering policies don't yet reward self-consumption enough to justify the cost. Austin Energy is responding with a new residential incentive program and a 100 MW utility-scale deal with Jupiter Power."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which ZIPs pair solar with battery storage?",
+      "category": "battery",
+      "expected_topics": [
+        "solar",
+        "battery",
+        "ZIP"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**High-income western ZIPs like 78746, 78703, and 78731** are most likely to pair solar with batteries. Battery adoption correlates strongly with wealth (0.78 coefficient), and these neighborhoods have both the solar base and the disposable income for the additional $10,000-$15,000 investment. Across Austin's 2,874 battery systems, the concentration mirrors the same income-infrastructure pattern seen in generators."
+    }
+  },
+  {
+    "vars": {
+      "question": "How does Austin's battery adoption compare to its solar growth?",
+      "category": "battery",
+      "expected_topics": [
+        "battery",
+        "solar",
+        "compare"
+      ],
+      "ground_truth_stats": [
+        "2,874",
+        "26,075"
+      ],
+      "golden_answer": "**2,874 batteries vs 26,075 solar installations** \u2014 Austin's battery adoption lags solar by a 9:1 ratio. While solar peaked at 2,097 permits in 2023, battery growth is still accelerating. Austin Energy's 100 MW utility-scale deal with Jupiter Power and a new residential incentive program signal a strategic push to close the storage gap."
+    }
+  },
+  {
+    "vars": {
+      "question": "What incentives exist for Austin battery storage adoption?",
+      "category": "battery",
+      "expected_topics": [
+        "battery",
+        "incentive"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Austin Energy is launching a residential battery incentive program** to close the 9:1 solar-to-battery gap. The utility also signed a 100 MW deal with Jupiter Power for utility-scale storage. With only 2,874 battery systems citywide versus 26,075 solar installations, the gap is stark. Federal ITC credits (30%) and Austin Energy's new program aim to bring the $10,000-$15,000 installed cost within reach."
+    }
+  },
+  {
+    "vars": {
+      "question": "How did generator permits spike after the 2021 freeze?",
+      "category": "generators",
+      "expected_topics": [
+        "generator",
+        "2021",
+        "freeze",
+        "spike"
+      ],
+      "ground_truth_stats": [
+        "312",
+        "1,373"
+      ],
+      "golden_answer": "**+340% surge \u2014 from 312 permits in 2020 to 1,373 in 2021** after Winter Storm Uri left millions without power. Generator dealers were backlogged for months as Austinites scrambled for backup power. Demand stayed elevated through 2023 before moderating in 2024. Austin now has 7,459 total generator installations, with the post-Uri wave fundamentally reshaping the city's backup power landscape."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which ZIP codes have the most generators?",
+      "category": "generators",
+      "expected_topics": [
+        "generator",
+        "ZIP"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Westlake and northwestern Austin ZIPs dominate**, with 78746, 78703, and 78731 leading in generator installations. The Westlake-to-East Austin ratio stands at 5:1 in backup power. Of Austin's 7,459 total generators, the concentration tracks wealth \u2014 affluent neighborhoods installed aggressively after Uri while lower-income areas largely went without. A typical whole-home generator costs $11,000-$13,000."
+    }
+  },
+  {
+    "vars": {
+      "question": "Are generators still selling faster in 2025 than before the freeze?",
+      "category": "generators",
+      "expected_topics": [
+        "generator",
+        "2025",
+        "freeze"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**7,459 total generators citywide** \u2014 well above pre-freeze levels. While the 2021 post-Uri spike (1,373 permits) was the peak, demand stayed elevated through 2023 before moderating in 2024. Pre-freeze Austin averaged around 312 generator permits per year (2020 baseline), so even moderated demand far exceeds the old normal. The freeze permanently raised Austin's backup power floor."
+    }
+  },
+  {
+    "vars": {
+      "question": "Why does Westlake have 5x more generators than East Austin?",
+      "category": "generators",
+      "expected_topics": [
+        "Westlake",
+        "East Austin",
+        "generator",
+        "5"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**5:1 ratio in backup power** between Westlake and East Austin comes down to income. A whole-home generator costs $11,000-$13,000, pricing out lower-income neighborhoods. After Winter Storm Uri, affluent areas installed generators immediately while eastern Austin \u2014 which suffered some of the longest outages \u2014 largely couldn't afford the investment. The 0.78 correlation between wealth and energy infrastructure tells the story."
+    }
+  },
+  {
+    "vars": {
+      "question": "What's the total number of backup generators in Austin?",
+      "category": "generators",
+      "expected_topics": [
+        "generator",
+        "total"
+      ],
+      "ground_truth_stats": [
+        "7,459"
+      ],
+      "golden_answer": "**7,459 backup generators** have been permitted across Austin since 2000. The trajectory was transformed by Winter Storm Uri: from 312 permits in 2020 to 1,373 in 2021, a +340% spike. Demand remained elevated through 2023 before moderating. Installations are heavily concentrated in western Austin, with Westlake outpacing East Austin at a 5:1 ratio."
+    }
+  },
+  {
+    "vars": {
+      "question": "How does 2024 generator demand compare to the 2021 peak?",
+      "category": "generators",
+      "expected_topics": [
+        "generator",
+        "2024",
+        "2021"
+      ],
+      "ground_truth_stats": [
+        "1,373"
+      ],
+      "golden_answer": "**2024 demand moderated from the 2021 peak of 1,373 permits**, but remains well above pre-freeze levels. The post-Uri urgency drove sustained installations through 2023, with 2024 showing a natural cooldown as the most motivated homeowners had already installed. Austin's 7,459 total generators reflect a city where backup power shifted from luxury to expectation after the freeze."
+    }
+  },
+  {
+    "vars": {
+      "question": "Could batteries replace generators as the go-to backup power?",
+      "category": "generators",
+      "expected_topics": [
+        "battery",
+        "generator",
+        "replace"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**2,874 batteries vs 7,459 generators** \u2014 batteries have a long way to go. Generators dominate backup power in Austin because they provide unlimited runtime during extended outages and cost similarly ($11,000-$13,000 for a generator vs $10,000-$15,000 for a battery). Austin Energy's new residential battery incentive and 100 MW Jupiter Power deal signal a shift, but generators remain the default choice for whole-home backup."
+    }
+  },
+  {
+    "vars": {
+      "question": "What does a typical Austin generator installation cost?",
+      "category": "generators",
+      "expected_topics": [
+        "generator",
+        "cost"
+      ],
+      "ground_truth_stats": [
+        "11,000",
+        "13,000"
+      ],
+      "golden_answer": "**$11,000-$13,000 for a whole-home generator** in Austin, per KXAN reporting. After Winter Storm Uri, dealer backlogs stretched for months as demand surged +340% (312\u21921,373 permits). Austin now has 7,459 generators installed, with Westlake and western ZIPs accounting for a disproportionate share \u2014 the 5:1 ratio over East Austin reflects who can afford the investment."
+    }
+  },
+  {
+    "vars": {
+      "question": "Where are EV chargers being installed in Austin?",
+      "category": "ev",
+      "expected_topics": [
+        "EV",
+        "charger",
+        "Austin"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**3,714 EV charger permits** across Austin, concentrated heavily in western and central neighborhoods. West Austin has significantly more EV infrastructure than eastern areas, mirroring the city's broader income-infrastructure divide. Austin Energy operates approximately 1,500 L2 public charging ports, and a $15M federal grant is funding 200+ stations in underserved areas to address the gap."
+    }
+  },
+  {
+    "vars": {
+      "question": "Did EV charger growth accelerate from 2023 to 2025?",
+      "category": "ev",
+      "expected_topics": [
+        "EV",
+        "charger",
+        "2023",
+        "2025"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**EV charger permits have accelerated since 2020**, tracking rising EV adoption across Austin. Travis County now has approximately 25,148 registered EVs, and the 3,714 charger permits reflect growing demand. Austin Energy's 1,500 L2 public charging ports and a $15M federal grant for 200+ new stations in underserved areas are expanding access further."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which areas are EV charging deserts?",
+      "category": "ev",
+      "expected_topics": [
+        "EV",
+        "charger",
+        "desert"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Eastern and southern Austin are EV charging deserts**, with significantly fewer charger installations than western neighborhoods. Despite 25,148 registered EVs in Travis County, the 3,714 charger permits cluster in higher-income areas. A $15M federal grant targeting 200+ stations in underserved areas directly addresses this gap. Austin Energy's existing 1,500 L2 public ports are similarly concentrated west of I-35."
+    }
+  },
+  {
+    "vars": {
+      "question": "How do EV charger installs compare east vs west?",
+      "category": "ev",
+      "expected_topics": [
+        "EV",
+        "charger",
+        "east",
+        "west"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**West Austin dominates EV infrastructure**, continuing the pattern seen across solar, batteries, and generators. Of Austin's 3,714 EV charger permits, western ZIPs have a significant lead. The $15M federal grant for 200+ stations in underserved areas is a direct policy response to this imbalance. Austin Energy's 1,500 L2 public ports similarly skew westward."
+    }
+  },
+  {
+    "vars": {
+      "question": "Is Austin keeping up with EV adoption rates?",
+      "category": "ev",
+      "expected_topics": [
+        "EV",
+        "adoption"
+      ],
+      "ground_truth_stats": [
+        "3,714"
+      ],
+      "golden_answer": "**~25,148 registered EVs vs 3,714 charger permits** \u2014 Austin is building infrastructure, but the ratio is tight. Austin Energy operates about 1,500 L2 public charging ports, and a $15M federal grant is funding 200+ new stations. The challenge is distribution: charging infrastructure clusters in western neighborhoods while EV adoption is spreading citywide."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which ZIP has the most EV infrastructure?",
+      "category": "ev",
+      "expected_topics": [
+        "EV",
+        "ZIP"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Western Austin ZIPs like 78746 and 78703 lead in EV infrastructure**, consistent with higher incomes and EV ownership rates. Of the 3,714 total charger permits citywide, the top ZIPs mirror Austin's solar and generator leaders. With ~25,148 registered EVs in Travis County and Austin Energy's 1,500 L2 public ports, the western concentration reflects where early adopters live and charge."
+    }
+  },
+  {
+    "vars": {
+      "question": "How many registered EVs per charger are there in Austin?",
+      "category": "ev",
+      "expected_topics": [
+        "EV",
+        "charger",
+        "registered"
+      ],
+      "ground_truth_stats": [
+        "25,148"
+      ],
+      "golden_answer": "**~25,148 registered EVs served by 3,714 permitted chargers** \u2014 roughly 7 EVs per charger permit across Austin. Austin Energy supplements this with approximately 1,500 L2 public charging ports, and a $15M federal grant is adding 200+ stations in underserved areas. The ratio is manageable now but will tighten as EV adoption accelerates."
+    }
+  },
+  {
+    "vars": {
+      "question": "Where should Austin build EV chargers next?",
+      "category": "ev",
+      "expected_topics": [
+        "EV",
+        "charger",
+        "build"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Eastern and southern Austin are the priority**, where EV charging deserts persist despite growing adoption. The $15M federal grant targeting 200+ stations in underserved areas is the right start. Austin currently has 3,714 charger permits and ~1,500 L2 public ports, but the distribution heavily favors western neighborhoods. Equitable deployment east of I-35 would serve the ~25,148 registered EVs increasingly spread across the metro."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which districts are most prepared for grid failure?",
+      "category": "resilience",
+      "expected_topics": [
+        "district",
+        "grid",
+        "prepared"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**District 10 leads with 2,151 generators** \u2014 by far the most prepared council district. District 8 follows with 1,423, then District 6 with 987. In contrast, District 1 (East Austin) has just 175 generators. Combined with battery storage, backup power varies up to 12x between the most and least prepared districts, with wealth being the defining factor."
+    }
+  },
+  {
+    "vars": {
+      "question": "How did Winter Storm Uri change Austin's infrastructure?",
+      "category": "resilience",
+      "expected_topics": [
+        "Uri",
+        "infrastructure",
+        "change"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**+340% generator surge \u2014 312 to 1,373 permits** in a single year after Uri. The freeze permanently altered Austin's energy landscape: 7,459 generators and 2,874 batteries are now installed citywide. Austin Energy launched a $735M Energy System Resiliency Plan (ESRP), including $60M in FY2026 to harden 10 priority circuits. Backup power went from optional to essential."
+    }
+  },
+  {
+    "vars": {
+      "question": "What's the backup power divide in Austin?",
+      "category": "resilience",
+      "expected_topics": [
+        "backup",
+        "power",
+        "divide"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**5:1 ratio \u2014 Westlake vs East Austin** in backup power installations. With a 0.78 correlation between wealth and energy infrastructure, the divide is stark: District 10 has 2,151 generators while District 1 has just 175. Austin's 7,459 generators and 2,874 batteries are overwhelmingly concentrated in western, higher-income neighborhoods. The people most vulnerable to outages have the least backup power."
+    }
+  },
+  {
+    "vars": {
+      "question": "Is Austin more grid-resilient now than it was in 2021?",
+      "category": "resilience",
+      "expected_topics": [
+        "grid",
+        "resilient",
+        "2021"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**$735M Energy System Resiliency Plan (ESRP)** represents Austin's biggest post-Uri investment. Combined with 7,459 generators and 2,874 batteries now installed privately, the city is measurably more resilient. Austin Energy is spending $60M in FY2026 alone to harden 10 priority circuits. But the benefits are unequal \u2014 Westlake has 5x more backup power than East Austin."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which neighborhoods are most grid-vulnerable?",
+      "category": "resilience",
+      "expected_topics": [
+        "neighborhood",
+        "vulnerable"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Eastern Austin ZIPs with the lowest generator and battery counts** are the most vulnerable. District 1 has just 175 generators compared to District 10's 2,151 \u2014 a 12x gap. The 0.78 correlation between wealth and infrastructure means lower-income neighborhoods that suffered the longest Uri outages have invested the least in backup power since. Austin Energy's $735M ESRP targets grid hardening, but private resilience remains a wealth story."
+    }
+  },
+  {
+    "vars": {
+      "question": "How much has backup power investment grown from 2022 to 2025?",
+      "category": "resilience",
+      "expected_topics": [
+        "backup",
+        "power",
+        "2022",
+        "2025"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**7,459 generators and 2,874 batteries now installed** across Austin \u2014 over 10,000 backup power systems citywide. Generator permits spiked from 312 in 2020 to 1,373 in 2021, stayed elevated through 2023, then moderated. Battery adoption grew rapidly since 2020 driven by reliability concerns. Austin Energy's $735M ESRP adds a utility-scale layer with $60M in FY2026 for circuit hardening."
+    }
+  },
+  {
+    "vars": {
+      "question": "How has Austin Energy's grid spending changed since Uri?",
+      "category": "resilience",
+      "expected_topics": [
+        "Austin Energy",
+        "grid",
+        "Uri"
+      ],
+      "ground_truth_stats": [
+        "735"
+      ],
+      "golden_answer": "**$735M Energy System Resiliency Plan (ESRP)** launched after Uri to harden Austin's grid. FY2026 alone includes $60M for 10 priority circuits. Before the freeze, grid spending was routine; now it's strategic. Alongside private investment \u2014 7,459 generators and 2,874 batteries installed citywide \u2014 Austin Energy is building redundancy that didn't exist when Uri hit."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which ZIP codes still have zero backup power?",
+      "category": "resilience",
+      "expected_topics": [
+        "ZIP",
+        "zero",
+        "backup"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Several eastern and southern Austin ZIPs have near-zero backup power**, reflecting the 5:1 Westlake-to-East Austin divide. With only 175 generators in all of District 1 versus 2,151 in District 10, entire neighborhoods lack private resilience. The 0.78 wealth-infrastructure correlation means the ZIPs most likely to lose power longest are the least equipped. Austin Energy's $735M ESRP targets these gaps at the grid level."
+    }
+  },
+  {
+    "vars": {
+      "question": "How has total construction changed from 2000 to 2026?",
+      "category": "growth",
+      "expected_topics": [
+        "construction",
+        "2000",
+        "2026"
+      ],
+      "ground_truth_stats": [
+        "2.34"
+      ],
+      "golden_answer": "**2.34 million permits** analyzed across Austin from 2000 to 2026. The trajectory shows steady growth punctuated by the 2020 COVID dip and a strong rebound through 2023. Austin's 2024 permits came in +42.6% above the 2000-2023 long-term average, and the metro ranked #6 nationally with 32,294 units authorized. Fastest-growing categories include solar (+300% since 2015) and demolition (+547%)."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which permit categories are growing fastest?",
+      "category": "growth",
+      "expected_topics": [
+        "permit",
+        "growing",
+        "fastest"
+      ],
+      "ground_truth_stats": [
+        "547"
+      ],
+      "golden_answer": "**Demolition surged +547% since 2015**, making it Austin's fastest-growing permit category. Solar grew +300% over the same period before peaking in 2023. ADU permits represent a newer category, up +86% since the HOME Initiative passed. These three categories \u2014 demolition, solar, and ADUs \u2014 reflect Austin's simultaneous boom in teardown-rebuilds, clean energy, and density."
+    }
+  },
+  {
+    "vars": {
+      "question": "How did 2024 construction compare to the 2020 COVID dip?",
+      "category": "growth",
+      "expected_topics": [
+        "2024",
+        "2020",
+        "COVID"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**2024 permits were +42.6% above the long-term average**, a dramatic recovery from the 2020 COVID dip. Construction dipped significantly in 2020 before rebounding strongly 2021-2023. By 2024, Austin ranked #6 nationally with 32,294 units authorized. The recovery wasn't just a bounce-back \u2014 it accelerated beyond pre-COVID levels across most permit categories."
+    }
+  },
+  {
+    "vars": {
+      "question": "Where is new construction concentrated in Austin?",
+      "category": "growth",
+      "expected_topics": [
+        "construction",
+        "concentrated"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Central and western Austin lead in new construction**, with 2.34 million total permits analyzed since 2000. The hottest zones include central Austin teardown-rebuild corridors (78702, 78704) where demolition is up +547%, and western neighborhoods driving solar (+300% since 2015) and generator installations. Austin ranked #6 nationally with 32,294 units authorized in 2024."
+    }
+  },
+  {
+    "vars": {
+      "question": "How did COVID affect Austin construction permits?",
+      "category": "growth",
+      "expected_topics": [
+        "COVID",
+        "construction",
+        "permit"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Construction dipped in 2020 during COVID**, then rebounded strongly through 2021-2023. By 2024, Austin's permits were +42.6% above the 2000-2023 long-term average \u2014 far exceeding pre-pandemic levels. The metro ranked #6 nationally with 32,294 authorized units. COVID disrupted the trend line briefly, but Austin's fundamental growth drivers \u2014 population, tech jobs, housing demand \u2014 reasserted quickly."
+    }
+  },
+  {
+    "vars": {
+      "question": "What's the hottest construction category in 2025?",
+      "category": "growth",
+      "expected_topics": [
+        "construction",
+        "2025",
+        "hottest"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Solar grew +300% since 2015** and remains a top category, though 2025 permits (1,139) are down from the 2023 peak (2,097). Demolition (+547% since 2015) and ADUs (+86% since HOME Initiative) are the other standout growth areas. Austin's 2.34 million total permits show a market normalizing after the 2021-2023 surge, settling at elevated but sustainable levels."
+    }
+  },
+  {
+    "vars": {
+      "question": "Where does Austin rank nationally in building permits?",
+      "category": "growth",
+      "expected_topics": [
+        "Austin",
+        "rank",
+        "nationally"
+      ],
+      "ground_truth_stats": [
+        "32,294"
+      ],
+      "golden_answer": "**#6 nationally \u2014 Austin authorized 32,294 units in 2024**, cementing its position among the top U.S. construction markets. The metro's 2024 permits came in +42.6% above the 2000-2023 long-term average. Across 2.34 million total permits analyzed, Austin has maintained consistent growth driven by population influx, tech sector expansion, and housing demand."
+    }
+  },
+  {
+    "vars": {
+      "question": "How did Austin's 2024 permits compare to the long-term average?",
+      "category": "growth",
+      "expected_topics": [
+        "2024",
+        "average"
+      ],
+      "ground_truth_stats": [
+        "42.6"
+      ],
+      "golden_answer": "**+42.6% above the 2000-2023 average** \u2014 Austin's 2024 construction permits significantly outpaced the city's historical norm. With 32,294 units authorized, Austin ranked #6 nationally. The overshoot reflects sustained demand from population growth and a post-COVID construction rebound that exceeded pre-pandemic baselines. Across 2.34 million total permits since 2000, 2024 stands out as one of the strongest years on record."
+    }
+  },
+  {
+    "vars": {
+      "question": "How does income correlate with energy infrastructure?",
+      "category": "equity",
+      "expected_topics": [
+        "income",
+        "energy",
+        "correlate"
+      ],
+      "ground_truth_stats": [
+        "0.78"
+      ],
+      "golden_answer": "**0.78 correlation between median income and backup power** \u2014 wealth is the strongest predictor of energy infrastructure in Austin. Westlake outpaces East Austin 5:1 in backup power installations, and wealthy ZIPs have 3-4x more solar per capita. Of the 26,075 solar, 7,459 generator, and 2,874 battery installations citywide, the vast majority cluster in higher-income neighborhoods."
+    }
+  },
+  {
+    "vars": {
+      "question": "Is there an energy equity gap in Austin?",
+      "category": "equity",
+      "expected_topics": [
+        "energy",
+        "equity",
+        "gap"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**5:1 ratio between Westlake and East Austin** in backup power defines Austin's energy equity gap. Wealthy neighborhoods have 3-4x more solar per capita, and the 0.78 correlation between income and infrastructure leaves lower-income areas most vulnerable during grid failures. Low-income Texans spend roughly 10% of income on energy versus 1% for wealthy households \u2014 a 10x burden gap."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which communities have the least resilience investment?",
+      "category": "equity",
+      "expected_topics": [
+        "resilience",
+        "least"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**District 1 (East Austin) has just 175 generators** compared to District 10's 2,151 \u2014 the starkest resilience gap in the city. Lower-income communities east of I-35 bore some of the longest Winter Storm Uri outages yet invested the least in backup power afterward. With a 0.78 wealth-infrastructure correlation, the communities most exposed to grid failure are systematically the least prepared."
+    }
+  },
+  {
+    "vars": {
+      "question": "Is the energy equity gap getting wider or narrower?",
+      "category": "equity",
+      "expected_topics": [
+        "equity",
+        "gap",
+        "wider",
+        "narrower"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**The gap is widening** \u2014 post-Uri, wealthy neighborhoods added generators and batteries at rates lower-income areas couldn't match. The 5:1 Westlake-to-East Austin ratio in backup power grew as affluent homeowners invested $11,000-$13,000 in generators. Austin Energy's $735M ESRP and a $15M federal EV grant target underserved areas, but private investment still overwhelmingly favors wealthy ZIPs."
+    }
+  },
+  {
+    "vars": {
+      "question": "What's the solar access gap between rich and poor ZIPs?",
+      "category": "equity",
+      "expected_topics": [
+        "solar",
+        "gap",
+        "rich",
+        "poor"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**3-4x more solar per capita in wealthy ZIPs** than in lower-income neighborhoods. With 26,075 total installations, Austin's solar map mirrors its income map almost exactly (0.78 correlation). Wealthy ZIPs like 78746 had both the upfront capital and the homeownership rates to capitalize on rebate programs, while eastern Austin \u2014 largely renters \u2014 couldn't participate at the same rate."
+    }
+  },
+  {
+    "vars": {
+      "question": "How much more backup power does Westlake have than East Austin?",
+      "category": "equity",
+      "expected_topics": [
+        "Westlake",
+        "East Austin",
+        "backup"
+      ],
+      "ground_truth_stats": [
+        "5:1"
+      ],
+      "golden_answer": "**5:1 ratio \u2014 Westlake has five times more backup power** than East Austin. District 10 alone has 2,151 generators while District 1 has just 175. Post-Uri, the gap accelerated as Westlake homeowners invested $11,000-$13,000 per generator. Add batteries (0.78 wealth correlation) and the total resilience gap is even wider. The freeze was the same; the recovery was not."
+    }
+  },
+  {
+    "vars": {
+      "question": "How much do low-income Texans spend on energy vs wealthy households?",
+      "category": "equity",
+      "expected_topics": [
+        "low-income",
+        "energy",
+        "spend"
+      ],
+      "ground_truth_stats": [
+        "10%",
+        "1%"
+      ],
+      "golden_answer": "**10% vs 1% of income on energy** \u2014 low-income Texans face a 10x higher energy burden than wealthy households. This compounds Austin's infrastructure gap: areas with the highest energy costs also have the least solar (3-4x gap), fewest generators (5:1 Westlake vs East Austin), and lowest battery adoption (0.78 wealth correlation). Energy poverty and infrastructure poverty reinforce each other."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which ZIP codes show the biggest gap between income and infrastructure?",
+      "category": "equity",
+      "expected_topics": [
+        "ZIP",
+        "gap",
+        "income",
+        "infrastructure"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Eastern Austin ZIPs like 78702 and 78722** show the widest income-to-infrastructure gap, with minimal backup power despite being among the most outage-vulnerable areas. The 0.78 correlation between wealth and energy infrastructure means lower-income ZIPs systematically underinvest. Westlake (78746) has 5x the backup power of East Austin, and wealthy ZIPs have 3-4x more solar per capita."
+    }
+  },
+  {
+    "vars": {
+      "question": "How does District 10 compare to District 1 in permits?",
+      "category": "districts",
+      "expected_topics": [
+        "District 10",
+        "District 1"
+      ],
+      "ground_truth_stats": [
+        "2,151",
+        "175"
+      ],
+      "golden_answer": "**12x gap \u2014 District 10 has 2,151 generators vs District 1's 175**. The disparity extends across all energy categories: D10 and D8 lead in solar, while D1 and D3 trail. Across 2.34 million total permits, the council district divide mirrors Austin's income geography. District 10 (Westlake/NW Hills) is the most infrastructure-rich district by virtually every metric."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which council district has the most energy permits?",
+      "category": "districts",
+      "expected_topics": [
+        "district",
+        "energy",
+        "most"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**District 10 (Westlake/NW Hills) leads decisively** with 2,151 generators and top-tier solar and battery installations. District 8 (SW Austin) follows with 1,423 generators. The ranking \u2014 D10, D8, D6 (987), D4 (412), D1 (175) \u2014 maps directly onto median household income. District 10's lead reflects both wealth and the post-Uri surge in backup power."
+    }
+  },
+  {
+    "vars": {
+      "question": "What are the biggest disparities between districts?",
+      "category": "districts",
+      "expected_topics": [
+        "disparity",
+        "district"
+      ],
+      "ground_truth_stats": [
+        "12"
+      ],
+      "golden_answer": "**Up to 12x variation** between District 10 and District 1 in energy permits. D10 has 2,151 generators; D1 has 175. The pattern holds for solar (D10 and D8 lead, D1 and D3 trail) and batteries. Across 2.34 million total permits, the most striking disparity is how consistently western districts outperform eastern ones \u2014 wealth is the through-line in every category."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which district saw the biggest permit jump from 2023 to 2025?",
+      "category": "districts",
+      "expected_topics": [
+        "district",
+        "permit",
+        "jump"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Western districts captured the post-Uri momentum**, with District 10 and District 8 seeing the largest absolute increases in energy permits. D10's 2,151 generators and D8's 1,423 reflect sustained investment. Eastern districts like D1 (175 generators) and D4 (412) grew more slowly. Solar followed a similar pattern, with D10 and D8 leading adoption."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which district leads in renewable energy adoption?",
+      "category": "districts",
+      "expected_topics": [
+        "district",
+        "renewable",
+        "energy"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**District 10 and District 8 lead in solar installations**, tracking their higher median incomes and homeownership rates. Across Austin's 26,075 total solar permits, these western districts account for a disproportionate share. District 1 and District 3 trail significantly. The renewable energy leader is also the generator leader (D10: 2,151 generators), showing that wealthy districts invest across all energy categories."
+    }
+  },
+  {
+    "vars": {
+      "question": "How does District 6 compare to District 3 in clean energy?",
+      "category": "districts",
+      "expected_topics": [
+        "District 6",
+        "District 3",
+        "clean energy"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**District 6 (NW Austin) has 987 generators** and solid solar numbers, significantly outpacing District 3 in clean energy infrastructure. D3, covering parts of central-east Austin, has lower investment levels consistent with its lower median income. The gap between D6 and D3 illustrates how Austin's middle-tier districts still outperform eastern ones, with income remaining the key driver."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which district is falling behind in energy infrastructure?",
+      "category": "districts",
+      "expected_topics": [
+        "district",
+        "behind",
+        "energy"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**District 1 (East Austin) \u2014 175 generators** and the lowest energy permit counts across nearly all categories. While D10 has 2,151 generators and D8 has 1,423, D1's infrastructure investment lags by up to 12x. The district that bore some of the heaviest Uri impacts has seen the least private investment in backup power since, highlighting the equity-resilience gap."
+    }
+  },
+  {
+    "vars": {
+      "question": "What's the per-capita permit gap between the richest and poorest districts?",
+      "category": "districts",
+      "expected_topics": [
+        "per-capita",
+        "gap",
+        "district"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Up to 12x per-capita gap** between District 10 (wealthiest, 2,151 generators) and District 1 (lowest investment, 175 generators). Across 2.34 million total permits, the per-capita disparity is even starker when accounting for population density \u2014 D1 has more residents per square mile but far fewer energy permits. The gap spans solar, battery, generator, and EV categories uniformly."
+    }
+  },
+  {
+    "vars": {
+      "question": "Where are pool permits concentrated in Austin?",
+      "category": "pools",
+      "expected_topics": [
+        "pool",
+        "concentrated"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Western and northwestern ZIPs dominate pool permits**, with 78746 (Westlake), 78703, and 78731 leading. Pool construction correlates strongly with median income \u2014 the same neighborhoods atop solar and generator rankings also top pool permits. Austin issued approximately 1,215 pool permits in 2024, with the western half of the city accounting for the majority."
+    }
+  },
+  {
+    "vars": {
+      "question": "Did luxury construction bounce back after the 2020 COVID dip?",
+      "category": "pools",
+      "expected_topics": [
+        "luxury",
+        "2020",
+        "COVID",
+        "bounce"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Pool and luxury permits recovered strongly 2021-2023** after the COVID dip. Pool construction tracks the broader Austin recovery \u2014 steady growth through 2019, a 2020 drop, then a rebound that pushed Austin's total construction +42.6% above the long-term average by 2024. With ~1,215 pool permits in 2024, luxury construction is at or near pre-pandemic highs."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which ZIPs have the most high-value renovations?",
+      "category": "pools",
+      "expected_topics": [
+        "ZIP",
+        "high-value",
+        "renovation"
+      ],
+      "ground_truth_stats": [
+        "78746"
+      ],
+      "golden_answer": "**78746 (Westlake), 78703, and 78731 lead** in high-value renovations and luxury construction. These ZIPs consistently appear atop permit rankings for pools, major remodels, and high-end residential work. Westlake's median home value of ~$1.63M supports the kind of premium renovation projects that dominate these ZIP codes. Pool permits alone totaled ~1,215 citywide in 2024."
+    }
+  },
+  {
+    "vars": {
+      "question": "What's the pool permit trend from 2010 to 2026?",
+      "category": "pools",
+      "expected_topics": [
+        "pool",
+        "trend",
+        "2010"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Steady growth from 2010-2019, COVID dip in 2020, strong recovery through 2023.** Pool permits track Austin's broader construction cycle \u2014 rising with the real estate boom, pausing during COVID, then rebounding. Austin issued approximately 1,215 pool permits in 2024. The trend mirrors luxury spending: western ZIPs drive the volume, and pool construction correlates directly with median household income."
+    }
+  },
+  {
+    "vars": {
+      "question": "How does 78746 compare to 78702 in luxury permits?",
+      "category": "pools",
+      "expected_topics": [
+        "78746",
+        "78702",
+        "luxury"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**78746 (Westlake) dramatically outpaces 78702 (East Austin)** in luxury permits, including pools and high-end renovations. With a median home value of ~$1.63M versus 78702's ~$730K, Westlake drives premium construction. Pool and renovation permits in 78746 are among the highest citywide, while 78702's permits tilt toward demolition and new construction \u2014 a gentrification signal rather than a luxury signal."
+    }
+  },
+  {
+    "vars": {
+      "question": "How do pool permits map to income levels?",
+      "category": "pools",
+      "expected_topics": [
+        "pool",
+        "income"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Pool permits correlate strongly with median income**, following the same wealth-infrastructure pattern seen across energy categories. The ~1,215 pool permits issued in 2024 are concentrated in 78746 (Westlake), 78703, and 78731 \u2014 Austin's wealthiest ZIPs. Lower-income neighborhoods show minimal pool permit activity. In Austin, a pool permit is effectively a wealth marker."
+    }
+  },
+  {
+    "vars": {
+      "question": "How many pool permits did Austin issue in 2024?",
+      "category": "pools",
+      "expected_topics": [
+        "pool",
+        "2024"
+      ],
+      "ground_truth_stats": [
+        "1,215"
+      ],
+      "golden_answer": "**Approximately 1,215 pool permits in 2024**, concentrated in western and northwestern Austin. This represents a solid year following the 2021-2023 recovery from the COVID dip. Pool permits cluster in 78746 (Westlake), 78703, and 78731 \u2014 the same ZIPs leading in solar, generator, and luxury renovation permits. Pool construction remains one of Austin's most income-correlated permit categories."
+    }
+  },
+  {
+    "vars": {
+      "question": "What share of Austin's total permits are luxury or high-end?",
+      "category": "pools",
+      "expected_topics": [
+        "luxury",
+        "share",
+        "total"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Pool and luxury renovation permits represent a small but telling slice** of Austin's 2.34 million total permits. With ~1,215 pool permits in 2024 alone, luxury construction is a steady presence concentrated in 78746, 78703, and 78731 \u2014 the same ZIPs that lead in energy infrastructure. Luxury permits serve as a reliable proxy for wealth accumulation across Austin's neighborhoods."
+    }
+  },
+  {
+    "vars": {
+      "question": "How have ADU permits grown since zoning changes?",
+      "category": "adu",
+      "expected_topics": [
+        "ADU",
+        "zoning",
+        "grown"
+      ],
+      "ground_truth_stats": [
+        "86"
+      ],
+      "golden_answer": "**+86% increase in ADU permits since the HOME Initiative** passed in December 2023. Austin's zoning changes unlocked accessory dwelling units as a density tool, with Phase 1 generating 264 applications. Top ADU ZIPs include central Austin neighborhoods like 78704, 78745, and 78702 \u2014 areas with established lots and strong demand for additional housing units."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which neighborhoods lead in ADU construction?",
+      "category": "adu",
+      "expected_topics": [
+        "ADU",
+        "neighborhood",
+        "lead"
+      ],
+      "ground_truth_stats": [
+        "78704",
+        "78745",
+        "78702"
+      ],
+      "golden_answer": "**78704, 78745, and 78702 lead in ADU activity** \u2014 central Austin neighborhoods with established lots and strong rental demand. These ZIPs have the combination of lot sizes, property values, and homeowner motivation that makes ADU construction feasible. Since the HOME Initiative boosted permits +86%, these neighborhoods have been the primary beneficiaries of Austin's density push."
+    }
+  },
+  {
+    "vars": {
+      "question": "How did the 2023 HOME Initiative change ADU construction?",
+      "category": "adu",
+      "expected_topics": [
+        "HOME Initiative",
+        "ADU",
+        "2023"
+      ],
+      "ground_truth_stats": [
+        "264"
+      ],
+      "golden_answer": "**+86% increase in ADU permits** after the HOME Initiative eased zoning restrictions in December 2023. Phase 1 generated 264 applications, but Phase 2 (allowing 3+ units) has attracted only 4 applications \u2014 far below expectations. The policy unlocked density in central neighborhoods (78704, 78745, 78702) but hasn't yet achieved its more ambitious multi-unit goals."
+    }
+  },
+  {
+    "vars": {
+      "question": "Where are ADUs concentrated in Austin?",
+      "category": "adu",
+      "expected_topics": [
+        "ADU",
+        "concentrated"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Central Austin \u2014 78704, 78745, and 78702** lead in ADU construction. These neighborhoods combine established lot sizes, rising property values, and homeowner demand for rental income. ADU permits are up +86% since the HOME Initiative, with 264 Phase 1 applications concentrated in these inner-ring ZIP codes. Outer suburban areas show minimal ADU activity."
+    }
+  },
+  {
+    "vars": {
+      "question": "Are ADUs actually increasing housing density in Austin?",
+      "category": "adu",
+      "expected_topics": [
+        "ADU",
+        "density"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**264 HOME Initiative Phase 1 applications** represent a meaningful density signal, but impact is modest so far. ADU permits are up +86% since the policy passed, concentrated in 78704, 78745, and 78702. Phase 2 (3+ units) has attracted only 4 applications, suggesting the bolder density goals are underperforming. ADUs are adding units but at a pace unlikely to materially alter Austin's housing math."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which ZIPs have the most ADU activity?",
+      "category": "adu",
+      "expected_topics": [
+        "ADU",
+        "ZIP"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**78704 (South Austin), 78745, and 78702 (East Austin)** are the ADU hotspots. These central ZIPs have the lot sizes, property values, and homeowner motivation to build accessory units. Since the HOME Initiative passed, ADU permits are up +86% with 264 Phase 1 applications. The concentration in central Austin reflects where density makes economic sense \u2014 close to downtown with strong rental demand."
+    }
+  },
+  {
+    "vars": {
+      "question": "How do ADU permits in 2025 compare to pre-HOME Initiative levels?",
+      "category": "adu",
+      "expected_topics": [
+        "ADU",
+        "2025",
+        "HOME Initiative"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**+86% above pre-HOME Initiative levels**, with the policy shift in December 2023 unlocking significant new ADU activity. Phase 1 attracted 264 applications, concentrated in central ZIPs like 78704, 78745, and 78702. However, Phase 2 (3+ units) has generated only 4 applications, suggesting the more ambitious density targets remain largely untapped."
+    }
+  },
+  {
+    "vars": {
+      "question": "How many HOME Initiative ADU applications have been submitted?",
+      "category": "adu",
+      "expected_topics": [
+        "HOME Initiative",
+        "application"
+      ],
+      "ground_truth_stats": [
+        "264",
+        "4"
+      ],
+      "golden_answer": "**264 Phase 1 applications and just 4 Phase 2 applications** since the HOME Initiative passed in December 2023. Phase 1 (allowing ADUs) has driven the +86% increase in ADU permits, concentrated in 78704, 78745, and 78702. But Phase 2, which allows 3+ units per lot, has dramatically underperformed with only 4 applications \u2014 a signal that bolder density remains economically or politically difficult."
+    }
+  },
+  {
+    "vars": {
+      "question": "Why has demolition grown 547% in Austin?",
+      "category": "demolition",
+      "expected_topics": [
+        "demolition",
+        "547",
+        "grown"
+      ],
+      "ground_truth_stats": [
+        "547"
+      ],
+      "golden_answer": "**+547% surge since 2015** driven by Austin's real estate boom and teardown-rebuild economics. Rising land values in central neighborhoods like 78702, 78704, and 78722 make it cheaper to demolish aging homes and build new than to renovate. Central Austin demolitions increased +40% in the last 2 years alone, accelerating after the HOME Initiative allowed more density on existing lots."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which areas are seeing the most teardowns?",
+      "category": "demolition",
+      "expected_topics": [
+        "teardown",
+        "area"
+      ],
+      "ground_truth_stats": [
+        "78702",
+        "78704",
+        "78722"
+      ],
+      "golden_answer": "**78702, 78704, and 78722 lead in demolition permits** \u2014 East Austin and South Austin corridors where gentrification is most visible. Central Austin demolitions are up +40% in the last 2 years. The pattern is clear: aging, lower-cost homes are being torn down and replaced with larger, higher-value construction. The HOME Initiative may be accelerating this trend by allowing more units per lot."
+    }
+  },
+  {
+    "vars": {
+      "question": "How do 2024 demolitions compare to 2015 levels?",
+      "category": "demolition",
+      "expected_topics": [
+        "demolition",
+        "2024",
+        "2015"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**+547% higher than 2015** \u2014 demolition permits have grown faster than almost any other category in Austin's permit data. Central Austin alone saw +40% more demolitions in the last 2 years. The growth reflects Austin's transition from renovation-oriented to teardown-rebuild, driven by land values that make new construction more economical than upgrading aging housing stock."
+    }
+  },
+  {
+    "vars": {
+      "question": "Where are teardowns replacing old homes?",
+      "category": "demolition",
+      "expected_topics": [
+        "teardown",
+        "old homes"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**78702 (East Austin), 78704 (South Austin), and 78722** are the epicenters of teardown-rebuild activity. Central Austin demolitions increased +40% in the last 2 years, with older homes being replaced by larger, higher-value construction. The +547% growth in demolition since 2015 is concentrated in these gentrifying corridors where land values now justify the cost of demolition and new builds."
+    }
+  },
+  {
+    "vars": {
+      "question": "Is demolition accelerating in East Austin neighborhoods?",
+      "category": "demolition",
+      "expected_topics": [
+        "demolition",
+        "East Austin"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Central Austin demolitions up +40% in the last 2 years**, with East Austin ZIPs like 78702 and 78722 among the most active. The +547% growth since 2015 is disproportionately concentrated east of I-35. The HOME Initiative (December 2023) may be accelerating the trend by allowing more density, making teardown-rebuild economics even more favorable on existing East Austin lots."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which ZIPs lead in demolition permits?",
+      "category": "demolition",
+      "expected_topics": [
+        "demolition",
+        "ZIP"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**78702, 78704, and 78722 top demolition permits** in Austin. These central and east-side ZIPs have seen the most intense teardown-rebuild activity, driven by rising land values and gentrification. Demolition permits citywide are up +547% since 2015, with central Austin contributing a +40% increase in just the last 2 years. The pattern signals neighborhood transformation at scale."
+    }
+  },
+  {
+    "vars": {
+      "question": "Is demolition a leading indicator of gentrification in Austin?",
+      "category": "demolition",
+      "expected_topics": [
+        "demolition",
+        "gentrification"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**+547% demolition growth since 2015 tracks directly with gentrification** in Austin. The top teardown ZIPs \u2014 78702, 78704, 78722 \u2014 are the same neighborhoods experiencing the sharpest demographic and economic shifts. Central Austin demolitions up +40% in 2 years confirm the acceleration. When older, affordable housing is replaced with premium construction, demolition permits serve as a reliable gentrification signal."
+    }
+  },
+  {
+    "vars": {
+      "question": "How did demolition permits change after the HOME Initiative?",
+      "category": "demolition",
+      "expected_topics": [
+        "demolition",
+        "HOME Initiative"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**The HOME Initiative (December 2023) may be accelerating demolition** by allowing more density on existing lots. Central Austin demolitions increased +40% in the last 2 years, and the +547% growth since 2015 shows a trend already surging. By enabling multiple units per lot, HOME creates stronger teardown-rebuild economics \u2014 a single-family home can be replaced with 2-3 units, improving the financial case."
+    }
+  },
+  {
+    "vars": {
+      "question": "How does East Austin compare to West Austin in permits?",
+      "category": "eastwest",
+      "expected_topics": [
+        "East Austin",
+        "West Austin",
+        "permit"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**West Austin leads East Austin across nearly every permit category**, from solar (3-4x more per capita) to generators (5:1 ratio) to pools and luxury renovations. The one area where East Austin leads is demolition \u2014 78702 and 78722 are top teardown ZIPs, reflecting gentrification rather than investment. With a 0.78 income-infrastructure correlation, the permit divide is fundamentally an income divide."
+    }
+  },
+  {
+    "vars": {
+      "question": "What's the energy infrastructure divide east vs west?",
+      "category": "eastwest",
+      "expected_topics": [
+        "energy",
+        "east",
+        "west",
+        "divide"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**5:1 ratio in backup power** between Westlake and East Austin, with the divide extending across all energy categories. West Austin has 3-4x more solar per capita, significantly more EV chargers, and higher battery adoption. The 0.78 correlation between wealth and infrastructure means this isn't just preference \u2014 it's purchasing power. Austin's 26,075 solar, 7,459 generator, and 3,714 EV charger installations skew overwhelmingly westward."
+    }
+  },
+  {
+    "vars": {
+      "question": "Is the east-west energy gap closing or widening since 2020?",
+      "category": "eastwest",
+      "expected_topics": [
+        "east",
+        "west",
+        "gap",
+        "2020"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**The gap has widened since 2020**, particularly after Winter Storm Uri. Wealthy western neighborhoods added generators and batteries at rates eastern Austin couldn't match. The 5:1 Westlake-to-East Austin ratio in backup power grew as post-freeze urgency met disposable income. Federal grants ($15M for EV, Austin Energy's $735M ESRP) target underserved areas, but private investment still overwhelmingly favors the west."
+    }
+  },
+  {
+    "vars": {
+      "question": "Where does East Austin lead in construction activity?",
+      "category": "eastwest",
+      "expected_topics": [
+        "East Austin",
+        "lead",
+        "construction"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Demolition and new construction \u2014 East Austin leads** in teardown-rebuild activity. ZIPs like 78702 and 78722 are the top demolition areas (+547% since 2015), with old homes being replaced by larger, higher-value builds. This is Austin's gentrification story: East Austin leads in the categories that signal neighborhood transformation, while West Austin leads in the categories that signal wealth accumulation."
+    }
+  },
+  {
+    "vars": {
+      "question": "How does 78746 Westlake compare to 78702 East Austin?",
+      "category": "eastwest",
+      "expected_topics": [
+        "78746",
+        "78702"
+      ],
+      "ground_truth_stats": [
+        "1.63"
+      ],
+      "golden_answer": "**78746 median home value: ~$1.63M vs 78702: ~$730K** \u2014 a 2.2x gap that drives every infrastructure metric. Westlake (78746) leads in solar, generators (5:1 ratio), pools, and luxury renovations. East Austin (78702) leads in demolition and new construction, reflecting rapid gentrification. The two ZIPs represent Austin's core geographic divide: accumulated wealth vs. neighborhood transformation."
+    }
+  },
+  {
+    "vars": {
+      "question": "How do east and west compare in solar adoption?",
+      "category": "eastwest",
+      "expected_topics": [
+        "east",
+        "west",
+        "solar"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**3-4x more solar per capita in western Austin** than eastern neighborhoods. Of Austin's 26,075 total installations, the concentration mirrors the income map almost exactly (0.78 correlation). Western ZIPs like 78746, 78703, and 78731 have the homeownership rates and upfront capital that solar requires. Eastern Austin's lower adoption reflects income constraints, not sun exposure \u2014 both sides get the same sunshine."
+    }
+  },
+  {
+    "vars": {
+      "question": "What would equal energy access look like across Austin?",
+      "category": "eastwest",
+      "expected_topics": [
+        "equal",
+        "energy",
+        "access"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**Closing the 5:1 backup power gap and 3-4x solar gap** would require massive investment in eastern Austin. Equal access means matching District 10's 2,151 generators in District 1's 175 \u2014 a 12x increase. Austin Energy's $735M ESRP and the $15M federal EV grant are steps, but private infrastructure would need to overcome the 0.78 wealth correlation that currently determines who has resilience."
+    }
+  },
+  {
+    "vars": {
+      "question": "Which east side ZIP has closed the infrastructure gap the most?",
+      "category": "eastwest",
+      "expected_topics": [
+        "east",
+        "ZIP",
+        "gap",
+        "closed"
+      ],
+      "ground_truth_stats": [],
+      "golden_answer": "**78702 (East Austin) has narrowed the gap the most**, driven by gentrification and rising property values. As median home values hit ~$730K (up sharply from a decade ago), new construction in 78702 increasingly includes solar and modern electrical systems. But 78702's gains come through displacement economics \u2014 the infrastructure gap closes as the neighborhood's demographics shift, not because original residents benefit."
+    }
+  }
+]
