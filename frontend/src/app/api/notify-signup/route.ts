@@ -6,6 +6,7 @@ const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://undervolt-atx.vercel.app';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
 const HOMENEST_URL = process.env.HOMENEST_URL; // Only set in local dev
 
 async function sendTelegramNotification(message: string) {
@@ -14,8 +15,8 @@ async function sendTelegramNotification(message: string) {
     return;
   }
 
-  // Try Homenest gateway if configured (local dev only)
-  if (HOMENEST_URL) {
+  // Try Homenest gateway only in local dev — never in production
+  if (HOMENEST_URL && !IS_PRODUCTION) {
     try {
       const res = await fetch(`${HOMENEST_URL}/api/telegram/send`, {
         method: 'POST',
@@ -31,14 +32,14 @@ async function sendTelegramNotification(message: string) {
         const result = await res.json();
         if (result.sent) return;
         console.log(`Gateway blocked: ${result.reason}`);
-        return; // Respect gateway decision
+        // Fall through to direct Telegram API instead of returning
       }
     } catch {
       console.log('Homenest unreachable, falling back to direct Telegram');
     }
   }
 
-  // Direct Telegram API (prod path, or fallback)
+  // Direct Telegram API (prod path, or fallback from gateway)
   try {
     const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
     await fetch(url, {
