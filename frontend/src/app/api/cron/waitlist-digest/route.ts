@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+// Runs every 3 hours via Vercel cron — see vercel.json
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
