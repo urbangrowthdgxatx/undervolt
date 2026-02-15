@@ -1,17 +1,23 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// All emails from environment variables - no hardcoded values
-const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL;
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://undervolt-atx.vercel.app';
-const IS_PRODUCTION = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
-const HOMENEST_URL = process.env.HOMENEST_URL; // Only set in local dev
+// Read env vars lazily at request time, not module load time
+function getEnv() {
+  return {
+    NOTIFY_EMAIL: process.env.NOTIFY_EMAIL,
+    TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
+    TELEGRAM_CHAT_ID: process.env.TELEGRAM_CHAT_ID,
+    APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'https://undervolt-atx.vercel.app',
+    IS_PRODUCTION: process.env.NODE_ENV === 'production' || process.env.VERCEL === '1',
+    HOMENEST_URL: process.env.HOMENEST_URL,
+  };
+}
 
 async function sendTelegramNotification(message: string) {
+  const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, HOMENEST_URL, IS_PRODUCTION } = getEnv();
+
   if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-    console.log('Telegram not configured');
+    console.log('Telegram not configured — TELEGRAM_BOT_TOKEN:', !!TELEGRAM_BOT_TOKEN, 'TELEGRAM_CHAT_ID:', !!TELEGRAM_CHAT_ID);
     return;
   }
 
@@ -42,7 +48,7 @@ async function sendTelegramNotification(message: string) {
   // Direct Telegram API (prod path, or fallback from gateway)
   try {
     const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    await fetch(url, {
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -51,22 +57,27 @@ async function sendTelegramNotification(message: string) {
         parse_mode: 'HTML',
       }),
     });
+    const result = await res.json();
+    if (!result.ok) {
+      console.error('Telegram API error:', JSON.stringify(result));
+    }
   } catch (error) {
     console.error('Telegram notification failed:', error);
   }
 }
 
 async function sendUserWelcomeEmail(email: string) {
+  const { APP_URL } = getEnv();
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   const EMAIL_FROM = process.env.EMAIL_FROM;
 
   if (!RESEND_API_KEY || !EMAIL_FROM) {
-    console.log('Welcome email not configured - missing RESEND_API_KEY or EMAIL_FROM');
+    console.log('Welcome email not configured — RESEND_API_KEY:', !!RESEND_API_KEY, 'EMAIL_FROM:', !!EMAIL_FROM);
     return;
   }
 
   try {
-    await fetch('https://api.resend.com/emails', {
+    const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${RESEND_API_KEY}`,
@@ -110,18 +121,19 @@ async function sendUserWelcomeEmail(email: string) {
 }
 
 async function sendEmailNotification(email: string, approveToken: string) {
+  const { NOTIFY_EMAIL, APP_URL } = getEnv();
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   const EMAIL_FROM = process.env.EMAIL_FROM;
 
   if (!RESEND_API_KEY || !EMAIL_FROM || !NOTIFY_EMAIL) {
-    console.log('Email not configured - missing RESEND_API_KEY, EMAIL_FROM, or NOTIFY_EMAIL env vars');
+    console.log('Email not configured — RESEND_API_KEY:', !!RESEND_API_KEY, 'EMAIL_FROM:', !!EMAIL_FROM, 'NOTIFY_EMAIL:', !!NOTIFY_EMAIL);
     return;
   }
 
   const approveUrl = `${APP_URL}/api/approve?token=${approveToken}&email=${encodeURIComponent(email)}`;
 
   try {
-    await fetch('https://api.resend.com/emails', {
+    const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${RESEND_API_KEY}`,
@@ -178,6 +190,7 @@ export async function POST(req: Request) {
     await supabase.from('waitlist').update({ approve_token: approveToken }).eq('email', email);
 
     // Send Telegram notification with approve link
+    const { APP_URL } = getEnv();
     const approveUrl = `${APP_URL}/api/approve?token=${approveToken}&email=${encodeURIComponent(email)}`;
     const telegramMessage = `
 🔔 <b>New Waitlist Signup</b>
