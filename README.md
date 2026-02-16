@@ -6,6 +6,7 @@
 Urban infrastructure intelligence — GPU-accelerated analysis of 2.34M Austin construction permits. First place, Urban Growth category at the [NVIDIA DGX Spark Frontier Hackathon](https://www.nvidia.com/en-us/events/dgx-spark-hackathon/).
 
 **Live Demo:** [undervolt-atx.vercel.app](https://undervolt-atx.vercel.app)
+**Live Video:** [Loom](https://www.loom.com/share/76e8ca2ec7884a1cb23b3f5a8e69103b)
 
 ## Features
 
