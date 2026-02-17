@@ -130,10 +130,11 @@ function ExplorationPageContent() {
       .map((c) => ({ headline: c.block.headline, insight: c.block.insight }));
 
     try {
+      const userEmail = typeof window !== 'undefined' ? localStorage.getItem('undervolt_email') : null;
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: question, mode: "scout", existingBlocks }),
+        body: JSON.stringify({ message: question, mode: "scout", existingBlocks, email: userEmail }),
         signal: controller.signal,
       });
 

@@ -1,33 +1,8 @@
 import { searchAnalytics, getKeyInsights } from '@/lib/analytics-data';
 import { supabase } from '@/lib/supabase';
-import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
 export const maxDuration = 60;
-
-// Check if user is approved for custom queries
-async function isUserApproved(authHeader: string | null): Promise<boolean> {
-  if (!authHeader?.startsWith('Bearer ')) return false;
-
-  const token = authHeader.slice(7);
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-  const client = createClient(supabaseUrl, supabaseKey, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
-  });
-
-  const { data: { user } } = await client.auth.getUser(token);
-  if (!user) return false;
-
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('approved')
-    .eq('id', user.id)
-    .single();
-
-  return profile?.approved === true;
-}
 
 // Active model for serving cached answers (set via env var or defaults to nemotron)
 function getActiveModel(): string {
@@ -130,30 +105,33 @@ function getQuerySQL(intent: string): string {
   }
 }
 
-// Extract a key statistic from answer text
-// Priority: bold stat > percentage > ratio > multiplier > large number
+// Extract a key statistic from answer text — prefer numbers over sentences
 function extractKeyStat(text: string): string | null {
-  // 1. Bold markdown stat (if Nemotron complied)
-  const boldMatch = text.match(/\*\*([^*]+)\*\*/);
-  if (boldMatch) return boldMatch[1].slice(0, 40);
-
-  // 2. Percentage with context (e.g., "+340%", "grew 547%")
+  // 1. Percentage (e.g., "+340%", "547%")
   const pctMatch = text.match(/(\+?\d[\d,]*\.?\d*%)/);
   if (pctMatch) return pctMatch[1];
 
-  // 3. Ratio (e.g., "22:1", "5:1")
+  // 2. Ratio (e.g., "22:1", "1:9")
   const ratioMatch = text.match(/(\d+:\d+)/);
   if (ratioMatch) return ratioMatch[1];
 
-  // 4. Multiplier (e.g., "5x more")
+  // 3. Multiplier (e.g., "5x more")
   const multMatch = text.match(/(\d+x\s+(?:more|less|higher|lower|greater))/i);
   if (multMatch) return multMatch[1];
 
-  // 5. Large number with commas (e.g., "7,305 installations")
+  // 4. Number with unit from bold text
+  const boldNumMatch = text.match(/\*\*([\d,]+(?:\.\d+)?)\*\*\s*(installations?|permits?|systems?|chargers?|generators?|units?|homes?|kW|MW)?/i);
+  if (boldNumMatch) return boldNumMatch[2] ? `${boldNumMatch[1]} ${boldNumMatch[2]}` : boldNumMatch[1];
+
+  // 5. Large number with unit in plain text
   const numMatch = text.match(/([\d,]+(?:\.\d+)?)\s+(installations?|permits?|systems?|chargers?|generators?|units?|homes?|projects?|buildings?)/i);
   if (numMatch) return `${numMatch[1]} ${numMatch[2]}`;
 
-  // 6. Any number with commas over 1,000
+  // 6. Short bold phrase (< 25 chars)
+  const shortBoldMatch = text.match(/\*\*([^*]{1,25})\*\*/);
+  if (shortBoldMatch) return shortBoldMatch[1];
+
+  // 7. Any large number
   const bigNumMatch = text.match(/\b(\d{1,3}(?:,\d{3})+)\b/);
   if (bigNumMatch) return bigNumMatch[1];
 
@@ -181,32 +159,62 @@ function detectIntent(message: string): 'energy' | 'trends' | 'clusters' | 'luxu
   return 'general';
 }
 
-// Call LLM gateway (LiteLLM or direct Ollama) via OpenAI-compatible API
-async function callLLM(prompt: string): Promise<string> {
-  try {
-    const llmBase = process.env.VLLM_BASE_URL || 'http://localhost:4000/v1';
-    const llmModel = process.env.VLLM_MODEL_NAME || 'nemotron-3-nano';
-    const llmKey = process.env.LLM_API_KEY;
+// Call NIM API for live queries
+async function callNIM(systemPrompt: string, userMessage: string): Promise<string> {
+  const apiKey = process.env.NVIDIA_NIM_API_KEY;
+  const baseUrl = process.env.NVIDIA_NIM_BASE_URL || 'https://integrate.api.nvidia.com/v1';
+  const model = process.env.NVIDIA_NIM_MODEL || 'nvidia/llama-3.1-nemotron-nano-8b-v1';
 
-    const response = await fetch(`${llmBase}/chat/completions`, {
+  if (!apiKey) {
+    console.error('NVIDIA_NIM_API_KEY not set');
+    return '';
+  }
+
+  try {
+    const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(llmKey && { 'Authorization': `Bearer ${llmKey}` }),
+        'Authorization': `Bearer ${apiKey}`,
       },
+      signal: AbortSignal.timeout(30000),
       body: JSON.stringify({
-        model: llmModel,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMessage },
+        ],
+        max_tokens: 512,
+        temperature: 0.6,
       }),
     });
 
-    if (!response.ok) return '';
+    if (!response.ok) {
+      console.error(`NIM error: ${response.status} ${response.statusText}`);
+      return '';
+    }
     const data = await response.json();
     return data.choices?.[0]?.message?.content || '';
   } catch (error) {
-    console.error('LLM error:', error);
+    console.error('NIM error:', error);
     return '';
+  }
+}
+
+
+// Check if email is on the waitlist (signed up)
+async function isWaitlistUser(email: string | null): Promise<boolean> {
+  if (!email) return false;
+  try {
+    const { data } = await supabase
+      .from('waitlist')
+      .select('id')
+      .eq('email', email.toLowerCase().trim())
+      .limit(1)
+      .single();
+    return !!data;
+  } catch {
+    return false;
   }
 }
 
@@ -271,8 +279,7 @@ function sseResponse(responseObj: any): Response {
 }
 
 export async function POST(req: Request) {
-  const { message } = await req.json();
-  const authHeader = req.headers.get('Authorization');
+  const { message, email } = await req.json();
 
   if (!message || typeof message !== 'string') {
     return Response.json({ error: 'Message is required' }, { status: 400 });
@@ -281,7 +288,7 @@ export async function POST(req: Request) {
   // Check if this is a cached (pre-built) question - anyone can query
   const isCached = await isCachedQuestion(message);
 
-  // For custom queries, require sign-in and approval
+  // For custom queries, require signup (waitlist) and feature flag
   if (!isCached) {
     const customQueriesEnabled = process.env.CUSTOM_QUERIES_ENABLED === 'true';
 
@@ -292,22 +299,23 @@ export async function POST(req: Request) {
         storyBlock: {
           id: `coming-soon-${Date.now()}`,
           headline: 'Try a suggested question',
-          insight: 'We have 72 pre-analyzed questions covering solar, batteries, generators, EV chargers, construction trends, and more. Pick one from the suggestions!',
+          insight: 'We have 133 pre-analyzed questions covering solar, batteries, generators, EV chargers, construction trends, and more. Pick one from the suggestions!',
           whyStoryWorthy: 'waitlist',
           confidence: 'high',
         },
       });
     }
 
-    const approved = await isUserApproved(authHeader);
-    if (!approved) {
+    // Check if user is on the waitlist (signed up)
+    const onWaitlist = await isWaitlistUser(email);
+    if (!onWaitlist) {
       return sseResponse({
-        message: 'Custom queries require an approved account.',
+        message: 'Sign up to unlock custom queries powered by NVIDIA Nemotron.',
         requiresAuth: true,
         storyBlock: {
           id: `auth-required-${Date.now()}`,
-          headline: 'Sign in required',
-          insight: 'Sign in with your approved account to ask custom questions.',
+          headline: 'Sign up required',
+          insight: 'Enter your email to unlock custom questions about Austin\'s energy infrastructure.',
           whyStoryWorthy: 'auth-gate',
           confidence: 'high',
         },
@@ -384,43 +392,38 @@ export async function POST(req: Request) {
         // Get analytics data (no SQL shown to user)
         const analyticsData = await searchAnalytics(message);
 
-        // Build LLM prompt based on intent
-        let prompt = '';
+        // Build system prompt and user message for NIM
+        let systemPrompt = '';
         let fallbackText = '';
 
-        // Generate engaging, informative insights using ONLY the provided data
-        const groundingInstruction = `
-INSTRUCTIONS:
+        const groundingRules = `INSTRUCTIONS:
 - Answer the question in 3-5 sentences using ONLY numbers from the data above.
 - Your FIRST word must be a bold stat from the data (e.g., **X solar installations** or **Y generators**).
 - NEVER start with "Sure", "Here's", "Based on", "It seems", or any preamble.
 - Use specific ZIP codes and comparisons from the data provided.
-- Be direct and authoritative like a news headline followed by context.
+- Be direct and authoritative like a news headline followed by context.`;
 
-Question: "${message}"
-Answer:`;
+        const topicMap: Record<string, string> = {
+          energy: 'Austin energy infrastructure',
+          trends: 'Austin construction trends',
+          clusters: 'Austin construction clusters',
+          luxury: 'Austin luxury construction',
+          general: 'Austin construction data',
+        };
 
-        if (intent === 'energy') {
-          prompt = `You are a data analyst. Answer this question about Austin energy infrastructure using ONLY the data provided below. Do NOT make up any numbers.\n\nQuestion: "${message}"\n\nVERIFIED DATA:\n${analyticsData}${groundingInstruction}`;
-          fallbackText = `Austin's energy infrastructure:\n\n${analyticsData}`;
-        } else if (intent === 'trends') {
-          prompt = `You are a data analyst. Answer this question about Austin construction trends using ONLY the data provided below. Do NOT make up any numbers.\n\nQuestion: "${message}"\n\nVERIFIED DATA:\n${analyticsData}${groundingInstruction}`;
-          fallbackText = `Construction trends in Austin:\n\n${analyticsData}`;
-        } else if (intent === 'clusters') {
-          prompt = `You are a data analyst. Answer this question about Austin construction clusters using ONLY the data provided below. Do NOT make up any numbers.\n\nQuestion: "${message}"\n\nVERIFIED DATA:\n${analyticsData}${groundingInstruction}`;
-          fallbackText = `Austin permit clusters:\n\n${analyticsData}`;
-        } else if (intent === 'luxury') {
-          prompt = `You are a data analyst. Answer this question about Austin luxury construction using ONLY the data provided below. Do NOT make up any numbers.\n\nQuestion: "${message}"\n\nVERIFIED DATA:\n${analyticsData}${groundingInstruction}`;
-          fallbackText = `Austin luxury construction trends:\n\n${analyticsData}`;
-        } else {
+        if (intent === 'general') {
           const insights = await getKeyInsights();
-          prompt = `You are an Austin construction data analyst. Answer the user's question using ONLY the verified data below. Do NOT make up any numbers.\n\nQuestion: "${message}"\n\nVERIFIED DATA:\n${insights}${groundingInstruction}`;
+          systemPrompt = `You are an Austin construction data analyst. Answer the user's question using ONLY the verified data below. Do NOT make up any numbers.\n\nVERIFIED DATA:\n${insights}\n\n${groundingRules}`;
           fallbackText = `I can help with Austin construction insights. Try asking about solar, generators, trends, or clusters.`;
+        } else {
+          const topic = topicMap[intent];
+          systemPrompt = `You are a data analyst. Answer questions about ${topic} using ONLY the data provided below. Do NOT make up any numbers.\n\nVERIFIED DATA:\n${analyticsData}\n\n${groundingRules}`;
+          fallbackText = `${topic}:\n\n${analyticsData}`;
         }
 
         sendEvent(controller, 'status', { step: 'processing', message: msgs.thinking });
 
-        const llmResponse = await callLLM(prompt);
+        const llmResponse = await callNIM(systemPrompt, cleaned);
         responseText = llmResponse || fallbackText;
 
         sendEvent(controller, 'status', { step: 'complete', message: 'Done' });
@@ -429,27 +432,36 @@ Answer:`;
         const questionHash = hashQuestion(cleaned);
 
         // Build response object matching ChatResponse schema
-        // Strip preamble for headline
-        const cleanedResponse = responseText
-          .replace(/^(here is |here are |here's |this is |the following |based on |according to )/i, '')
-          .replace(/^\*\*/g, '')
-          .trim();
-        const firstSentence = cleanedResponse.split(/[.!?\n]/)[0].replace(/\*\*/g, '').trim();
-        const headline = firstSentence.length > 50
-          ? firstSentence.substring(0, 47) + '...'
-          : firstSentence || 'Austin Insight';
+        const plainText = responseText.replace(/\*\*/g, '').trim();
+        const sentences = plainText.split(/(?<=[.!?])\s+/).filter(s => s.length > 10);
+        const shortInsight = sentences.slice(0, 2).join(' ');
+
+        // Short headline from intent
+        const intentLabels: Record<string, string> = {
+          energy: 'Energy Insight',
+          trends: 'Trend Analysis',
+          clusters: 'Cluster Pattern',
+          luxury: 'Premium Segment',
+          general: 'Austin Insight',
+        };
+        const headline = intentLabels[intent] || 'Austin Insight';
 
         // Extract a key stat from the response text for dataPoint
         const keyStat = extractKeyStat(responseText);
-        const llmModel = process.env.VLLM_MODEL_NAME || 'nemotron-3-nano';
+        const llmModel = process.env.NVIDIA_NIM_MODEL || 'nvidia/llama-3.1-nemotron-nano-8b-v1';
+
+        // Trim message to 3 sentences max
+        const msgSentences = responseText.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 10);
+        const shortMessage = msgSentences.slice(0, 3).join(' ');
 
         const responseObject = {
-          message: responseText,
+          message: shortMessage || responseText.slice(0, 300),
           storyBlock: {
             id: `${intent}-${Date.now()}`,
+            question: cleaned,
             headline,
-            insight: responseText,
-            dataPoint: keyStat ? { label: 'Key finding', value: keyStat.slice(0, 30) } : null,
+            insight: shortInsight || plainText.slice(0, 200),
+            dataPoint: keyStat ? { label: keyStat.includes('%') ? 'Change' : 'Key stat', value: keyStat.slice(0, 30) } : null,
             whyStoryWorthy: 'turning-point',
             evidence: [
               { stat: 'Analyzed from Austin permit records (2000-2026)', source: 'Austin Open Data via Supabase' },
