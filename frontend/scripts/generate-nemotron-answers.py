@@ -11,12 +11,12 @@ import hashlib
 import sys
 import os
 
-NIM_API_KEY = os.environ.get("NVIDIA_NIM_API_KEY", "REDACTED_NIM_KEY")
+NIM_API_KEY = os.environ.get("NVIDIA_NIM_API_KEY", "")
 NIM_BASE_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
 MODEL = "nvidia/llama-3.1-nemotron-nano-8b-v1"
 
-SUPABASE_URL = "https://arpoymzcflsqcaqixhie.supabase.co"
-ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFycG95bXpjZmxzcWNhcWl4aGllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0NzkyNjYsImV4cCI6MjA4NTA1NTI2Nn0.xawXW7s2Yk2N3VNcTZqp3TsKyHG8urPrlFRMGTPF_aE"
+SUPABASE_URL = os.environ.get("NEXT_PUBLIC_SUPABASE_URL", "")
+ANON_KEY = os.environ.get("NEXT_PUBLIC_SUPABASE_ANON_KEY", "")
 
 SYSTEM_PROMPT = """You are Undervolt, an AI analyst specializing in Austin, Texas construction permit data. You analyze 2.34 million geocoded permits (2000-2026) to reveal energy trends, grid gaps, and infrastructure patterns.
 
@@ -184,8 +184,8 @@ def call_nemotron(question: str, category: str, retries: int = 3) -> str:
     return f"ERROR: Failed after {retries} attempts"
 
 
-TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "REDACTED_TELEGRAM_TOKEN")
-TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "REDACTED_CHAT_ID")
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 
 def send_telegram(message: str):

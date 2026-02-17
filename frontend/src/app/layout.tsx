@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Undervolt — Urban Infrastructure Intelligence",
   description: "AI-powered analysis of 2.34M Austin construction permits using NVIDIA Nemotron. 1st Place Urban Growth — NVIDIA DGX Spark Frontier Hackathon.",
-  keywords: ["NVIDIA", "Nemotron", "NIM", "Austin", "energy", "infrastructure", "permits", "AI", "urban growth", "Supabase", "construction analytics"],
+  keywords: ["NVIDIA", "DGX Spark", "Jetson", "Nemotron", "NIM", "Austin", "energy", "infrastructure", "permits", "AI", "urban growth", "Supabase"],
   authors: [{ name: "Undervolt Team" }],
   openGraph: {
     title: "Undervolt — Urban Infrastructure Intelligence",

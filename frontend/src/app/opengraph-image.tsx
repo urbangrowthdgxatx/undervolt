@@ -87,16 +87,16 @@ export default async function Image() {
             <span style={{ fontSize: "22px", color: "rgba(255,255,255,0.5)" }}>Permits Analyzed</span>
           </div>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <span style={{ fontSize: "56px", fontWeight: 700, color: "#76B900" }}>NVIDIA</span>
-            <span style={{ fontSize: "22px", color: "rgba(255,255,255,0.5)" }}>NIM Microservices</span>
+            <span style={{ fontSize: "56px", fontWeight: 700, color: "#76B900" }}>DGX Spark</span>
+            <span style={{ fontSize: "22px", color: "rgba(255,255,255,0.5)" }}>Hackathon Origin</span>
           </div>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <span style={{ fontSize: "56px", fontWeight: 700, color: "#76B900" }}>Nemotron</span>
-            <span style={{ fontSize: "22px", color: "rgba(255,255,255,0.5)" }}>Nano 8B</span>
+            <span style={{ fontSize: "56px", fontWeight: 700, color: "#76B900" }}>Jetson</span>
+            <span style={{ fontSize: "22px", color: "rgba(255,255,255,0.5)" }}>AGX Orin Edge AI</span>
           </div>
           <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <span style={{ fontSize: "56px", fontWeight: 700, color: "#ffffff" }}>Supabase</span>
-            <span style={{ fontSize: "22px", color: "rgba(255,255,255,0.5)" }}>Realtime Analytics</span>
+            <span style={{ fontSize: "56px", fontWeight: 700, color: "#ffffff" }}>Nemotron</span>
+            <span style={{ fontSize: "22px", color: "rgba(255,255,255,0.5)" }}>Nano 8B via NIM</span>
           </div>
         </div>
       </div>
