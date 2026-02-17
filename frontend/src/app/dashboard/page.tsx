@@ -91,6 +91,12 @@ interface GeoJSONFeature {
 
 function DashboardContent() {
   const searchParams = useSearchParams();
+
+  // Initialize filter from URL params immediately (avoids race with data loading)
+  const validFilters = ["solar", "battery", "ev_charger", "generator", "panel_upgrade", "hvac"];
+  const filterParam = searchParams.get("filter");
+  const initialFilter = filterParam && validFilters.includes(filterParam) ? filterParam : null;
+
   const [stats, setStats] = useState<Stats | null>(null);
   const [clusterData, setClusterData] = useState<any[]>([]);  // Cluster polygons
   const [individualPermits, setIndividualPermits] = useState<any[]>([]);  // Individual permits
@@ -101,18 +107,15 @@ function DashboardContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showZipDropdown, setShowZipDropdown] = useState(false);
   const [highlightZip, setHighlightZip] = useState<string | null>(null);
-  const [showEnergyOnly, setShowEnergyOnly] = useState(false);
-  const [selectedEnergyType, setSelectedEnergyType] = useState<string | null>(null);
+  const [showEnergyOnly, setShowEnergyOnly] = useState(!!initialFilter);
+  const [selectedEnergyType, setSelectedEnergyType] = useState<string | null>(initialFilter);
 
-  // Read filter from URL on mount
+  // Sync filter from URL when searchParams change (e.g., navigating between report links)
   useEffect(() => {
     const filter = searchParams.get("filter");
-    if (filter) {
-      const validFilters = ["solar", "battery", "ev_charger", "generator", "panel_upgrade", "hvac"];
-      if (validFilters.includes(filter)) {
-        setSelectedEnergyType(filter);
-        setShowEnergyOnly(true);
-      }
+    if (filter && validFilters.includes(filter)) {
+      setSelectedEnergyType(filter);
+      setShowEnergyOnly(true);
     }
   }, [searchParams]);
   const [selectedProjectType, setSelectedProjectType] = useState<string | null>(null);
