@@ -92,6 +92,13 @@ export function InsightCard({ block, isSelected, onSelect }: InsightCardProps) {
     >
       {/* Header */}
       <div className="p-5 pb-0">
+        {/* Question label */}
+        {block.question && (
+          <p className="text-xs text-white/40 mb-2 line-clamp-2 leading-relaxed">
+            {block.question}
+          </p>
+        )}
+
         {/* Headline + Confidence */}
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-medium uppercase tracking-wider text-white flex-1">

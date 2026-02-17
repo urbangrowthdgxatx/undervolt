@@ -703,10 +703,10 @@ function DashboardContent() {
                 )}
               </p>
             </div>
-            {/* NVIDIA Jetson Badge */}
+            {/* NVIDIA Badge */}
             <div className="hidden md:flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-3 py-1 text-[10px] text-emerald-400">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-              Powered by Jetson AGX Orin
+              Powered by NVIDIA Nemotron
             </div>
           </div>
 
@@ -770,7 +770,7 @@ function DashboardContent() {
                 <div className="flex justify-start">
                   <div className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 flex items-center gap-2">
                     <Loader2 size={14} className="animate-spin text-emerald-400" />
-                    <span className="text-[10px] text-white/40">Running on Jetson AGX Orin...</span>
+                    <span className="text-[10px] text-white/40">Analyzing with Nemotron...</span>
                   </div>
                 </div>
               )}
@@ -992,7 +992,7 @@ function DashboardContent() {
                 <div className="flex justify-start">
                   <div className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 flex items-center gap-2">
                     <Loader2 size={14} className="animate-spin text-emerald-400" />
-                    <span className="text-[10px] text-white/40">Running on Jetson AGX Orin...</span>
+                    <span className="text-[10px] text-white/40">Analyzing with Nemotron...</span>
                   </div>
                 </div>
               )}

@@ -190,7 +190,7 @@ function ExplorationPageContent() {
             try {
               const parsed = JSON.parse(eventData) as ChatResponse;
               console.log("API response:", parsed);
-              handleResponse(parsed);
+              handleResponse(parsed, question);
               gotResponse = true;
             } catch (e) {
               console.error("Failed to parse response:", e);
@@ -305,7 +305,7 @@ function ExplorationPageContent() {
   }, [initialQuestion]);
 
   // Handle LLM response - convert to cards
-  const handleResponse = (response: ChatResponse) => {
+  const handleResponse = (response: ChatResponse, question?: string) => {
     console.log("handleResponse called:", response);
     let block = response.storyBlock;
     let isGeneratedFromMessage = false;
@@ -326,6 +326,12 @@ function ExplorationPageContent() {
         confidence: "medium",
       };
       isGeneratedFromMessage = true;
+    }
+
+    // Inject question text into the block (from API _question field or caller)
+    if (block) {
+      const q = (response as any)._question || question;
+      if (q) block.question = q;
     }
 
     if (!block) {
@@ -385,7 +391,7 @@ function ExplorationPageContent() {
         whyStoryWorthy: "turning-point",
         confidence: "low" as const,
       },
-    });
+    }, question);
   };
 
   // Toggle card selection

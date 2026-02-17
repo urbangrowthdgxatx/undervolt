@@ -20,13 +20,24 @@ export async function POST(req: Request) {
     // Otherwise return a mix from all categories
     const allQuestions = getAllQuestions();
 
-    // Check which questions have cached answers in the DB
+    // Check which questions have cached answers in the DB (prefer active model)
+    const activeModel = process.env.ACTIVE_LLM_MODEL || 'nvidia/llama-3.1-nemotron-nano-8b-v1';
     const hashes = allQuestions.map(q => hashQuestion(q));
 
-    const { data: cached } = await supabase
+    // Try with model filter first; fall back to without if column doesn't exist yet
+    let { data: cached, error } = await supabase
       .from('cached_answers')
       .select('question_hash')
-      .in('question_hash', hashes);
+      .in('question_hash', hashes)
+      .eq('model', activeModel);
+
+    if (error) {
+      // Pre-migration fallback: no model column yet
+      ({ data: cached } = await supabase
+        .from('cached_answers')
+        .select('question_hash')
+        .in('question_hash', hashes));
+    }
 
     const cachedHashes = new Set((cached || []).map(r => r.question_hash));
 

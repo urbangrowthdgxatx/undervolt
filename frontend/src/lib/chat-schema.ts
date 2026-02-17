@@ -78,6 +78,7 @@ export const ImageDataSchema = z.object({
 
 export const StoryBlockSchema = z.object({
   id: z.string().describe('Unique ID for this story block (e.g., "resilience-gap-1")'),
+  question: z.string().nullable().optional().describe('The user question that generated this insight'),
   headline: z.string().describe('Short punchy headline, 3-6 words (e.g., "Resilience is Wealth")'),
   insight: z.string().describe('The key insight with **bold** stats, 1-2 sentences'),
   dataPoint: DataPointSchema.nullable().optional().describe('One key statistic to highlight'),

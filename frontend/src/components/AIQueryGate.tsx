@@ -160,7 +160,7 @@ export function AIQueryInput({ onSubmit, isLoading, placeholder }: AIQueryInputP
       {/* Powered by badge */}
       <div className="flex items-center justify-center gap-2 text-white/30 text-xs">
         <Sparkles className="w-3 h-3" />
-        <span>Local inference on NVIDIA Jetson AGX Orin • Nemotron 3 Nano</span>
+        <span>NVIDIA Nemotron Nano 8B • Persisted in Supabase</span>
       </div>
 
       {/* Signup modal */}
