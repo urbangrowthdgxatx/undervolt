@@ -88,7 +88,7 @@ export function Footer() {
             Open source under MIT License
           </p>
           <p className="text-white/50 text-xs">
-            Built with NVIDIA Jetson
+            Powered by NVIDIA Nemotron via NIM
           </p>
         </div>
       </div>

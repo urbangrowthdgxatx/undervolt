@@ -239,7 +239,7 @@ function Overview({ yearlyData }: { yearlyData: Array<{ year: number; total: num
 
       <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-center">
         <p className="text-white/40 text-sm">
-          Source: Austin Open Data Portal • Processed with NVIDIA Jetson • Updated nightly at 2AM CT
+          Source: Austin Open Data Portal • Analyzed by NVIDIA Nemotron via NIM • Persisted in Supabase
         </p>
       </div>
     </div>

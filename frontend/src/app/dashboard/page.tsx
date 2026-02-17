@@ -9,7 +9,7 @@ import { CATEGORY_QUESTIONS } from '@/lib/modes';
 import type { SignalType } from '@/components/LeafletMap';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
-// Dynamically import Leaflet map (better performance on Jetson - no WebGL required)
+// Dynamically import Leaflet map (no WebGL required)
 const LeafletMap = dynamicImport(() => import('@/components/LeafletMap').then(mod => ({ default: mod.LeafletMap })), {
   ssr: false,
   loading: () => <div className="w-full h-full flex items-center justify-center"><div className="text-white/40">Loading map...</div></div>

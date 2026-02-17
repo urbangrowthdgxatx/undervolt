@@ -226,7 +226,7 @@ function SignupModal({
           <h3 className="text-xl font-semibold text-white">Unlock Custom Queries</h3>
         </div>
         <p className="text-white/60 text-sm mb-4">
-          Sign up to ask your own questions about Austin's energy infrastructure, powered by local AI inference on NVIDIA Jetson.
+          Sign up to ask your own questions about Austin's energy infrastructure, powered by NVIDIA Nemotron via NIM.
         </p>
         
         <form onSubmit={handleSubmit} className="space-y-4">

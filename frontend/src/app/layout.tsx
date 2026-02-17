@@ -20,12 +20,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Undervolt — Urban Infrastructure Intelligence",
-  description: "GPU-accelerated analysis of 2.34M Austin construction permits, processed nightly. 1st Place Urban Growth — NVIDIA DGX Spark Frontier Hackathon.",
-  keywords: ["NVIDIA", "DGX Spark", "Jetson", "Ollama", "Austin", "energy", "infrastructure", "permits", "AI", "GPU", "hackathon", "urban growth"],
+  description: "AI-powered analysis of 2.34M Austin construction permits using NVIDIA Nemotron. 1st Place Urban Growth — NVIDIA DGX Spark Frontier Hackathon.",
+  keywords: ["NVIDIA", "Nemotron", "NIM", "Austin", "energy", "infrastructure", "permits", "AI", "urban growth", "Supabase", "construction analytics"],
   authors: [{ name: "Undervolt Team" }],
   openGraph: {
     title: "Undervolt — Urban Infrastructure Intelligence",
-    description: "GPU-accelerated analysis of 2.34M Austin construction permits. 1st Place Urban Growth — NVIDIA DGX Spark Frontier Hackathon.",
+    description: "AI-powered analysis of 2.34M Austin construction permits using NVIDIA Nemotron. 1st Place Urban Growth — NVIDIA DGX Spark Frontier Hackathon.",
     url: "https://undervolt-atx.vercel.app",
     siteName: "Undervolt",
     type: "website",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Undervolt — Urban Infrastructure Intelligence",
-    description: "GPU-accelerated analysis of 2.34M Austin construction permits. 1st Place Urban Growth — NVIDIA DGX Spark Frontier Hackathon.",
+    description: "AI-powered analysis of 2.34M Austin construction permits using NVIDIA Nemotron. 1st Place Urban Growth — NVIDIA DGX Spark Frontier Hackathon.",
     images: ["https://undervolt-atx.vercel.app/opengraph-image"]
   },
   robots: {

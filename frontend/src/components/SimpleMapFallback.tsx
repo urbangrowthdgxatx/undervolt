@@ -17,7 +17,7 @@ export function SimpleMapFallback() {
         <div className="flex gap-2 items-start">
           <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
           <div className="text-sm text-yellow-200/80">
-            <p className="font-medium mb-1">Jetson Browser Limitation</p>
+            <p className="font-medium mb-1">Map Rendering Issue</p>
             <p>Try accessing this page from a desktop browser with WebGL support, or use the Story Builder mode instead.</p>
           </div>
         </div>
